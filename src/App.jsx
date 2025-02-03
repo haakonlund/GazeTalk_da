@@ -1,13 +1,18 @@
 import React, { useState } from 'react';
 import { config } from './config';
+import settings from './settings.json';
+
 import './App.css';
+
+var dwellTime = 500; // 0.5 seconds
+var language = "english";
 
 function App() {
   const [currentLayoutName, setCurrentLayoutName] = useState("main_menu");
   const [textValue, setTextValue] = useState("");
 
   const layout = config.layouts[currentLayoutName];
-
+  
   const handleAction = (action) => {
     if (action.type === "enter_letter") {
       setTextValue(prev => prev + action.value);
@@ -15,6 +20,12 @@ function App() {
       if (config.layouts[action.layout]) {
         setCurrentLayoutName(action.layout);
       }
+    } else if (action.type === "choose_button_layout") {
+      settings.buttons_layout = action.value;
+    } else if (action.type === "change_language") {
+      language = action.value;
+    } else if (action.type === "change_linger_time") {
+      dwellTime = parseFloat(action.value);
     }
   };
 
@@ -38,6 +49,7 @@ function KeyboardGrid({ layout, textValue, setTextValue, onTileActivate }) {
   // layout.tiles could be more or fewer; we trust config is correct.
   // We'll map them into positions. The first 'textarea' consumes 2 cells, 
   // so total must remain 12. If a tile has colspan=2, we skip the next cell.
+
 
   const tiles = layout.tiles;
   
@@ -102,7 +114,6 @@ function TextAreaTile({ value, onChange, colspan=2 }) {
 function Tile({ tile, onActivate }) {
   const [hovering, setHovering] = useState(false);
   const [progress, setProgress] = useState(100);
-  const dwellTime = 500; // 0.5 seconds
   
   React.useEffect(() => {
     let timer;
