@@ -3,7 +3,7 @@ import { config } from './config';
 import './App.css';
 
 function App() {
-  const [currentLayoutName, setCurrentLayoutName] = useState("default");
+  const [currentLayoutName, setCurrentLayoutName] = useState("main_menu");
   const [textValue, setTextValue] = useState("");
 
   const layout = config.layouts[currentLayoutName];
