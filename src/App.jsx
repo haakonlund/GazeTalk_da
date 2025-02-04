@@ -1,7 +1,6 @@
 import React, {  useState } from 'react';
 import { config } from './config';
 import settings from './settings.json';
-
 import './App.css';
 
 var dwellTime = 500; // 0.5 seconds
@@ -12,6 +11,8 @@ function App() {
   const [textValue, setTextValue] = useState("");
 
   const [isCapsOn, setIsCapsOn] = useState(false);
+
+  const [alarmActive, setAlarmActive] = useState(false);
   const layout = config.layouts[currentLayoutName];
   
   const handleAction = (action) => {
@@ -68,6 +69,11 @@ function App() {
       language = action.value;
     } else if (action.type === "change_linger_time") {
       dwellTime = parseFloat(action.value);
+    } else if (action.type === "play_alarm") {
+      console.log("Playing alarm");
+      setAlarmActive(true);
+    } else if (action.type === 'close_alarm') {
+      setAlarmActive(false);
     }
   };
 
@@ -79,6 +85,9 @@ function App() {
         setTextValue={setTextValue}
         onTileActivate={handleAction}
       />
+      {alarmActive && (
+        <AlarmPopup onClose={() => setAlarmActive(false)} />
+      )}
     </div>
   );
 }
@@ -202,6 +211,23 @@ function Tile({ tile, onActivate }) {
           <div className="progress" style={{width: `${progress}%`}}></div>
         </div>
       )}
+    </div>
+  );
+}
+
+function AlarmPopup({ onClose }) {
+  return (
+    <div className="alarm-overlay">
+      <audio src="/alarm.mp3" autoPlay loop />
+
+      <div className="alarm-popup-content">
+        <h2>Alarm playing</h2>
+        <p>Do you want to stop it?</p>
+        <Tile
+          tile={{ label: 'Yes', action: { type: 'close_alarm' } }}
+          onActivate={() => onClose()}
+        />
+      </div>
     </div>
   );
 }
