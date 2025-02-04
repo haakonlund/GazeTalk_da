@@ -909,7 +909,9 @@ export const config = {
           colspan: 2
         },
         {
+          type : "switch",
           label : "Edit",
+          action : { type : "switch_layout", layout : "edit_menu"}
         },
         {
           type : "switch",
@@ -980,8 +982,9 @@ export const config = {
           label : "Delete Line"
         },
         {
-          type : "asdf",
-          label : "Delete Word"
+          type : "editing",
+          label : "Delete Word",
+          action : { type: "delete_word"}
         },
         {
           type : "asdf",
