@@ -1,18 +1,18 @@
 import React, {  useState } from 'react';
 import { config } from './config';
 import settings from './settings.json';
-
+import { useTranslation } from 'react-i18next';
+import { changeLanguage } from 'i18next';
 import './App.css';
 
 var dwellTime = 500; // 0.5 seconds
-var language = "english";
 
 function App() {
   const [currentLayoutName, setCurrentLayoutName] = useState("main_menu");
   const [textValue, setTextValue] = useState("");
 
   const [isCapsOn, setIsCapsOn] = useState(false);
-  // const [cursorDistance, setCursorDistance] = useState(0); // how many times the user has selected right (used for up and down movement)
+  const [cursorDistance, setCursorDistance] = useState(0); // how many times the user has selected right (used for up and down movement)
   const layout = config.layouts[currentLayoutName];
   
   const input = document.getElementById('text_region');
@@ -129,7 +129,8 @@ function App() {
     } else if (action.type === "choose_button_layout") {
       settings.buttons_layout = action.value;
     } else if (action.type === "change_language") {
-      language = action.value;
+      // language = action.value;
+      changeLanguage(action.value);
     } else if (action.type === "change_linger_time") {
       dwellTime = parseFloat(action.value);
     }
@@ -152,6 +153,18 @@ function App() {
     </div>
   );
 }
+// const Fixed = (value, onChange) => {
+//   const [val, setVal] = useState(value);
+//   const updateVal = (val) => {
+//     /* Make update synchronous, to avoid caret jumping when the value doesn't change asynchronously */
+//     setVal(val);
+//     /* Make the real update afterwards */
+//     onChange(val);
+//   };
+//   return <input value={val} onChange={(e) => updateVal(e.target.value)} />;
+// };
+
+
 function getCurrentLine(currentLines, cursorPosition) {
   let line = 0;
   for (let i = 0; i < cursorPosition; i++) {
@@ -181,6 +194,7 @@ function getCharDistance(currentLines, line) {
 
 
 function KeyboardGrid({ layout, textValue, setTextValue, onTileActivate }) {
+  
   // The layout tiles are defined in rows implicitly: 12 tiles, 4 columns each row
   // The first tile of type "textarea" will be special. If colspan=2, it occupies two grid cells.
   
@@ -254,6 +268,8 @@ function TextAreaTile({ value, onChange, colspan=2 }) {
 }
 
 function Tile({ tile, onActivate }) {
+  const {t} = useTranslation();
+
   const [hovering, setHovering] = useState(false);
   const [progress, setProgress] = useState(100);
   
@@ -292,7 +308,7 @@ function Tile({ tile, onActivate }) {
       onClick={() => onActivate(tile.action)}
     >
       <div className="label">
-        {tile.label}
+        {t(tile.label)}
       </div>
       {hovering && (
         <div className="progress-bar">

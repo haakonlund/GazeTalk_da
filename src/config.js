@@ -289,12 +289,12 @@ export const config = {
         {
           type: "switch",
           label: "english",
-          action: { type: "change_language", value: "english" }          
+          action: { type: "change_language", value: "en" }          
         },
         {
           type: "switch",
           label: "danish",
-          action: { type: "change_language", value: "danish" }
+          action: { type: "change_language", value: "da" }
         },
         {
           type: "switch",
