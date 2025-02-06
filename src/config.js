@@ -22,26 +22,31 @@ export const config = {
         {
           type: "letter",
           label: "A",
+          surroundingLetters: ['m', 'g', 'p', 'k', 'v', 'r'],
           action: { type: "enter_letter", value: "A" }
         },
         {
           type: "letter",
+          surroundingLetters: ['m', 'g', 'p', 'k', 'v', 'r'],
           label: "B",
           action: { type: "enter_letter", value: "B" }
         },
         // Row 2 (4 tiles)
         {
           type: "letter",
+          surroundingLetters: ['m', 'g', 'p', 'k', 'v', 'r'],
           label: "C",
           action: { type: "enter_letter", value: "C" }
         },
         {
           type: "letter",
+          surroundingLetters: ['m', 'g', 'p', 'k', 'v', 'r'],
           label: "D",
           action: { type: "enter_letter", value: "D" }
         },
         {
           type: "letter",
+          surroundingLetters: ['m', 'g', 'p', 'k', 'v', 'r'],
           label: "E",
           action: { type: "enter_letter", value: "E" }
         },
@@ -53,16 +58,19 @@ export const config = {
         // Row 3 (4 tiles)
         {
           type: "letter",
+          surroundingLetters: ['m', 'g', 'p', 'k', 'v', 'r'],
           label: "F",
           action: { type: "enter_letter", value: "F" }
         },
         {
           type: "letter",
+          surroundingLetters: ['m', 'g', 'p', 'k', 'v', 'r'],
           label: "G",
           action: { type: "enter_letter", value: "G" }
         },
         {
           type: "letter",
+          surroundingLetters: ['m', 'g', 'p', 'k', 'v', 'r'],
           label: "H",
           action: { type: "enter_letter", value: "H" }
         }
