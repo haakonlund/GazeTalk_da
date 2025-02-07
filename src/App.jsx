@@ -1,4 +1,5 @@
-import React, {  useState } from 'react';
+import React, {  useState, useRef } from 'react';
+import axios from 'axios';
 import { config } from './config';
 import settings from './settings.json';
 import { useTranslation } from 'react-i18next';
@@ -11,28 +12,62 @@ var dwellTime = 500; // 0.5 seconds
 function App() {
   const [currentLayoutName, setCurrentLayoutName] = useState("main_menu");
   const [textValue, setTextValue] = useState("");
-
   const [isCapsOn, setIsCapsOn] = useState(false);
+  const [alarmActive, setAlarmActive] = useState(false);
   // const [cursorDistance, setCursorDistance] = useState(0); // how many times the user has selected right (used for up and down movement)
+  const [suggestions, setSuggestions] = useState([]); 
+  const textAreaRef = useRef(null);
+
   const layout = config.layouts[currentLayoutName];
   
   const input = document.getElementById('text_region');
+
+  React.useEffect(() => {
+    if (textValue.trim() === "") {
+      setSuggestions([]);
+      return;
+    }
+    const prompt = textValue;
+
+    const fetchSuggestions = async () => {
+      try {
+        const uri = 'https://cloudapidemo.azurewebsites.net/continuations';
+        const response = await axios.post(uri, {
+          locale: "en_US",
+          prompt: prompt
+        });
+        const preds = response.data.continuations || [];
+        setSuggestions(preds);
+      } catch (error) {
+        console.error("Error fetching suggestions:", error);
+        setSuggestions([]);
+      }
+    };
+
+    fetchSuggestions();
+  }, [textValue]);
+
+  const handleTextAreaChange = (e) => {
+    setTextValue(e.target.value);
+    setCursorPosition(e.target.selectionStart);
+  };
+
+  const matchCase = (suggestion, existingWord = "") => {
+    if (!existingWord) return suggestion;
+    if (existingWord[0] === existingWord[0].toUpperCase()) {
+      return suggestion.charAt(0).toUpperCase() + suggestion.slice(1);
+    } else {
+      return suggestion.toLowerCase();
+    }
+  };
 
   const handleAction = (action) => {
     // const input = document.getElementById('text_region');
     
     if (action.type === "enter_letter") {
-      // setTextValue(prev => isCapsOn ?  prev + action.value.toUpperCase() : prev + action.value.toLowerCase());
-      
-      // insert the letter at the global cursor position
-      const letter = isCapsOn ? action.value.toUpperCase() : action.value.toLowerCase();
-      const newText = textValue.slice(0, globalCursorPosition.value) + letter + textValue.slice(globalCursorPosition.value);
-      setTextValue(newText);
-      
-      updateGlobalCursorPosition(input.selectionStart + 1);
-      // always go back to writing layout after entering a letter
+      setTextValue(prev => isCapsOn ?  prev + action.value.toUpperCase() : prev + action.value.toLowerCase());
       setCurrentLayoutName("writing");
-      
+
     } else if (action.type === "newline") {
       // insert a newline at the global cursor position
       const newText = textValue.slice(0, globalCursorPosition.value) + "\n" + textValue.slice(globalCursorPosition.value, textValue.length);
@@ -145,6 +180,31 @@ function App() {
     } else if (action.type === "delete_paragraph") { 
 
     
+    } else if (action.type === "insert_suggestion") {
+      const suggestion = action.value;
+      setTextValue(prev => {
+        const cursorPos = input.selectionStart;
+        const textUpToCursor = prev.slice(0, cursorPos);
+        const rest = prev.slice(cursorPos);
+        const lastSpaceIndex = textUpToCursor.lastIndexOf(" ");
+        const lastWord = 
+          lastSpaceIndex >= 0 
+            ? textUpToCursor.slice(lastSpaceIndex + 1) 
+            : textUpToCursor; 
+        const replaced = textUpToCursor.slice(0, textUpToCursor.length - lastWord.length);
+
+        const casedSuggestion = matchCase(suggestion, lastWord);
+
+        const newText = replaced + casedSuggestion + " " + rest;
+        return newText;
+      });
+      setTimeout(() => {
+        const newPos = input.value.length;
+        input.focus();
+        input.setSelectionRange(newPos, newPos);
+        setCursorPosition(newPos);
+      }, 0);
+
     } else if (action.type === "choose_button_layout") {
       settings.buttons_layout = action.value;
     } else if (action.type === "change_language") {
@@ -176,6 +236,9 @@ function App() {
         textValue={textValue} 
         setTextValue={setTextValue}
         onTileActivate={handleAction}
+        suggestions={suggestions} 
+        handleTextAreaChange={handleTextAreaChange}
+        textAreaRef={textAreaRef}
       />
       {alarmActive && (
         <AlarmPopup onClose={() => setAlarmActive(false)} />
@@ -236,8 +299,7 @@ function getWordBoundaries(text, cursorPosition) {
   return { x0: start, x1: end };
 }
 
-function KeyboardGrid({ layout, textValue, setTextValue, onTileActivate }) {
-  
+function KeyboardGrid({ layout, textValue, setTextValue, onTileActivate, suggestions, handleTextAreaChange, textAreaRef }) {
   // The layout tiles are defined in rows implicitly: 12 tiles, 4 columns each row
   // The first tile of type "textarea" will be special. If colspan=2, it occupies two grid cells.
   
@@ -246,56 +308,42 @@ function KeyboardGrid({ layout, textValue, setTextValue, onTileActivate }) {
   // We'll map them into positions. The first 'textarea' consumes 2 cells, 
   // so total must remain 12. If a tile has colspan=2, we skip the next cell.
 
+  const [firstTile, secondTile, thirdTile] = layout.tiles;
 
-  const tiles = layout.tiles;
-  
-  // Prepare a 3x4 grid indexing:
-  let cells = new Array(3).fill(null).map(() => new Array(4).fill(null));
-
-  // We'll fill cells row by row
-  let currentRow = 0, currentCol = 0;
-  
-  const placedTiles = [];
-  
-  for (let i = 0; i < tiles.length && currentRow < 3; i++) {
-    let tile = tiles[i];
-    // Place the tile
-    if (tile.type === 'textarea') {
-      // Assume it always appears at the start of a row and colspan=2 is guaranteed.
-      // If not at start of a row, you'd need more logic.
-      placedTiles.push(
-        <TextAreaTile 
-          key={i} 
-          value={textValue} 
-          onChange={setTextValue}
-          colspan={tile.colspan || 1}
-          autofocus={true}
-        />
-      );
-      currentCol += tile.colspan || 1;
-      if (currentCol >= 4) {
-        currentRow++;
-        currentCol = 0;
-      }
-    } else {
-      placedTiles.push(
-        <Tile 
-          key={i} 
-          tile={tile} 
-          onActivate={onTileActivate}
-        />
-      );
-      currentCol++;
-      if (currentCol >= 4) {
-        currentRow++;
-        currentCol = 0;
-      }
-    }
+  let suggestionTiles = [];
+  var tiles = [];
+  if (suggestions.length > 0) {
+    suggestionTiles = suggestions.slice(0, 8).map((sugg, idx) => {
+      return {
+        type: 'suggestion',
+        label: sugg, 
+        action: { type: 'insert_suggestion', value: sugg }
+      };
+    });
+    tiles = [firstTile, secondTile, thirdTile, ...suggestionTiles];
+  } else {
+    tiles = layout.tiles;
   }
-
   return (
     <div className="keyboard-grid">
-      {placedTiles}
+      <div className="tile textarea-tile" style={{ gridColumn: 'span 2' }}>
+        <textarea
+          id="text_region"
+          ref={textAreaRef}
+          value={textValue}
+          onChange={handleTextAreaChange}
+          placeholder="Type text here..."
+        />
+      </div>
+
+      {tiles.map((tile, i) => {
+        if (tile.type === 'textarea') {
+          return null;
+        }
+        return (
+          <Tile key={i} tile={tile} onActivate={onTileActivate} />
+        );
+      })}
     </div>
   );
 }
