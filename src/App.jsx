@@ -227,6 +227,12 @@ function App() {
         const newText = replaced + casedSuggestion + " " + rest;
         return newText;
       });
+      setTimeout(() => {
+        const newPos = input.value.length;
+        input.focus();
+        input.setSelectionRange(newPos, newPos);
+        setCursorPosition(newPos);
+      }, 0);
 
     } else if (action.type === "choose_button_layout") {
       settings.buttons_layout = action.value;
