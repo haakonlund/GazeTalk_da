@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next';
 import { changeLanguage } from 'i18next';
 import './App.css';
 import globalCursorPosition from './cursorSingleton';
-
 var dwellTime = 500; // 0.5 seconds
 
 function App() {
@@ -88,7 +87,12 @@ function App() {
 
 
       setCurrentLayoutName("writing");
+    } else if (action.type === "delete_letter_edit") {
+      const newText = textValue.slice(0, globalCursorPosition.value - 1) + textValue.slice(globalCursorPosition.value);
+      updateGlobalCursorPosition(input.selectionStart - 1);
+      setTextValue(newText);
 
+    
     } else if (action.type === "toggle_case") {
       setIsCapsOn(prev => !prev);
       console.log("Caps on:", isCapsOn);
@@ -146,40 +150,36 @@ function App() {
     updateGlobalCursorPosition(input.selectionStart);
     
     console.log("Cursor position:", globalCursorPosition.value);
+    
+  
     } else if (action.type === "delete_word") { 
-      const cursorPosition = input.selectionStart;
-      // get the current line
-      const currentLines = textValue.split("\n");
-      let line = getCurrentLine(currentLines, cursorPosition);
-      let currentLine = currentLines[line];
-      
-
-      // get word boudaries
-      const coords = getWordBoundaries(currentLine, cursorPosition);
-      if (!coords) {
-        throw new Error("No word boundaries found");
-      }
-
-      const x0 = coords.x0;
-      const x1 = coords.x1;
-      console.log("Current line:", currentLine);
-      console.log("current word:", "|" + currentLine.slice(x0, x1) + "|");
-      console.log("Word boundaries:", x0, x1);
-      // delete the word
-      const newText = textValue.slice(0, x0) + textValue.slice(x1, textValue.length);
-      console.log()
-      setTextValue(newText);
-
-      const previousLength = textValue.slice(0, x1).length;
-      const distanceToEndofWord = previousLength - globalCursorPosition.value;
-      console.log("Distance to end of word:", distanceToEndofWord);
-      updateGlobalCursorPosition(cursorPosition - (x1 - x0) + distanceToEndofWord);
+      deleteWordAtCursor();
 
     } else if (action.type === "delete_sentence") { 
+      deleteSentence();
+    } else if (action.type === "delete_section") { 
+      deleteSection()
+    } else if (action.type === "undo") {
+      // todo
+    } else if (action.type === "start_of_text") {
+      //
+    } else if (action.type === "previous_section") {
 
-    } else if (action.type === "delete_paragraph") { 
+    } else if (action.type === "previous_sentence") {
 
-    
+    } else if (action.type === "previous_word") {
+
+    } else if (action.type === "end_of_text") {
+
+    } else if (action.type === "next_section") {
+
+    } else if (action.type === "next_sentence") {
+
+    } else if (action.type === "next_word") {
+
+
+
+
     } else if (action.type === "insert_suggestion") {
       const suggestion = action.value;
       setTextValue(prev => {
@@ -218,6 +218,86 @@ function App() {
     } else if (action.type === 'close_alarm') {
       setAlarmActive(false);
     }
+
+    function deleteWordAtCursor() {
+      const cursorPosition = input.selectionStart;
+      // get the current line
+      const currentLines = textValue.split("\n");
+      let line = getCurrentLine(currentLines, cursorPosition);
+      let currentLine = currentLines[line];
+
+
+      // get word boudaries
+      // const localCursorPosition = calcCursorDistance();
+      const textStr = textValue
+      const coords = getWordBoundaries(textStr, cursorPosition);
+      if (!coords) {
+        throw new Error("No word boundaries found");
+      }
+
+      const x0 = coords.x0;
+      const x1 = coords.x1;
+      // delete the word
+      const oldText = textValue
+      const newText = textValue.slice(0, x0) + textValue.slice(x1, textValue.length);
+      setTextValue(newText);
+
+      const oldCursorPos = cursorPosition
+      const previousLength = textValue.slice(0, x1).length;
+      const distanceToEndofWord = previousLength - globalCursorPosition.value;
+      console.log("Distance to end of word:", distanceToEndofWord);
+      updateGlobalCursorPosition(cursorPosition - (x1 - x0) + distanceToEndofWord);
+      undoStack.push({old_text : oldText, old_cursor_pos : oldCursorPos})
+      console.log(undoStack)
+    }
+
+    function deleteSentence() {
+      const cursorPosition = input.selectionStart;
+
+      let start = cursorPosition
+      let end = start
+      let temp = textValue[start - 1]
+      while (start > 0 && !(textValue[start - 1] === ".")) {
+        start--;
+      }
+      while (end < textValue.length && !(textValue[end] === ".")) {
+        end++;
+      }
+      if (end < textValue.length && textValue[end] === ".") {
+        end++
+      }
+      
+      setTextValue(textValue.slice(0,start) + textValue.slice(end, textValue.length))
+      
+      const previousLength = textValue.slice(0, end).length;
+      const distanceToEndofWord = previousLength - globalCursorPosition.value;
+      updateGlobalCursorPosition(cursorPosition - (end - start) + distanceToEndofWord);
+    }
+
+    
+    function deleteSection() {
+      const cursorPosition = input.selectionStart;
+
+      let start = cursorPosition
+      let end = start
+      let temp = textValue[start - 1]
+      while (start > 0 && !(textValue[start - 1] === "\n")) {
+        start--;
+      }
+      while (end < textValue.length && !(textValue[end] === "\n")) {
+        end++;
+      }
+      if (end < textValue.length && textValue[end] === "\n") {
+        end++
+      }
+
+      setTextValue(textValue.slice(0,start) + textValue.slice(end, textValue.length))
+      
+      const previousLength = textValue.slice(0, end).length;
+      const distanceToEndofWord = previousLength - globalCursorPosition.value;
+      updateGlobalCursorPosition(cursorPosition - (end - start) + distanceToEndofWord);
+    }
+
   };
   const calcCursorDistance = () => {
     const currentLines = textValue.split("\n");
@@ -272,30 +352,50 @@ function getCharDistance(currentLines, line) {
   }
   return previousDistance + line;
 }
+/*
+a ab abc
+abcd abcde abcdef
+
+*/
 function getWordBoundaries(text, cursorPosition) {
   if (!text || cursorPosition < 0 || cursorPosition >= text.length) {
     return null;
   }
 
-  if (text[cursorPosition] === "") {
-    return null;
-  }
+  // if (text[cursorPosition] === "") {
+  //   return null;
+  // }
   let start = cursorPosition;
   let end = cursorPosition;
 
+  // handle the case where the cursor is at the end of the word + a space
+  // if (text[start-1] === " " && text[start] !== " ") {
+  //   start--;
+  //   end--;
+  // }
   // get the left boundary
-  while (start > 0 && text[start - 1] !== " ") {
+  while (start > 0 && !/\s/.test(text[start - 1])) {
     start--;
   }
-
+  // asdf asdf  df
+  // debugger
+  // let tm2 = text[start- 1]
+  // if (start > 0 && text[start- 1] === " ") {
+  //   start--;
+  // }
 
   // get the right boundary
-  while (end < text.length && text[end] !== " ") {
+  while (end < text.length && !/\s/.test(text[end])) {
     end++;
   }
-  if ( end < text.length && text[end] === " ") {
-    end++;
-  }
+  // console.log("text[end](", text[end]+")")
+  // console.log("text[end+1]", ""text[end+1])
+  // debugger
+  // let tmp3 = text[end]
+  // let tmp4 = text[end+1]
+  // if ( end < text.length && text[end] === " ") {
+  //   end++;
+  // }
   return { x0: start, x1: end };
 }
 
