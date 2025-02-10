@@ -3,6 +3,7 @@ import { act } from "react";
 export const config = {
   layouts: {
     "writing": {
+      name: "writing",
       tiles: [
         // Row 1 (4 tiles): first two tiles combined into a textarea
         {
@@ -16,8 +17,14 @@ export const config = {
         },
         {
           type: "switch",
-          label: "ABC",
+          label: "ABCD...",
           action: { type: "switch_layout", layout: "writing_submenu" }
+        },
+        {
+          type: "letter",
+          label: "",
+          surroundingLetters: [],
+          action: { type: "show_suggestions", value: "" }
         },
         {
           type: "letter",
@@ -40,6 +47,12 @@ export const config = {
         },
         {
           type: "letter",
+          surroundingLetters: [],
+          label: "Space",
+          action: { type: "enter_letter", value: " " }
+        },
+        {
+          type: "letter",
           surroundingLetters: ['m', 'g', 'p', 'k', 'v', 'r'],
           label: "D",
           action: { type: "enter_letter", value: "D" }
@@ -51,28 +64,30 @@ export const config = {
           action: { type: "enter_letter", value: "E" }
         },
         {
-          type: "switch",
-          label: "123",
-          action: { type: "switch_layout", layout: "numbers" }
-        },
-        // Row 3 (4 tiles)
-        {
           type: "letter",
           surroundingLetters: ['m', 'g', 'p', 'k', 'v', 'r'],
           label: "F",
           action: { type: "enter_letter", value: "F" }
+        }
+      ]
+    },
+    "suggestions": {
+      name: "suggestions",
+      tiles: [
+        // Row 1 (4 tiles): first two tiles combined into a textarea
+        {
+          type: "textarea",
+          colspan: 2 // This tile spans 2 columns
         },
         {
-          type: "letter",
-          surroundingLetters: ['m', 'g', 'p', 'k', 'v', 'r'],
-          label: "G",
-          action: { type: "enter_letter", value: "G" }
+          type: "delete",
+          label: "DELETE",
+          action: { type: "delete_letter" }
         },
         {
-          type: "letter",
-          surroundingLetters: ['m', 'g', 'p', 'k', 'v', 'r'],
-          label: "H",
-          action: { type: "enter_letter", value: "H" }
+          type: "switch",
+          label: "Back",
+          action: { type: "switch_layout", layout: "writing" }
         }
       ]
     },
