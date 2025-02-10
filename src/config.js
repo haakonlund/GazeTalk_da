@@ -942,7 +942,9 @@ export const config = {
           action : { type: "cursor", direction : "up"}
         },
         {
+          type : "switch",
           label : "More functions",
+          action:  {type : "switch_layout", layout : "more_function_menu"}
         },
         {
           type: "newline",
@@ -982,21 +984,25 @@ export const config = {
 
         },
         {
-          type : "asdf",
-          label : "Delete Section"
+          type : "editing",
+          label : "Delete Section",
+          action : {type : "delete_section"}
         },
         {
-          type : "asdf",
-          label : "Delete Line"
+          type : "editing",
+          label : "Delete Sentence",
+          action : {type : "delete_sentence"}
+
         },
         {
           type : "editing",
           label : "Delete Word",
           action : { type: "delete_word"}
         },
-        {
-          type : "asdf",
-          label : "Delete Letter"
+        { 
+          type: "delete",
+          label: "DELETE",
+          action: { type: "delete_letter_edit" }
         },
         {
           type : "empty",
@@ -1007,13 +1013,73 @@ export const config = {
           label : ""
         },
         {
-          type : "asdf",
-          label : "Undo"
+          type : "undo",
+          label : "Undo",
+          action : {type : "undo"}
         },
         {
           type : "Switch",
           label : "File",
           action : { type: "switch_layout", layout: "file_menu"}
+        },
+      ]
+    },
+    "more_function_menu" : {
+      tiles : [
+        {
+          type: "textarea",
+          colspan: 2
+        },
+        {
+          type : "switch",
+          label : "Edit",
+          action : {type : "switch_layout", layout : "edit_menu"}
+        },
+        {
+          type : "switch",
+          label: "back to writing",
+          action : {type: "swtich_layout", layout : "writing"}
+        },
+        {
+          type : "start_of_text",
+          label : "Start of text",
+          action : {type : "start_of_text"}
+        },
+        {
+          type : "previous_section",
+          label : "Previous section",
+          action : {type : "previous_section"}
+        },
+        {
+          type : "previous_sentence",
+          label : "Previous sentence",
+          action : {type : "previous_sentence"}
+        },
+        {
+          type : "previous_word",
+          label : "Previous word",
+          action : {type : "previous_word"}
+        },
+        {
+          type : "end_of_text",
+          label : "End of text",
+          action : {type : "end_of_text"}
+        },
+        {
+          type : "next_section",
+          label : "Next section",
+          action : {type : "next_section"}
+        },
+        {
+          type : "next_sentence",
+          label : "Next Sentence",
+          action : {type : "next_sentence"}
+
+        },
+        {
+          type : "next_word",
+          label : "next word",
+          action : {type : "next_word"}
         },
       ]
     }
