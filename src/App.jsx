@@ -12,11 +12,12 @@ function App() {
   const [currentLayoutName, setCurrentLayoutName] = useState("main_menu");
   const [textValue, setTextValue] = useState("");
   const [isCapsOn, setIsCapsOn] = useState(false);
+
   const [alarmActive, setAlarmActive] = useState(false);
   // const [cursorDistance, setCursorDistance] = useState(0); // how many times the user has selected right (used for up and down movement)
   const [suggestions, setSuggestions] = useState([]); 
   const textAreaRef = useRef(null);
-
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const layout = config.layouts[currentLayoutName];
   
   const input = document.getElementById('text_region');
@@ -25,6 +26,12 @@ function App() {
     if (textValue.trim() === "") {
       setSuggestions([]);
       return;
+    }
+    if (textValue.endsWith(".")) {
+      const lastSentence = getLastSentence(textValue);
+      if (lastSentence) {
+        speakText(lastSentence);
+      }
     }
     const prompt = textValue;
 
@@ -49,6 +56,23 @@ function App() {
   const handleTextAreaChange = (e) => {
     setTextValue(e.target.value);
     setCursorPosition(e.target.selectionStart);
+  };
+
+  const getLastSentence = (text) => {
+    const sentences = text.split(".").map(s => s.trim()).filter(s => s.length > 0);
+    if (sentences.length > 0) {
+      return sentences[sentences.length - 1]; 
+    }
+    return text.trim(); 
+  };
+
+  const speakText = (text) => {
+    const synth = window.speechSynthesis;
+    if (synth.speaking) {
+      synth.cancel();
+    }
+    const utterance = new SpeechSynthesisUtterance(text);
+    synth.speak(utterance);
   };
 
   const matchCase = (suggestion, existingWord = "") => {
@@ -180,6 +204,11 @@ function App() {
 
 
 
+    } else if (action.type === "show_suggestions") {
+      if (suggestions.length > 0 && suggestions.some(s => s !== undefined)) {
+        setShowSuggestions(true);
+        setCurrentLayoutName("suggestions");
+      }
     } else if (action.type === "insert_suggestion") {
       const suggestion = action.value;
       setTextValue(prev => {
@@ -198,12 +227,6 @@ function App() {
         const newText = replaced + casedSuggestion + " " + rest;
         return newText;
       });
-      setTimeout(() => {
-        const newPos = input.value.length;
-        input.focus();
-        input.setSelectionRange(newPos, newPos);
-        setCursorPosition(newPos);
-      }, 0);
 
     } else if (action.type === "choose_button_layout") {
       settings.buttons_layout = action.value;
@@ -408,25 +431,9 @@ function KeyboardGrid({ layout, textValue, setTextValue, onTileActivate, suggest
   // We'll map them into positions. The first 'textarea' consumes 2 cells, 
   // so total must remain 12. If a tile has colspan=2, we skip the next cell.
 
-  const [firstTile, secondTile, thirdTile] = layout.tiles;
-
-  let suggestionTiles = [];
-  var tiles = [];
-  if (suggestions.length > 0) {
-    suggestionTiles = suggestions.slice(0, 8).map((sugg, idx) => {
-      return {
-        type: 'suggestion',
-        label: sugg, 
-        action: { type: 'insert_suggestion', value: sugg }
-      };
-    });
-    tiles = [firstTile, secondTile, thirdTile, ...suggestionTiles];
-  } else {
-    tiles = layout.tiles;
-  }
   return (
     <div className="keyboard-grid">
-      <div className="tile textarea-tile" style={{ gridColumn: 'span 2' }}>
+      <div className="tile textarea-tile" style={{ gridColumn: "span 2" }}>
         <textarea
           id="text_region"
           ref={textAreaRef}
@@ -436,17 +443,92 @@ function KeyboardGrid({ layout, textValue, setTextValue, onTileActivate, suggest
         />
       </div>
 
-      {tiles.map((tile, i) => {
-        if (tile.type === 'textarea') {
-          return null;
-        }
-        return (
-          <Tile key={i} tile={tile} onActivate={onTileActivate} />
-        );
-      })}
+      {layout.name === "writing" && (
+        <WritingLayoutTiles
+          layout={layout}
+          textValue={textValue}
+          suggestions={suggestions}
+          onTileActivate={onTileActivate}
+        />
+      )}
+      {layout.name === "suggestions" && (
+        <SuggestionsLayoutTiles
+          layout={layout}
+          suggestions={suggestions}
+          onTileActivate={onTileActivate}
+        />
+      )}
+      {layout.name !== "writing" && layout.name !== "suggestions" && (
+        layout.tiles.map((tile, i) => {
+          if (tile.type === "textarea") {
+            return null;
+          }
+          return <Tile key={i} tile={tile} onActivate={onTileActivate} />;
+        })
+      )}
     </div>
   );
 }
+
+function WritingLayoutTiles({ layout, textValue, suggestions, onTileActivate, showSuggestions }) {
+  const tilesCopy = [...layout.tiles];
+
+  if (showSuggestions) {
+    const suggestionTiles = suggestions.slice(0, 8).map((sugg) => ({
+      type: "suggestion",
+      label: sugg,
+      action: { type: "insert_suggestion", value: sugg }
+    }));
+    tilesCopy.splice(4, suggestionTiles.length, ...suggestionTiles);
+  } else {
+    let suggestionsLabel = suggestions
+      .slice(0, 8)
+      .filter(s => s !== undefined)
+      .join("\n");
+      
+    if (tilesCopy[3]) {
+      tilesCopy[3] = {
+        ...tilesCopy[3],
+        type: "switch_suggestions",
+        label: suggestionsLabel,
+        action: { type: "show_suggestions" },
+        customStyle: {fontSize: "12px"}
+      };
+    }
+  }
+
+  return (
+    <>
+      {tilesCopy.map((tile, i) => {
+        if (tile.type === "textarea") return null;
+        return <Tile key={i} tile={tile} onActivate={onTileActivate} />;
+      })}
+    </>
+  );
+}
+
+function SuggestionsLayoutTiles({ layout, suggestions, onTileActivate }) {
+  const baseTiles = layout.tiles.slice(0, 3);
+
+  const suggestionTiles = suggestions.slice(0, 8).map((sugg) => ({
+    type: "suggestion",
+    label: sugg,
+    action: { type: "insert_suggestion", value: sugg }
+  }));
+
+
+  const finalTiles = [...baseTiles, ...suggestionTiles];
+
+  return (
+    <>
+      {finalTiles.map((tile, i) => {
+        if (tile.type === "textarea") return null;
+        return <Tile key={i} tile={tile} onActivate={onTileActivate} />;
+      })}
+    </>
+  );
+}
+
 
 function TextAreaTile({ value, onChange, colspan=2 }) {
   const handleChange = (e) => {
@@ -541,6 +623,7 @@ function Tile({ tile, onActivate }) {
   return (
     <div 
       className="tile"
+      style={tile.customStyle || {}}
       onMouseEnter={() => setHovering(true)}
       onMouseLeave={() => setHovering(false)}
       onClick={() => onActivate(tile.action)}
