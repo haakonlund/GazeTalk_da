@@ -414,8 +414,9 @@ export const config = {
         },
         // Row 2 (4 tiles)
         {
-          type: "empty",
-          label: "",
+          type: "switch",
+          label: "play alarm",
+          action: { type: "play_alarm" }
         },
         {
           type: "empty",
