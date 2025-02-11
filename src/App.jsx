@@ -11,15 +11,18 @@ var dwellTime = 500; // 0.5 seconds
 function App() {
   const [currentLayoutName, setCurrentLayoutName] = useState("main_menu");
   const [textValue, setTextValue] = useState("");
-  const [isCapsOn, setIsCapsOn] = useState(false);
 
+  const [isCapsOn, setIsCapsOn] = useState(false);
+  const [cursorDistance, setCursorDistance] = useState(0); // how many times the user has selected right (used for up and down movement)
+  const layout = config.layouts[currentLayoutName];
+ 
   const [alarmActive, setAlarmActive] = useState(false);
-  // const [cursorDistance, setCursorDistance] = useState(0); // how many times the user has selected right (used for up and down movement)
   const [suggestions, setSuggestions] = useState([]); 
   const textAreaRef = useRef(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const layout = config.layouts[currentLayoutName];
-  
+
+
+
   const input = document.getElementById('text_region');
 
   React.useEffect(() => {
@@ -83,13 +86,23 @@ function App() {
       return suggestion.toLowerCase();
     }
   };
-
   const handleAction = (action) => {
     // const input = document.getElementById('text_region');
     
     if (action.type === "enter_letter") {
-      setTextValue(prev => isCapsOn ?  prev + action.value.toUpperCase() : prev + action.value.toLowerCase());
+      // setTextValue(prev => isCapsOn ?  prev + action.value.toUpperCase() : prev + action.value.toLowerCase());
+      
+      // insert the letter at the global cursor position
+      const letter = isCapsOn ? action.value.toUpperCase() : action.value.toLowerCase();
+      const newText = textValue.slice(0, globalCursorPosition.value) + letter + textValue.slice(globalCursorPosition.value);
+      setTextValue(newText);
+      
+      updateGlobalCursorPosition(input.selectionStart + 1);
+      // always go back to writing layout after entering a letter
       setCurrentLayoutName("writing");
+      
+
+      
 
     } else if (action.type === "newline") {
       // insert a newline at the global cursor position
@@ -128,7 +141,7 @@ function App() {
         if (cursorPosition === 0) return;
         input.setSelectionRange(cursorPosition - 1, cursorPosition - 1);
         setCursorDistance(calcCursorDistance(cursorDistance));
-
+     
       } else if (action.direction === "right") {
         if (cursorPosition === textValue.length) return;
         input.setSelectionRange(cursorPosition + 1, cursorPosition + 1);
@@ -201,11 +214,9 @@ function App() {
 
     } else if (action.type === "next_word") {
 
-
-
-
     } else if (action.type === "show_suggestions") {
       if (suggestions.length > 0 && suggestions.some(s => s !== undefined)) {
+        console.log("switching to suggestions")
         setShowSuggestions(true);
         setCurrentLayoutName("suggestions");
       }
@@ -227,12 +238,17 @@ function App() {
         const newText = replaced + casedSuggestion + " " + rest;
         return newText;
       });
+      console.log("word length : ", suggestion.length )
+      console.log("current curs pos : ", globalCursorPosition.value)
+      updateGlobalCursorPosition(globalCursorPosition.value + suggestion.length)
+
       setTimeout(() => {
         const newPos = input.value.length;
         input.focus();
         input.setSelectionRange(newPos, newPos);
         setCursorPosition(newPos);
       }, 0);
+
 
     } else if (action.type === "choose_button_layout") {
       settings.buttons_layout = action.value;
@@ -241,11 +257,6 @@ function App() {
       changeLanguage(action.value);
     } else if (action.type === "change_linger_time") {
       dwellTime = parseFloat(action.value);
-    } else if (action.type === "play_alarm") {
-      console.log("Playing alarm");
-      setAlarmActive(true);
-    } else if (action.type === 'close_alarm') {
-      setAlarmActive(false);
     }
 
     function deleteWordAtCursor() {
@@ -295,15 +306,13 @@ function App() {
       if (end < textValue.length && textValue[end] === ".") {
         end++
       }
-      
+
       setTextValue(textValue.slice(0,start) + textValue.slice(end, textValue.length))
       
       const previousLength = textValue.slice(0, end).length;
       const distanceToEndofWord = previousLength - globalCursorPosition.value;
       updateGlobalCursorPosition(cursorPosition - (end - start) + distanceToEndofWord);
     }
-
-    
     function deleteSection() {
       const cursorPosition = input.selectionStart;
 
@@ -340,19 +349,19 @@ function App() {
   }
   return (
     <div className="App">
-      <KeyboardGrid 
+     <KeyboardGrid 
         layout={layout} 
         textValue={textValue} 
         setTextValue={setTextValue}
         onTileActivate={handleAction}
-        suggestions={suggestions} 
+        suggestions={suggestions}
         handleTextAreaChange={handleTextAreaChange}
         textAreaRef={textAreaRef}
       />
-      {alarmActive && (
-        <AlarmPopup onClose={() => setAlarmActive(false)} />
-      )}
-    </div>
+          {alarmActive && (
+            <AlarmPopup onClose={() => setAlarmActive(false)} />
+          )}
+          </div>
   );
 }
 function getCurrentLine(currentLines, cursorPosition) {
@@ -428,40 +437,38 @@ function getWordBoundaries(text, cursorPosition) {
   return { x0: start, x1: end };
 }
 
-function KeyboardGrid({ layout, textValue, setTextValue, onTileActivate, suggestions, handleTextAreaChange, textAreaRef }) {
-  // The layout tiles are defined in rows implicitly: 12 tiles, 4 columns each row
-  // The first tile of type "textarea" will be special. If colspan=2, it occupies two grid cells.
+function KeyboardGrid({ layout, textValue, setTextValue, onTileActivate, suggestions , handleTextAreaChange, textAreaRef }) {
+  const [showSuggestions, setShowSuggestions] = useState(false);
   
-  // We must place 12 cells in a 4x3 grid.
-  // layout.tiles could be more or fewer; we trust config is correct.
-  // We'll map them into positions. The first 'textarea' consumes 2 cells, 
-  // so total must remain 12. If a tile has colspan=2, we skip the next cell.
+  // Create a handler that wraps onTileActivate to handle suggestion-related actions
+  const handleTileActivate = (action) => {
+    setShowSuggestions(action.type === "show_suggestions")
+    onTileActivate(action);
+  };
 
   return (
     <div className="keyboard-grid">
-      <div className="tile textarea-tile" style={{ gridColumn: "span 2" }}>
-        <textarea
-          id="text_region"
-          ref={textAreaRef}
-          value={textValue}
-          onChange={handleTextAreaChange}
-          placeholder="Type text here..."
-        />
-      </div>
+      <TextAreaTile 
+        value={textValue}
+        onChange={handleTextAreaChange || setTextValue}
+        colspan={2}
+        textAreaRef={textAreaRef}
+      />
 
       {layout.name === "writing" && (
         <WritingLayoutTiles
           layout={layout}
           textValue={textValue}
           suggestions={suggestions}
-          onTileActivate={onTileActivate}
+          onTileActivate={handleTileActivate}
+          showSuggestions={showSuggestions}
         />
       )}
       {layout.name === "suggestions" && (
         <SuggestionsLayoutTiles
           layout={layout}
           suggestions={suggestions}
-          onTileActivate={onTileActivate}
+          onTileActivate={handleTileActivate}
         />
       )}
       {layout.name !== "writing" && layout.name !== "suggestions" && (
@@ -469,25 +476,25 @@ function KeyboardGrid({ layout, textValue, setTextValue, onTileActivate, suggest
           if (tile.type === "textarea") {
             return null;
           }
-          return <Tile key={i} tile={tile} onActivate={onTileActivate} />;
+          return <Tile key={i} tile={tile} onActivate={handleTileActivate} />;
         })
       )}
     </div>
   );
 }
 
-function WritingLayoutTiles({ layout, textValue, suggestions, onTileActivate, showSuggestions }) {
+function WritingLayoutTiles({ layout, textValue, suggestions = [], onTileActivate, showSuggestions }) {
   const tilesCopy = [...layout.tiles];
 
   if (showSuggestions) {
-    const suggestionTiles = suggestions.slice(0, 8).map((sugg) => ({
+    const suggestionTiles = (suggestions || []).slice(0, 8).map((sugg) => ({
       type: "suggestion",
       label: sugg,
       action: { type: "insert_suggestion", value: sugg }
     }));
     tilesCopy.splice(4, suggestionTiles.length, ...suggestionTiles);
   } else {
-    let suggestionsLabel = suggestions
+    let suggestionsLabel = (suggestions || [])
       .slice(0, 8)
       .filter(s => s !== undefined)
       .join("\n");
@@ -535,6 +542,21 @@ function SuggestionsLayoutTiles({ layout, suggestions, onTileActivate }) {
   );
 }
 
+// Modify the setInterval to check if element exists
+const focusInterval = setInterval(function() {
+  const focusBox = document.getElementById("text_region");
+  if (focusBox) {
+    focusBox.focus();
+  }
+}, 1000); // Changed to 1 second to reduce CPU usage
+
+// Clean up interval when component unmounts
+if (typeof window !== 'undefined') {
+  window.addEventListener('beforeunload', () => {
+    clearInterval(focusInterval);
+  });
+}
+
 
 function TextAreaTile({ value, onChange, colspan=2 }) {
   const handleChange = (e) => {
@@ -544,15 +566,7 @@ function TextAreaTile({ value, onChange, colspan=2 }) {
   };
 
   React.useEffect(() => {
-    // Add your custom logic here
-    // console.log("Text value changed:", value);
-
-    // log current cursor position
     const input = document.getElementById('text_region');
-    // console.log("Cursor position:", input.selectionStart);
-    // the cursor pos to 5
-    // const app = document.getElementById("App")
-    // app.cursorDistance
     console.log("Cursor distance:", globalCursorPosition.value);
     input.setSelectionRange(globalCursorPosition.value, globalCursorPosition.value);
   }, [value]);
@@ -563,26 +577,6 @@ function TextAreaTile({ value, onChange, colspan=2 }) {
     </div>
   );
 }
-// taken from this example https://jsfiddle.net/g9YxB/10/ and i don't think its used
-function focusMe() {
-  var focusBox
-  focusBox = document.getElementById("text_region");
-  {
-    setTimeout(function() {
-      focusBox.focus();
-    } , 1);
-
-  }
-// however this is used to focus the textarea and it works
-}
-setInterval(function() {
-  var focusBox 
-  focusBox = document.getElementById("text_region");
-  focusBox.focus();
-});
-
-
-
 
 
 
@@ -659,7 +653,6 @@ function Tile({ tile, onActivate }) {
     </div>
   );
 }
-
 function AlarmPopup({ onClose }) {
   return (
     <div className="alarm-overlay">
@@ -676,5 +669,4 @@ function AlarmPopup({ onClose }) {
     </div>
   );
 }
-
 export default App;
