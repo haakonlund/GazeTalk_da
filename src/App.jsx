@@ -78,7 +78,6 @@ function App() {
   };
   const handleTextAreaChange = (e) => {
     setTextValue(e.target.value);
-    setCursorPosition(e.target.selectionStart);
   };
   
 
@@ -254,6 +253,10 @@ function App() {
       changeLanguage(action.value);
     } else if (action.type === "change_linger_time") {
       dwellTime = parseFloat(action.value);
+      let goBack = {
+         type: "switch_layout", layout: "main_menu"
+      }
+      handleAction(goBack);
     }
 
     function deleteWordAtCursor() {
