@@ -219,32 +219,38 @@ function App() {
       }
     } else if (action.type === "insert_suggestion") {
       const suggestion = action.value;
-      setTextValue(prev => {
-        const cursorPos = input.selectionStart;
-        const textUpToCursor = prev.slice(0, cursorPos);
-        const rest = prev.slice(cursorPos);
-        const lastSpaceIndex = textUpToCursor.lastIndexOf(" ");
-        const lastWord = 
-          lastSpaceIndex >= 0 
-            ? textUpToCursor.slice(lastSpaceIndex + 1) 
-            : textUpToCursor; 
-        const replaced = textUpToCursor.slice(0, textUpToCursor.length - lastWord.length);
+      
+      const cursorPos = input.selectionStart;
+      const textUpToCursor = textValue.slice(0, cursorPos);
+      const rest = textValue.slice(cursorPos, textValue.length);
+      const lastSpaceIndex = textUpToCursor.lastIndexOf(" ");
+      const lastWord = 
+        lastSpaceIndex >= 0 
+          ? textUpToCursor.slice(lastSpaceIndex + 1) 
+          : textUpToCursor; 
+      const replaced = textUpToCursor.slice(0, textUpToCursor.length - lastWord.length);
 
-        const casedSuggestion = matchCase(suggestion, lastWord);
+      const casedSuggestion = matchCase(suggestion, lastWord);
 
-        const newText = replaced + casedSuggestion + " " + rest;
-        return newText;
-      });
+      const newText = replaced + casedSuggestion + " " + rest;
+        
+      
+      setTextValue(newText);
+      // const letter = isCapsOn ? action.value.toUpperCase() : action.value.toLowerCase();
+      // const newText = textValue.slice(0, globalCursorPosition.value) + suggestion + textValue.slice(globalCursorPosition.value);
+      // setTextValue(newText);
+
+
       console.log("word length : ", suggestion.length )
       console.log("current curs pos : ", globalCursorPosition.value)
-      updateGlobalCursorPosition(globalCursorPosition.value + suggestion.length)
+      const spaceLength = 1;
+      updateGlobalCursorPosition(globalCursorPosition.value + casedSuggestion.length + spaceLength)
 
-      setTimeout(() => {
-        const newPos = input.value.length;
-        input.focus();
-        input.setSelectionRange(newPos, newPos);
-        setCursorPosition(newPos);
-      }, 0);
+      // setTimeout(() => {
+      //   const newPos = input.value.length;
+      //   input.focus();
+      //   input.setSelectionRange(newPos, newPos);
+      // }, 0);
 
 
     } else if (action.type === "choose_button_layout") {
