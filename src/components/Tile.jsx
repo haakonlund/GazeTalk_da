@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
-const Tile = ({ tile, onActivate }) => {
+const Tile = ({ tile, onActivate, dwellTime }) => {
   const { t } = useTranslation();
   const [hovering, setHovering] = useState(false);
   const [progress, setProgress] = useState(100);
@@ -22,7 +22,7 @@ const Tile = ({ tile, onActivate }) => {
       const startTime = Date.now();
       timer = setInterval(() => {
         const elapsed = Date.now() - startTime;
-        const percentage = 100 - (elapsed / 500) * 100;
+        const percentage = 100 - (elapsed / dwellTime) * 100;
         if (percentage <= 0) {
           clearInterval(timer);
           onActivate(tile.action);

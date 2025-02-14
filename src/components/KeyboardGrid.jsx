@@ -2,7 +2,7 @@ import React from "react";
 import TextAreaTile from "./TextAreaTile";
 import Tile from "./Tile";
 
-const KeyboardGrid = ({ layout, textValue, setTextValue, onTileActivate, suggestions, handleTextAreaChange }) => {
+const KeyboardGrid = ({ layout, textValue, setTextValue, onTileActivate, suggestions, handleTextAreaChange, dwellTime }) => {
     return (
         <div className="keyboard-grid">
         <TextAreaTile 
@@ -15,7 +15,13 @@ const KeyboardGrid = ({ layout, textValue, setTextValue, onTileActivate, suggest
           if (tile.type === "textarea") return null;
 
           if (tile.action && tile.action.type === "show_suggestions") {
-            const suggestionsPreview = suggestions.join("\n"); 
+            let suggestionsLabel = "";
+            for (let i = 0; i < 4; i++) {
+              if (suggestions[i]) {
+                suggestionsLabel += suggestions[i] + "\n";
+              } 
+            }
+            const suggestionsPreview = suggestionsLabel.trim();
             return (
               <Tile 
                 key={i} 
@@ -23,18 +29,19 @@ const KeyboardGrid = ({ layout, textValue, setTextValue, onTileActivate, suggest
                   ...tile, 
                   label: suggestionsPreview || "", 
                   action: { type: "show_suggestions" }, 
-                  customStyle: { fontSize: "14px", whiteSpace: "pre-line" }
+                  customStyle: { fontSize: "24px", whiteSpace: "pre-line" }
                 }} 
-                onActivate={onTileActivate} 
+                onActivate={onTileActivate}
+                dwellTime={dwellTime * 2} 
               />
             );
           }
 
-          return <Tile key={i} tile={tile} onActivate={onTileActivate} />;
+          return <Tile key={i} tile={tile} onActivate={onTileActivate} dwellTime={dwellTime} />;
         })}
   
         {layout.name === "suggestions" && suggestions.map((suggestion, i) => (
-          <Tile key={i} tile={{ label: suggestion, action: { type: "insert_suggestion", value: suggestion }}} onActivate={onTileActivate} />
+          <Tile key={i} tile={{ label: suggestion, action: { type: "insert_suggestion", value: suggestion }}} onActivate={onTileActivate} dwellTime={dwellTime} />
         ))}
       </div>
     );

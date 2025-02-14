@@ -9,6 +9,8 @@ import GenericView from "./views/GenericView";
 import AlarmPopup from "./components/AlarmPopup";
 import { config } from "./config";
 
+let dwellTime = 500;
+
 function App() {
   const [currentLayoutName, setCurrentLayoutName] = useState("main_menu");
   const [textValue, setTextValue] = useState("");
@@ -64,6 +66,7 @@ function App() {
       synth.cancel();
     }
     const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 0.75;
     synth.speak(utterance);
   };
 
@@ -221,6 +224,10 @@ function App() {
       changeLanguage(action.value);
     } else if (action.type === "change_linger_time") {
       dwellTime = parseFloat(action.value);
+      let goBack = {
+         type: "switch_layout", layout: "main_menu"
+      }
+      handleAction(goBack);
     }
 
     function deleteWordAtCursor() {
@@ -364,7 +371,8 @@ function App() {
         textValue={textValue} 
         setTextValue={setTextValue} 
         handleAction={handleAction}
-        suggestions={suggestions} />
+        suggestions={suggestions}
+        dwellTime={dwellTime} />
       {alarmActive && <AlarmPopup onClose={() => setAlarmActive(false)} />}
     </div>
   );
