@@ -2,10 +2,14 @@ import React from "react";
 import TextAreaTile from "./TextAreaTile";
 import Tile from "./Tile";
 
-const KeyboardGrid = ({ layout, textValue, setTextValue, onTileActivate, suggestions, dwellTime }) => {
+const KeyboardGrid = ({ layout, textValue, setTextValue, onTileActivate, suggestions, handleTextAreaChange, dwellTime }) => {
     return (
         <div className="keyboard-grid">
-        <TextAreaTile value={textValue} onChange={setTextValue} colspan={2} />
+        <TextAreaTile 
+          value={textValue} 
+          onChange={handleTextAreaChange || setTextValue} 
+          colspan={2}  
+        />
   
         {layout.tiles.map((tile, i) => {
           if (tile.type === "textarea") return null;

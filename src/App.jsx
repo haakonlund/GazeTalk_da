@@ -20,6 +20,7 @@ function App() {
   const textAreaRef = useRef(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const layout = config.layouts[currentLayoutName] || config.layouts["main_menu"];
+  const input = document.getElementById('text_region');
 
   React.useEffect(() => {
     if (textValue.trim() === "") {
@@ -75,78 +76,327 @@ function App() {
       return suggestion.toLowerCase();
     }
   };
+  const handleTextAreaChange = (e) => {
+    setTextValue(e.target.value);
+    setCursorPosition(e.target.selectionStart);
+  };
+  
 
   const handleAction = (action) => {
-    const input = document.getElementById("text_region");
+    // const input = document.getElementById('text_region');
+    
     if (action.type === "enter_letter") {
+      // setTextValue(prev => isCapsOn ?  prev + action.value.toUpperCase() : prev + action.value.toLowerCase());
+      
+      // insert the letter at the global cursor position
       const letter = isCapsOn ? action.value.toUpperCase() : action.value.toLowerCase();
-      setTextValue(prev => {
-        const cursorPos = globalCursorPosition.value;
-            const newText = prev.slice(0, cursorPos) + letter + prev.slice(cursorPos);
+      const newText = textValue.slice(0, globalCursorPosition.value) + letter + textValue.slice(globalCursorPosition.value);
+      setTextValue(newText);
+      
+      updateGlobalCursorPosition(input.selectionStart + 1);
+      // always go back to writing layout after entering a letter
+      setCurrentLayoutName("writing");
+      
 
-            setTimeout(() => updateGlobalCursorPosition(cursorPos + 1), 0);
-            return newText;
-      });
+      
 
+    } else if (action.type === "newline") {
+      // insert a newline at the global cursor position
+      const newText = textValue.slice(0, globalCursorPosition.value) + "\n" + textValue.slice(globalCursorPosition.value, textValue.length);
+      setTextValue(newText);
+      // move the cursor to the next line after inserting a newline
+      updateGlobalCursorPosition(globalCursorPosition.value + 1);
     } else if (action.type === "switch_layout") {
       if (config.layouts[action.layout]) {
         setCurrentLayoutName(action.layout);
       }
 
     } else if (action.type === "delete_letter") {
-      setTextValue(prev => {
-        const cursorPos = globalCursorPosition.value;
-        if (cursorPos > 0) {
+      // setTextValue(prev => prev.slice(0, -1));
+      // delete the letter at the global cursor position
+      const newText = textValue.slice(0, globalCursorPosition.value - 1) + textValue.slice(globalCursorPosition.value);
+      updateGlobalCursorPosition(input.selectionStart - 1);
+      setTextValue(newText);
 
-            const newText = prev.slice(0, cursorPos - 1) + prev.slice(cursorPos);
-            setTimeout(() => updateGlobalCursorPosition(cursorPos - 1), 0);
-            return newText;
-        }
-        return prev;
-      });
-      updateGlobalCursorPosition(globalCursorPosition.value - 1);
 
+      setCurrentLayoutName("writing");
+    } else if (action.type === "delete_letter_edit") {
+      const newText = textValue.slice(0, globalCursorPosition.value - 1) + textValue.slice(globalCursorPosition.value);
+      updateGlobalCursorPosition(input.selectionStart - 1);
+      setTextValue(newText);
+
+    
     } else if (action.type === "toggle_case") {
       setIsCapsOn(prev => !prev);
+      console.log("Caps on:", isCapsOn);
 
-    } else if (action.type === "change_language") {
-      changeLanguage(action.value);
+    } else if (action.type === "cursor" ) {
+      const cursorPosition = input.selectionStart;
+      
+      if (action.direction === "left") {
+        if (cursorPosition === 0) return;
+        input.setSelectionRange(cursorPosition - 1, cursorPosition - 1);
+     
+      } else if (action.direction === "right") {
+        if (cursorPosition === textValue.length) return;
+        input.setSelectionRange(cursorPosition + 1, cursorPosition + 1);
 
-    } else if (action.type === "change_linger_time") {
-      dwellTime = parseFloat(action.value);
-      let goBack = {
-         type: "switch_layout", layout: "main_menu"
+      } else if (action.direction === "up") {
+        // get current linelength where there is mutlipe lines
+        const currentLines = textValue.split("\n");
+        // Get the current line the cursor is on
+        let line = getCurrentLine(currentLines, cursorPosition);
+        if (line === 0) {
+          return;
+        }
+        let previousLine = currentLines[line - 1];
+        let previousDistance = getCharDistance(currentLines, line -1);
+        let currentLineLength = currentLines[line].length;
+        if (calcCursorDistance() === currentLineLength) {
+          const previousLineLength = previousLine.length;
+          input.setSelectionRange(previousDistance + previousLineLength, previousDistance + previousLineLength);
+        } else {
+          input.setSelectionRange(previousDistance + calcCursorDistance(), previousDistance+ calcCursorDistance());
+          
+        }
+        
+      } else if (action.direction === "down") {
+        input.focus();
+        const currentLines = textValue.split("\n");
+        let line = getCurrentLine(currentLines, cursorPosition);
+        if (line === currentLines.length - 1) {
+          return;
+        }
+        let nextLine = currentLines[line + 1];
+        let nextDistance = getCharDistance(currentLines, line + 1);
+        let currentLineLength = currentLines[line].length;
+        console.log("Current lines", currentLines);
+        if (calcCursorDistance() === currentLineLength) {
+          const nextLineLength = nextLine.length;
+          input.setSelectionRange(nextDistance + nextLineLength, nextDistance + nextLineLength);
+        } else {
+          input.setSelectionRange(nextDistance + calcCursorDistance(), nextDistance + calcCursorDistance());
+        }
       }
-      handleAction(goBack);
+    updateGlobalCursorPosition(input.selectionStart);
+    
+    console.log("Cursor position:", globalCursorPosition.value);
+    
+  
+    } else if (action.type === "delete_word") { 
+      deleteWordAtCursor();
+
+    } else if (action.type === "delete_sentence") { 
+      deleteSentence();
+    } else if (action.type === "delete_section") { 
+      deleteSection()
+    } else if (action.type === "undo") {
+      // todo
+    } else if (action.type === "start_of_text") {
+      //
+    } else if (action.type === "previous_section") {
+
+    } else if (action.type === "previous_sentence") {
+
+    } else if (action.type === "previous_word") {
+
+    } else if (action.type === "end_of_text") {
+
+    } else if (action.type === "next_section") {
+
+    } else if (action.type === "next_sentence") {
+
+    } else if (action.type === "next_word") {
+
     } else if (action.type === "show_suggestions") {
-      if (suggestions.length > 0) {
+      if (suggestions.length > 0 && suggestions.some(s => s !== undefined)) {
+        console.log("switching to suggestions")
         setShowSuggestions(true);
         setCurrentLayoutName("suggestions");
       }
     } else if (action.type === "insert_suggestion") {
       const suggestion = action.value;
-    
       setTextValue(prev => {
-        const cursorPos = globalCursorPosition.value;
+        const cursorPos = input.selectionStart;
         const textUpToCursor = prev.slice(0, cursorPos);
         const rest = prev.slice(cursorPos);
         const lastSpaceIndex = textUpToCursor.lastIndexOf(" ");
-        const lastWord = lastSpaceIndex >= 0 ? textUpToCursor.slice(lastSpaceIndex + 1) : textUpToCursor;
+        const lastWord = 
+          lastSpaceIndex >= 0 
+            ? textUpToCursor.slice(lastSpaceIndex + 1) 
+            : textUpToCursor; 
         const replaced = textUpToCursor.slice(0, textUpToCursor.length - lastWord.length);
-    
+
         const casedSuggestion = matchCase(suggestion, lastWord);
+
         const newText = replaced + casedSuggestion + " " + rest;
         
         setTimeout(() => updateGlobalCursorPosition(replaced.length + casedSuggestion.length + 1), 0);
         speakText(casedSuggestion);
         return newText;
       });
+      console.log("word length : ", suggestion.length )
+      console.log("current curs pos : ", globalCursorPosition.value)
+      updateGlobalCursorPosition(globalCursorPosition.value + suggestion.length)
+
+      setTimeout(() => {
+        const newPos = input.value.length;
+        input.focus();
+        input.setSelectionRange(newPos, newPos);
+        setCursorPosition(newPos);
+      }, 0);
+
+
+    } else if (action.type === "choose_button_layout") {
+      settings.buttons_layout = action.value;
+    } else if (action.type === "change_language") {
+      // language = action.value;
+      changeLanguage(action.value);
+    } else if (action.type === "change_linger_time") {
+      dwellTime = parseFloat(action.value);
     }
 
-  };
+    function deleteWordAtCursor() {
+      const cursorPosition = input.selectionStart;
+      // get the current line
+      const currentLines = textValue.split("\n");
+      let line = getCurrentLine(currentLines, cursorPosition);
+      let currentLine = currentLines[line];
 
+
+      // get word boudaries
+      // const localCursorPosition = calcCursorDistance();
+      const textStr = textValue
+      const coords = getWordBoundaries(textStr, cursorPosition);
+      if (!coords) {
+        throw new Error("No word boundaries found");
+      }
+
+      const x0 = coords.x0;
+      const x1 = coords.x1;
+      // delete the word
+      const oldText = textValue
+      const newText = textValue.slice(0, x0) + textValue.slice(x1, textValue.length);
+      setTextValue(newText);
+
+      const oldCursorPos = cursorPosition
+      const previousLength = textValue.slice(0, x1).length;
+      const distanceToEndofWord = previousLength - globalCursorPosition.value;
+      console.log("Distance to end of word:", distanceToEndofWord);
+      updateGlobalCursorPosition(cursorPosition - (x1 - x0) + distanceToEndofWord);
+      // undoStack.push({old_text : oldText, old_cursor_pos : oldCursorPos})
+      // console.log(undoStack)
+    }
+
+    
+  };
+  function deleteSentence() {
+    const cursorPosition = input.selectionStart;
+
+    let start = cursorPosition
+    let end = start
+    let temp = textValue[start - 1]
+    while (start > 0 && !(textValue[start - 1] === ".")) {
+      start--;
+    }
+    while (end < textValue.length && !(textValue[end] === ".")) {
+      end++;
+    }
+    if (end < textValue.length && textValue[end] === ".") {
+      end++
+    }
+
+    setTextValue(textValue.slice(0,start) + textValue.slice(end, textValue.length))
+    
+    const previousLength = textValue.slice(0, end).length;
+    const distanceToEndofWord = previousLength - globalCursorPosition.value;
+    updateGlobalCursorPosition(cursorPosition - (end - start) + distanceToEndofWord);
+  }
+  function deleteSection() {
+    const cursorPosition = input.selectionStart;
+
+    let start = cursorPosition
+    let end = start
+    let temp = textValue[start - 1]
+    while (start > 0 && !(textValue[start - 1] === "\n")) {
+      start--;
+    }
+    while (end < textValue.length && !(textValue[end] === "\n")) {
+      end++;
+    }
+    if (end < textValue.length && textValue[end] === "\n") {
+      end++
+    }
+
+    setTextValue(textValue.slice(0,start) + textValue.slice(end, textValue.length))
+    
+    const previousLength = textValue.slice(0, end).length;
+    const distanceToEndofWord = previousLength - globalCursorPosition.value;
+    updateGlobalCursorPosition(cursorPosition - (end - start) + distanceToEndofWord);
+  }
+  const calcCursorDistance = () => {
+    const currentLines = textValue.split("\n");
+    let line = getCurrentLine(currentLines, input.selectionStart);
+    const cursorPosition = input.selectionStart -  getCharDistance(currentLines, line);
+    return cursorPosition
+  }
   function updateGlobalCursorPosition(xCursorPosition) {
     globalCursorPosition.value = xCursorPosition;
+    // console.log("Cursor position:", cursorPosition);
+  }
+  function updateGlobalCursorPosition(xCursorPosition) {
+    globalCursorPosition.value = xCursorPosition;
+  }
+  function getCurrentLine(currentLines, cursorPosition) {
+    let line = 0;
+    for (let i = 0; i < cursorPosition; i++) {
+      let currentLine = currentLines[line];
+      for (let j = 0; j < currentLine.length; j++) {
+        if (i >= cursorPosition) {
+          break;
+        }
+        i++;
+      }
+      if ((i >= cursorPosition)) {
+        break;
+      } else {
+        line++;
+      }
+    }
+    return line;
+  }
+  // Gets the distance of the character from the start of the text to the current line
+  function getCharDistance(currentLines, line) {
+    let previousDistance = 0;
+    for (let i = 0; i < line; i++) {
+      previousDistance += currentLines[i].length; 
+    }
+    return previousDistance + line;
+  }
+  /*
+  a ab abc
+  abcd abcde abcdef
+  
+  */
+  function getWordBoundaries(text, cursorPosition) {
+    if (!text || cursorPosition < 0 || cursorPosition >= text.length) {
+      return null;
+    }
+  
+    let start = cursorPosition;
+    let end = cursorPosition;
+
+    // get the left boundary
+    while (start > 0 && !/\s/.test(text[start - 1])) {
+      start--;
+    }
+
+    // get the right boundary
+    while (end < text.length && !/\s/.test(text[end])) {
+      end++;
+    }
+
+    return { x0: start, x1: end };
   }
 
   return (
@@ -156,6 +406,7 @@ function App() {
         textValue={textValue} 
         setTextValue={setTextValue} 
         handleAction={handleAction}
+        handleTextAreaChange={handleTextAreaChange}
         suggestions={suggestions}
         dwellTime={dwellTime} />
       {alarmActive && <AlarmPopup onClose={() => setAlarmActive(false)} />}
