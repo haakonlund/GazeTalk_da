@@ -9,6 +9,8 @@ import GenericView from "./views/GenericView";
 import AlarmPopup from "./components/AlarmPopup";
 import { config } from "./config";
 
+let dwellTime = 500;
+
 function App() {
   const [currentLayoutName, setCurrentLayoutName] = useState("main_menu");
   const [textValue, setTextValue] = useState("");
@@ -24,10 +26,8 @@ function App() {
       setSuggestions([]);
       return;
     }
-    console.log(textValue);
     if (textValue.endsWith(".") || textValue.endsWith(". ")) {
       const lastSentence = getLastSentence(textValue);
-      console.log(lastSentence);
       if (lastSentence) {
         speakText(lastSentence);
       }
@@ -50,24 +50,21 @@ function App() {
   }, [textValue]);
 
   const getLastSentence = (text) => {
-    let start = globalCursorPosition.value
-    console.log("start: ", start)
+    let start = globalCursorPosition.value;
     while (start > 0 && text[start-1] !== ".") {
       start--;
     }
-    console.log("text.slice(start, globalCursorPosition.value)", text.slice(start, globalCursorPosition.value))
-    return text.slice(start, globalCursorPosition.value)
+    return text.slice(start, globalCursorPosition.value);
   };
 
   const speakText = (text) => {
     const synth = window.speechSynthesis;
-    console.log(text);
     if (synth.speaking) {
       synth.cancel();
     }
     const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 0.75;
     synth.speak(utterance);
-    console.log("speaking");
   };
 
   const matchCase = (suggestion, existingWord = "") => {
@@ -81,7 +78,6 @@ function App() {
 
   const handleAction = (action) => {
     const input = document.getElementById("text_region");
-    
     if (action.type === "enter_letter") {
       const letter = isCapsOn ? action.value.toUpperCase() : action.value.toLowerCase();
       setTextValue(prev => {
@@ -117,7 +113,11 @@ function App() {
       changeLanguage(action.value);
 
     } else if (action.type === "change_linger_time") {
-      settings.dwellTime = parseFloat(action.value);
+      dwellTime = parseFloat(action.value);
+      let goBack = {
+         type: "switch_layout", layout: "main_menu"
+      }
+      handleAction(goBack);
     } else if (action.type === "show_suggestions") {
       if (suggestions.length > 0) {
         setShowSuggestions(true);
@@ -138,7 +138,7 @@ function App() {
         const newText = replaced + casedSuggestion + " " + rest;
         
         setTimeout(() => updateGlobalCursorPosition(replaced.length + casedSuggestion.length + 1), 0);
-
+        speakText(casedSuggestion);
         return newText;
       });
     }
@@ -156,7 +156,8 @@ function App() {
         textValue={textValue} 
         setTextValue={setTextValue} 
         handleAction={handleAction}
-        suggestions={suggestions} />
+        suggestions={suggestions}
+        dwellTime={dwellTime} />
       {alarmActive && <AlarmPopup onClose={() => setAlarmActive(false)} />}
     </div>
   );
