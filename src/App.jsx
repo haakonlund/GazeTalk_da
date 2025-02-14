@@ -166,6 +166,7 @@ function App() {
         }
       }
     updateGlobalCursorPosition(input.selectionStart);
+    input.focus();
     
     
   
