@@ -25,20 +25,20 @@ function App() {
       setSuggestions([]);
       return;
     }
-    console.log(textValue);
     if (textValue.endsWith(".") || textValue.endsWith(". ")) {
       const lastSentence = getLastSentence(textValue);
-      console.log(lastSentence);
       if (lastSentence) {
         speakText(lastSentence);
       }
     }
 
     const fetchSuggestions = async () => {
+      
+      const textUpToCursor = textValue.slice(0, globalCursorPosition.value)
       try {
         const response = await axios.post("https://cloudapidemo.azurewebsites.net/continuations", {
           locale: "en_US",
-          prompt: textValue,
+          prompt: textUpToCursor,
         });
         setSuggestions(response.data.continuations.slice(0, 8) || []);
       } catch (error) {
@@ -52,23 +52,19 @@ function App() {
 
   const getLastSentence = (text) => {
     let start = globalCursorPosition.value
-    console.log("start: ", start)
     while (start > 0 && text[start-1] !== ".") {
       start--;
     }
-    console.log("text.slice(start, globalCursorPosition.value)", text.slice(start, globalCursorPosition.value))
     return text.slice(start, globalCursorPosition.value)
   };
 
   const speakText = (text) => {
     const synth = window.speechSynthesis;
-    console.log(text);
     if (synth.speaking) {
       synth.cancel();
     }
     const utterance = new SpeechSynthesisUtterance(text);
     synth.speak(utterance);
-    console.log("speaking");
   };
 
   const matchCase = (suggestion, existingWord = "") => {
@@ -79,18 +75,9 @@ function App() {
       return suggestion.toLowerCase();
     }
   };
-  const handleTextAreaChange = (e) => {
-    setTextValue(e.target.value);
-    setCursorPosition(e.target.selectionStart);
-  };
-  
 
-  const handleAction = (action) => {
-    // const input = document.getElementById('text_region');
-    
+  const handleAction = (action) => {  
     if (action.type === "enter_letter") {
-      // setTextValue(prev => isCapsOn ?  prev + action.value.toUpperCase() : prev + action.value.toLowerCase());
-      
       // insert the letter at the global cursor position
       const letter = isCapsOn ? action.value.toUpperCase() : action.value.toLowerCase();
       const newText = textValue.slice(0, globalCursorPosition.value) + letter + textValue.slice(globalCursorPosition.value);
@@ -100,9 +87,6 @@ function App() {
       // always go back to writing layout after entering a letter
       setCurrentLayoutName("writing");
       
-
-      
-
     } else if (action.type === "newline") {
       // insert a newline at the global cursor position
       const newText = textValue.slice(0, globalCursorPosition.value) + "\n" + textValue.slice(globalCursorPosition.value, textValue.length);
@@ -115,7 +99,6 @@ function App() {
       }
 
     } else if (action.type === "delete_letter") {
-      // setTextValue(prev => prev.slice(0, -1));
       // delete the letter at the global cursor position
       const newText = textValue.slice(0, globalCursorPosition.value - 1) + textValue.slice(globalCursorPosition.value);
       updateGlobalCursorPosition(input.selectionStart - 1);
@@ -131,7 +114,6 @@ function App() {
     
     } else if (action.type === "toggle_case") {
       setIsCapsOn(prev => !prev);
-      console.log("Caps on:", isCapsOn);
 
     } else if (action.type === "cursor" ) {
       const cursorPosition = input.selectionStart;
@@ -173,7 +155,6 @@ function App() {
         let nextLine = currentLines[line + 1];
         let nextDistance = getCharDistance(currentLines, line + 1);
         let currentLineLength = currentLines[line].length;
-        console.log("Current lines", currentLines);
         if (calcCursorDistance() === currentLineLength) {
           const nextLineLength = nextLine.length;
           input.setSelectionRange(nextDistance + nextLineLength, nextDistance + nextLineLength);
@@ -183,7 +164,6 @@ function App() {
       }
     updateGlobalCursorPosition(input.selectionStart);
     
-    console.log("Cursor position:", globalCursorPosition.value);
     
   
     } else if (action.type === "delete_word") { 
@@ -213,7 +193,6 @@ function App() {
 
     } else if (action.type === "show_suggestions") {
       if (suggestions.length > 0 && suggestions.some(s => s !== undefined)) {
-        console.log("switching to suggestions")
         setShowSuggestions(true);
         setCurrentLayoutName("suggestions");
       }
@@ -229,29 +208,11 @@ function App() {
           ? textUpToCursor.slice(lastSpaceIndex + 1) 
           : textUpToCursor; 
       const replaced = textUpToCursor.slice(0, textUpToCursor.length - lastWord.length);
-
       const casedSuggestion = matchCase(suggestion, lastWord);
-
       const newText = replaced + casedSuggestion + " " + rest;
-        
-      
       setTextValue(newText);
-      // const letter = isCapsOn ? action.value.toUpperCase() : action.value.toLowerCase();
-      // const newText = textValue.slice(0, globalCursorPosition.value) + suggestion + textValue.slice(globalCursorPosition.value);
-      // setTextValue(newText);
-
-
-      console.log("word length : ", suggestion.length )
-      console.log("current curs pos : ", globalCursorPosition.value)
       const spaceLength = 1;
       updateGlobalCursorPosition(globalCursorPosition.value + casedSuggestion.length + spaceLength)
-
-      // setTimeout(() => {
-      //   const newPos = input.value.length;
-      //   input.focus();
-      //   input.setSelectionRange(newPos, newPos);
-      // }, 0);
-
 
     } else if (action.type === "choose_button_layout") {
       settings.buttons_layout = action.value;
@@ -271,7 +232,6 @@ function App() {
 
 
       // get word boudaries
-      // const localCursorPosition = calcCursorDistance();
       const textStr = textValue
       const coords = getWordBoundaries(textStr, cursorPosition);
       if (!coords) {
@@ -288,10 +248,7 @@ function App() {
       const oldCursorPos = cursorPosition
       const previousLength = textValue.slice(0, x1).length;
       const distanceToEndofWord = previousLength - globalCursorPosition.value;
-      console.log("Distance to end of word:", distanceToEndofWord);
       updateGlobalCursorPosition(cursorPosition - (x1 - x0) + distanceToEndofWord);
-      // undoStack.push({old_text : oldText, old_cursor_pos : oldCursorPos})
-      // console.log(undoStack)
     }
 
     
@@ -348,7 +305,6 @@ function App() {
   }
   function updateGlobalCursorPosition(xCursorPosition) {
     globalCursorPosition.value = xCursorPosition;
-    // console.log("Cursor position:", cursorPosition);
   }
   function updateGlobalCursorPosition(xCursorPosition) {
     globalCursorPosition.value = xCursorPosition;
@@ -379,11 +335,7 @@ function App() {
     }
     return previousDistance + line;
   }
-  /*
-  a ab abc
-  abcd abcde abcdef
-  
-  */
+
   function getWordBoundaries(text, cursorPosition) {
     if (!text || cursorPosition < 0 || cursorPosition >= text.length) {
       return null;
@@ -412,7 +364,6 @@ function App() {
         textValue={textValue} 
         setTextValue={setTextValue} 
         handleAction={handleAction}
-        handleTextAreaChange={handleTextAreaChange}
         suggestions={suggestions} />
       {alarmActive && <AlarmPopup onClose={() => setAlarmActive(false)} />}
     </div>
