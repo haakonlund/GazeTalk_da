@@ -24,8 +24,10 @@ function App() {
       setSuggestions([]);
       return;
     }
-    if (textValue.endsWith(".")) {
+    console.log(textValue);
+    if (textValue.endsWith(".") || textValue.endsWith(". ")) {
       const lastSentence = getLastSentence(textValue);
+      console.log(lastSentence);
       if (lastSentence) {
         speakText(lastSentence);
       }
@@ -47,6 +49,27 @@ function App() {
     fetchSuggestions();
   }, [textValue]);
 
+  const getLastSentence = (text) => {
+    let start = globalCursorPosition.value
+    console.log("start: ", start)
+    while (start > 0 && text[start-1] !== ".") {
+      start--;
+    }
+    console.log("text.slice(start, globalCursorPosition.value)", text.slice(start, globalCursorPosition.value))
+    return text.slice(start, globalCursorPosition.value)
+  };
+
+  const speakText = (text) => {
+    const synth = window.speechSynthesis;
+    console.log(text);
+    if (synth.speaking) {
+      synth.cancel();
+    }
+    const utterance = new SpeechSynthesisUtterance(text);
+    synth.speak(utterance);
+    console.log("speaking");
+  };
+
   const matchCase = (suggestion, existingWord = "") => {
     if (!existingWord) return suggestion;
     if (existingWord[0] === existingWord[0].toUpperCase()) {
@@ -63,9 +86,11 @@ function App() {
       const letter = isCapsOn ? action.value.toUpperCase() : action.value.toLowerCase();
       setTextValue(prev => {
         const cursorPos = globalCursorPosition.value;
-        return prev.slice(0, cursorPos) + letter + prev.slice(cursorPos);
+            const newText = prev.slice(0, cursorPos) + letter + prev.slice(cursorPos);
+
+            setTimeout(() => updateGlobalCursorPosition(cursorPos + 1), 0);
+            return newText;
       });
-      updateGlobalCursorPosition(globalCursorPosition.value + 1);
 
     } else if (action.type === "switch_layout") {
       if (config.layouts[action.layout]) {
@@ -76,7 +101,10 @@ function App() {
       setTextValue(prev => {
         const cursorPos = globalCursorPosition.value;
         if (cursorPos > 0) {
-          return prev.slice(0, cursorPos - 1) + prev.slice(cursorPos);
+
+            const newText = prev.slice(0, cursorPos - 1) + prev.slice(cursorPos);
+            setTimeout(() => updateGlobalCursorPosition(cursorPos - 1), 0);
+            return newText;
         }
         return prev;
       });
@@ -108,11 +136,11 @@ function App() {
     
         const casedSuggestion = matchCase(suggestion, lastWord);
         const newText = replaced + casedSuggestion + " " + rest;
-    
+        
+        setTimeout(() => updateGlobalCursorPosition(replaced.length + casedSuggestion.length + 1), 0);
+
         return newText;
       });
-    
-      updateGlobalCursorPosition(globalCursorPosition.value + suggestion.length);
     }
 
   };
