@@ -8,7 +8,7 @@ import { globalCursorPosition, cursorEventTarget, updateGlobalCursorPosition } f
 
 import GenericView from "./views/GenericView";
 import AlarmPopup from "./components/AlarmPopup";
-import { config } from "./config";
+import { config } from "./config/config";
 
 let dwellTime = 500;
 

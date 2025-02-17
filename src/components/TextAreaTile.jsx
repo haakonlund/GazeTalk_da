@@ -3,13 +3,6 @@ import { globalCursorPosition, cursorEventTarget, updateGlobalCursorPosition } f
 
 const TextAreaTile = ({ value, onChange, colspan = 2 }) => {
   const inputRef = useRef(null);
-
-  const handleChange = (e) => {
-    const cursorPos = e.target.selectionStart;
-    onChange(e.target.value);
-    updateGlobalCursorPosition(cursorPos); 
-  };
-
   useEffect(() => {
     const handleCursorUpdate = (event) => {
       inputRef.current.setSelectionRange(globalCursorPosition.value, globalCursorPosition.value);
