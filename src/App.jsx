@@ -186,21 +186,54 @@ function App() {
       console.log("globo", globalCursorPosition)
 
     } else if (action.type === "previous_section") {
-
+      let start = globalCursorPosition.value
+      while (start > 0 && !(textValue[start - 1] === "\n")) {
+        start--;
+      }
+      if (start > 0 && (textValue[start - 1] === "\n")) start--;
+      updateGlobalCursorPosition(start)
     } else if (action.type === "previous_sentence") {
+      let start = globalCursorPosition.value
+      while (start > 0 && !(textValue[start - 1] === ".")) {
+        start--;
+      }
+      if (start < textValue.length && textValue[start-1] === ".") start--;
 
+      updateGlobalCursorPosition(start)
     } else if (action.type === "previous_word") {
-
+      let start = globalCursorPosition.value;
+      while (start > 0 && textValue[start - 1] !== " ") {
+        start--;
+      }      
+      if (start > 0 && textValue[start - 1] === " ") start--;
+      updateGlobalCursorPosition(start)
     } else if (action.type === "end_of_text") {
       updateGlobalCursorPosition(textValue.length)
       console.log("globo", globalCursorPosition)
 
     } else if (action.type === "next_section") {
-
+      let end = globalCursorPosition.value;
+      while (end < textValue.length && textValue[end] !== "\n") {
+        end++;
+      }
+      if (end < textValue.length && textValue[end] === "\n") end++;
+      updateGlobalCursorPosition(end)
     } else if (action.type === "next_sentence") {
-
+      let end = globalCursorPosition.value
+      while (end < textValue.length && textValue[end] !== ".") {
+        end++;
+      }
+      if (end < textValue.length && textValue[end] === ".") {
+        end++;
+      }
+      updateGlobalCursorPosition(end)
     } else if (action.type === "next_word") {
-
+      let end = globalCursorPosition.value
+      while (end < textValue.length && textValue[end] !== " ") {
+        end++;
+      }
+      if (end < textValue.length && textValue[end] === " ") end++;
+      updateGlobalCursorPosition(end)
     } else if (action.type === "show_suggestions") {
       if (suggestions.length > 0 && suggestions.some(s => s !== undefined)) {
         setShowSuggestions(true);
