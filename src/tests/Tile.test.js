@@ -48,6 +48,7 @@ describe("Testing Tile component", () => {
     });
 
     test("Progress bar removed when exiting hover", () => {
+        jest.useFakeTimers();
         render(<Tile tile={tile} onActivate={onActivateMock} dwellTime={1000} />);
         const tileDiv = screen.getByText(tileLabel).closest(".tile");
 
@@ -63,6 +64,7 @@ describe("Testing Tile component", () => {
 
         // Expect the progress bar to disappear when exiting hover
         expect(tileDiv.querySelector(".progress-bar")).not.toBeInTheDocument();
+        jest.useRealTimers();
     });
 
     test("Trigger onActivate after dwell time", () => {
@@ -82,6 +84,7 @@ describe("Testing Tile component", () => {
     });
 
     test("DON'T trigger onActivate before dwell time", () => {
+        jest.useFakeTimers();
         render(<Tile tile={tile} onActivate={onActivateMock} dwellTime={1000} />);
         const tileDiv = screen.getByText(tileLabel).closest(".tile");
 
@@ -96,5 +99,6 @@ describe("Testing Tile component", () => {
 
         // Check that onActivate was not called since hover time was less than dwell time
         expect(onActivateMock).not.toHaveBeenCalled();
+        jest.useRealTimers();
     });
 });
