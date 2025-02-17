@@ -29,7 +29,7 @@ const KeyboardGrid = ({ layout, textValue, setTextValue, onTileActivate, suggest
                   ...tile, 
                   label: suggestionsPreview || "", 
                   action: { type: "show_suggestions" }, 
-                  customStyle: { fontSize: "24px", whiteSpace: "pre-line" }
+                  customStyle: { fontSize: "24px", whiteSpace: "pre-line", color : "00ff00" }
                 }} 
                 onActivate={onTileActivate}
                 dwellTime={dwellTime * 2} 
@@ -37,11 +37,33 @@ const KeyboardGrid = ({ layout, textValue, setTextValue, onTileActivate, suggest
             );
           }
 
-          return <Tile key={i} tile={tile} onActivate={onTileActivate} dwellTime={dwellTime} />;
+          return <Tile 
+            key={i} 
+            tile={{
+              ...tile, 
+              customStyle: { color: 
+                tile.label ==  "back" ? "#0f0" : 
+                tile.type == "switch" ? "#ff0" :
+                                        "#fff"} 
+          }}
+            onActivate={onTileActivate} 
+            dwellTime={dwellTime} />;
         })}
   
         {layout.name === "suggestions" && suggestions.map((suggestion, i) => (
-          <Tile key={i} tile={{ label: suggestion, action: { type: "insert_suggestion", value: suggestion }}} onActivate={onTileActivate} dwellTime={dwellTime} />
+          <Tile 
+            key={i} 
+            tile={
+              { 
+                label: suggestion, 
+                action: { type: "insert_suggestion", value: suggestion },
+              }
+                
+              } 
+            onActivate={onTileActivate} 
+            dwellTime={dwellTime} 
+            
+          />
         ))}
       </div>
     );
