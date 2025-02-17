@@ -4,7 +4,8 @@ import settings from "./settings.json";
 import { useTranslation } from "react-i18next";
 import { changeLanguage } from "i18next";
 import "./App.css";
-import globalCursorPosition from "./cursorSingleton";
+import { globalCursorPosition, cursorEventTarget, updateGlobalCursorPosition } from "./cursorSingleton";
+
 import GenericView from "./views/GenericView";
 import AlarmPopup from "./components/AlarmPopup";
 import { config } from "./config";
@@ -21,6 +22,7 @@ function App() {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const layout = config.layouts[currentLayoutName] || config.layouts["main_menu"];
   const input = document.getElementById('text_region');
+  // const cursorEventTarget = new EventTarget();
 
   React.useEffect(() => {
     if (textValue.trim() === "") {
@@ -180,7 +182,9 @@ function App() {
     } else if (action.type === "undo") {
       // todo
     } else if (action.type === "start_of_text") {
-      //
+      updateGlobalCursorPosition(0)
+      console.log("globo", globalCursorPosition)
+
     } else if (action.type === "previous_section") {
 
     } else if (action.type === "previous_sentence") {
@@ -188,6 +192,8 @@ function App() {
     } else if (action.type === "previous_word") {
 
     } else if (action.type === "end_of_text") {
+      updateGlobalCursorPosition(textValue.length)
+      console.log("globo", globalCursorPosition)
 
     } else if (action.type === "next_section") {
 
@@ -259,7 +265,7 @@ function App() {
       updateGlobalCursorPosition(cursorPosition - (x1 - x0) + distanceToEndofWord);
     }
 
-    
+    input.focus()
   };
   function deleteSentence() {
     const cursorPosition = input.selectionStart;
@@ -311,12 +317,8 @@ function App() {
     const cursorPosition = input.selectionStart -  getCharDistance(currentLines, line);
     return cursorPosition
   }
-  function updateGlobalCursorPosition(xCursorPosition) {
-    globalCursorPosition.value = xCursorPosition;
-  }
-  function updateGlobalCursorPosition(xCursorPosition) {
-    globalCursorPosition.value = xCursorPosition;
-  }
+
+
   function getCurrentLine(currentLines, cursorPosition) {
     let line = 0;
     for (let i = 0; i < cursorPosition; i++) {

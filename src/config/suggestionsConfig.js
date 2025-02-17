@@ -13,7 +13,7 @@ export const suggestionsConfig = {
         },
         {
           type: "switch",
-          label: "Back",
+          label: "back",
           action: { type: "switch_layout", layout: "writing" }
         }
       ]
