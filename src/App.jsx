@@ -235,7 +235,12 @@ function App() {
          type: "switch_layout", layout: "main_menu"
       }
       handleAction(goBack);
+    } else if (action.type === "play_alarm") {
+      setAlarmActive(true);
+    } else if (action.type === 'close_alarm') {
+      setAlarmActive(false);
     }
+
 
     function deleteWordAtCursor() {
       const cursorPosition = input.selectionStart;
@@ -376,7 +381,7 @@ function App() {
         handleAction={handleAction}
         suggestions={suggestions}
         dwellTime={dwellTime} />
-      {alarmActive && <AlarmPopup onClose={() => setAlarmActive(false)} />}
+      {alarmActive && <AlarmPopup onClose={() => setAlarmActive(false)} dwellTime={dwellTime} />}
     </div>
   );
 }

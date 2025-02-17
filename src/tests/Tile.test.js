@@ -12,7 +12,7 @@ jest.mock("react-i18next", () => ({
     useTranslation: () => ({ t: (key) => key })
   }));
 
-describe("Testing Tile component", () => {
+describe("Tile component", () => {
     const onActivateMock = jest.fn();
     const tile = {
         label: tileLabel,        
