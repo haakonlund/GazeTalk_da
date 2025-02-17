@@ -1,23 +1,23 @@
 import React from "react";
-import { ABCDEFGH_menuConfig } from "./config/ABCDEFGH_menuConfig";
-import { IJKLMNOP_menuConfig } from "./config/IJKLMNOP_menuConfig";
-import { QRSTUVWX_menuConfig } from "./config/QRSTUVWX_menuConfig";
-import { YZ_menuConfig } from "./config/YZ_menuConfig";
-import { numbersConfig } from "./config/numbersConfig";
-import { numbers2Config } from "./config/numbers2Config";
-import { edit_languageConfig } from "./config/edit_languageConfig";
-import { writingConfig } from "./config/writingConfig";
-import { suggestionsConfig } from "./config/suggestionsConfig";
-import { main_menuConfig } from "./config/main_menuConfig";
-import { writing_submenuConfig } from "./config/writing_submenuConfig";
-import { navigation_menuConfig } from "./config/navigation_menuConfig";
-import { edit_menuConfig } from "./config/edit_menuConfig";
-import { edit_lingertimeConfig } from "./config/edit_lingertimeConfig";
-import { edit_settingsConfig } from "./config/edit_settingsConfig";
-import { more_function_menuConfig } from "./config/more_function_menuConfig";
-import { special_chars1Config } from "./config/special_chars1Config";
-import { special_chars2Config } from "./config/special_chars2Config";
-import { special_chars3Config } from "./config/special_chars3Config";
+import { ABCDEFGH_menuConfig } from "./ABCDEFGH_menuConfig";
+import { IJKLMNOP_menuConfig } from "./IJKLMNOP_menuConfig";
+import { QRSTUVWX_menuConfig } from "./QRSTUVWX_menuConfig";
+import { YZ_menuConfig } from "./YZ_menuConfig";
+import { numbersConfig } from "./numbersConfig";
+import { numbers2Config } from "./numbers2Config";
+import { edit_languageConfig } from "./edit_languageConfig";
+import { writingConfig } from "./writingConfig";
+import { suggestionsConfig } from "./suggestionsConfig";
+import { main_menuConfig } from "./main_menuConfig";
+import { writing_submenuConfig } from "./writing_submenuConfig";
+import { navigation_menuConfig } from "./navigation_menuConfig";
+import { edit_menuConfig } from "./edit_menuConfig";
+import { edit_lingertimeConfig } from "./edit_lingertimeConfig";
+import { edit_settingsConfig } from "./edit_settingsConfig";
+import { more_function_menuConfig } from "./more_function_menuConfig";
+import { special_chars1Config } from "./special_chars1Config";
+import { special_chars2Config } from "./special_chars2Config";
+import { special_chars3Config } from "./special_chars3Config";
 
 export const config = {
   layouts: {
