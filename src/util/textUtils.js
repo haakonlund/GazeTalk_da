@@ -1,0 +1,147 @@
+import { globalCursorPosition } from "../cursorSingleton";
+export const getLastSentence = (text) => {
+    let start = globalCursorPosition.value
+    while (start > 0 && text[start-1] !== ".") {
+      start--;
+    }
+    return text.slice(start, globalCursorPosition.value)
+  };
+
+export const speakText = (text) => {
+    const synth = window.speechSynthesis;
+    if (synth.speaking) {
+      synth.cancel();
+    }
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 0.75;
+    synth.speak(utterance);
+  };
+
+export const matchCase = (suggestion, existingWord = "") => {
+    if (!existingWord) return suggestion;
+    if (existingWord[0] === existingWord[0].toUpperCase()) {
+      return suggestion.charAt(0).toUpperCase() + suggestion.slice(1);
+    } else {
+      return suggestion.toLowerCase();
+    }
+  };
+export const getWordBoundaries = (text, cursorPosition) => {
+    let start = cursorPosition;
+    let end = cursorPosition;
+  
+    // get the left boundary
+    while (start > 0 && !/\s/.test(text[start - 1])) {
+      start--;
+    }
+  
+    // get the right boundary
+    while (end < text.length && !/\s/.test(text[end])) {
+      end++;
+    }
+  
+    return { x0: start, x1: end };
+  };
+  
+  export const getCurrentLine = (currentLines, cursorPosition) => {
+    let line = 0;
+    for (let i = 0; i < cursorPosition; i++) {
+      let currentLine = currentLines[line];
+      for (let j = 0; j < currentLine.length; j++) {
+        if (i >= cursorPosition) {
+          break;
+        }
+        i++;
+      }
+      if ((i >= cursorPosition)) {
+        break;
+      } else {
+        line++;
+      }
+    }
+    return line;
+  };
+  
+  export const getCharDistance = (currentLines, line) => {
+    let previousDistance = 0;
+    for (let i = 0; i < line; i++) {
+      previousDistance += currentLines[i].length;
+    }
+    return previousDistance + line;
+  };
+  
+  export const calcCursorDistance = (textValue, input, currentLines) => {
+    let line = getCurrentLine(currentLines, input.selectionStart);
+    return input.selectionStart - getCharDistance(currentLines, line);
+  };
+  
+  export const deleteWordAtCursor = (textValue, cursorPosition) => {
+    const { x0, x1 } = getWordBoundaries(textValue, cursorPosition);
+    const newText = textValue.slice(0, x0) + textValue.slice(x1, textValue.length);
+    const newCursorPosition = cursorPosition - (x1 - x0) + (textValue.slice(0, x1).length - cursorPosition);
+  
+    return {
+      newText,
+      newCursorPosition
+    };
+  };
+  
+  export const deleteSentence = (textValue, cursorPosition) => {
+    let start = cursorPosition;
+    let end = start;
+  
+    while (start > 0 && !(textValue[start - 1] === ".")) {
+      start--;
+    }
+    while (end < textValue.length && !(textValue[end] === ".")) {
+      end++;
+    }
+    if (end < textValue.length && textValue[end] === ".") {
+      end++;
+    }
+  
+    const newText = textValue.slice(0, start) + textValue.slice(end, textValue.length);
+    const newCursorPosition = cursorPosition - (end - start) + (textValue.slice(0, end).length - cursorPosition);
+  
+    return {
+      newText,
+      newCursorPosition
+    };
+  };
+  
+  export const deleteSection = (textValue, cursorPosition) => {
+    let start = cursorPosition;
+    let end = start;
+  
+    while (start > 0 && !(textValue[start - 1] === "\n")) {
+      start--;
+    }
+    while (end < textValue.length && !(textValue[end] === "\n")) {
+      end++;
+    }
+    if (end < textValue.length && textValue[end] === "\n") {
+      end++;
+    }
+  
+    const newText = textValue.slice(0, start) + textValue.slice(end, textValue.length);
+    const newCursorPosition = cursorPosition - (end - start) + (textValue.slice(0, end).length - cursorPosition);
+  
+    return {
+      newText,
+      newCursorPosition
+    };
+  };
+// export const insertSuggestion = (action, textValue) => {
+//     const suggestion = action.value;
+
+//     const cursorPos = globalCursorPosition.value;
+//     const textUpToCursor = textValue.slice(0, cursorPos);
+//     const rest = textValue.slice(cursorPos, textValue.length);
+//     const lastSpaceIndex = textUpToCursor.lastIndexOf(" ");
+//     const lastWord = lastSpaceIndex >= 0
+//       ? textUpToCursor.slice(lastSpaceIndex + 1)
+//       : textUpToCursor;
+//     const replaced = textUpToCursor.slice(0, textUpToCursor.length - lastWord.length);
+//     const casedSuggestion = matchCase(suggestion, lastWord);
+//     const newText = replaced + casedSuggestion + " " + rest;
+//     return newText
+//   }
