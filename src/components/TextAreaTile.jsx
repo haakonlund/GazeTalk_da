@@ -7,7 +7,6 @@ const TextAreaTile = ({ value, onChange, colspan = 2, customStyle }) => {
     const handleCursorUpdate = (event) => {
       inputRef.current.setSelectionRange(globalCursorPosition.value, globalCursorPosition.value);
       inputRef.current.focus();
-      
     };
     cursorEventTarget.addEventListener("cursorUpdated", handleCursorUpdate);
 

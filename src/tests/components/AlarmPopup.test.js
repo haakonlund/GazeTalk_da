@@ -2,10 +2,10 @@
 import React from 'react';
 import { render, fireEvent, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import AlarmPopup from '../components/AlarmPopup';
+import AlarmPopup from '../../components/AlarmPopup';
 
 // Render the Tile component since it's used by the AlarmPopup
-jest.mock('../components/Tile', () => (props) => {
+jest.mock('../../components/Tile', () => (props) => {
   return (
     <button onClick={props.onActivate}>
       {props.tile.label}
