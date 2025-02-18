@@ -7,7 +7,6 @@ const TextAreaTile = ({ value, onChange, colspan = 2, customStyle }) => {
     const handleCursorUpdate = (event) => {
       inputRef.current.setSelectionRange(globalCursorPosition.value, globalCursorPosition.value);
       inputRef.current.focus();
-      
     };
     cursorEventTarget.addEventListener("cursorUpdated", handleCursorUpdate);
 
@@ -25,7 +24,7 @@ const TextAreaTile = ({ value, onChange, colspan = 2, customStyle }) => {
 
   return (
     <div className="tile textarea-tile" style={{ gridColumn: `span ${colspan}` }}>
-      <textarea ref={inputRef} value={value}  id="text_region" style={customStyle} />
+      <textarea ref={inputRef} value={value} readOnly id="text_region" style={customStyle} />
     </div>
   );
 };

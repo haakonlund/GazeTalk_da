@@ -18,7 +18,7 @@ export const writingConfig = {
         },
         {
           type: "letter",
-          label: "skrr",
+          label: "",
           surroundingLetters: [],
           action: { type: "show_suggestions", value: "" }
         },
