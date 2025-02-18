@@ -2,13 +2,17 @@ import React from "react";
 import TextAreaTile from "./TextAreaTile";
 import Tile from "./Tile";
 
-const KeyboardGrid = ({ layout, textValue, setTextValue, onTileActivate, suggestions, handleTextAreaChange, dwellTime }) => {
+const KeyboardGrid = ({ layout, textValue, setTextValue, onTileActivate, suggestions, handleTextAreaChange, dwellTime, buttonFontSize, textFontSize }) => {
     return (
         <div className="keyboard-grid">
         <TextAreaTile 
           value={textValue} 
           onChange={handleTextAreaChange || setTextValue} 
           colspan={2}  
+          customStyle={{
+            fontSize : `${textFontSize}px`
+          }}
+
         />
   
         {layout.tiles.map((tile, i) => {
@@ -32,7 +36,7 @@ const KeyboardGrid = ({ layout, textValue, setTextValue, onTileActivate, suggest
                   customStyle: { fontSize: "24px", whiteSpace: "pre-line", color : "00ff00" }
                 }} 
                 onActivate={onTileActivate}
-                dwellTime={dwellTime * 2} 
+                dwellTime={dwellTime}
               />
             );
           }
@@ -41,11 +45,13 @@ const KeyboardGrid = ({ layout, textValue, setTextValue, onTileActivate, suggest
             key={i} 
             tile={{
               ...tile, 
-              customStyle: { color: 
-                tile.label ==  "back" ? "#0f0" : 
-                tile.type == "switch" ? "#ff0" :
-                                        "#fff"} 
-          }}
+              customStyle: { 
+                color: 
+                  tile.label ==  "back" ? "#0f0" : 
+                  tile.type == "switch" ? "#ff0" :
+                                          "#fff",
+                fontSize : `${buttonFontSize}px`
+          }}}
             onActivate={onTileActivate} 
             dwellTime={dwellTime} />;
         })}
@@ -62,7 +68,6 @@ const KeyboardGrid = ({ layout, textValue, setTextValue, onTileActivate, suggest
               } 
             onActivate={onTileActivate} 
             dwellTime={dwellTime} 
-            
           />
         ))}
       </div>

@@ -24,6 +24,11 @@ export const edit_settingsConfig = {
           type: "switch",
           label: "change language",
           action: { type: "switch_layout", layout: "edit_language" }
+        },
+        {
+          type : "switch",
+          label : "font size",
+          action : {type : "switch_layout", layout : "adjust_font_size"}
         }
       ]
   };

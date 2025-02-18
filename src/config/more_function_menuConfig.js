@@ -11,9 +11,9 @@ export const more_function_menuConfig = {
           action : {type : "switch_layout", layout : "edit_menu"}
         },
         {
-          type : "switch",
-          label: "back to writing",
-          action : {type: "swtich_layout", layout : "writing"}
+          type: "switch",
+          label: "back to wrtiting",
+          action: { type: "switch_layout", layout: "writing" }
         },
         {
           type : "start_of_text",

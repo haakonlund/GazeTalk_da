@@ -22,7 +22,12 @@ function App() {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const layout = config.layouts[currentLayoutName] || config.layouts["main_menu"];
   const input = document.getElementById('text_region');
-  // const cursorEventTarget = new EventTarget();
+
+  const [buttonFontSize, setButtonFontSize] = useState(30)
+  const [textFontSize, setTextFontSize] = useState(20)
+
+  
+
 
   React.useEffect(() => {
     if (textValue.trim() === "") {
@@ -242,7 +247,7 @@ function App() {
     } else if (action.type === "insert_suggestion") {
       const suggestion = action.value;
       
-      const cursorPos = input.selectionStart;
+      const cursorPos = globalCursorPosition.value;
       const textUpToCursor = textValue.slice(0, cursorPos);
       const rest = textValue.slice(cursorPos, textValue.length);
       const lastSpaceIndex = textUpToCursor.lastIndexOf(" ");
@@ -272,6 +277,17 @@ function App() {
       setAlarmActive(true);
     } else if (action.type === 'close_alarm') {
       setAlarmActive(false);
+    } else if (action.type === "increase_button_font_size") {
+      setButtonFontSize(buttonFontSize < 96 ? buttonFontSize + 1 : buttonFontSize)
+      console.log(buttonFontSize)
+    } else if (action.type === "decrease_button_font_size") {
+      setButtonFontSize(buttonFontSize > 0 ? buttonFontSize -1 : buttonFontSize)
+
+    } else if (action.type === "increase_text_font_size") {
+      setTextFontSize(textFontSize < 96 ? textFontSize + 1 : textFontSize)
+    } else if (action.type === "decrease_text_font_size") {
+      setTextFontSize(textFontSize > 0 ? textFontSize - 1 : textFontSize)
+      
     }
 
 
@@ -412,6 +428,8 @@ function App() {
         textValue={textValue} 
         setTextValue={setTextValue} 
         handleAction={handleAction}
+        fontSize={buttonFontSize}
+        textFontSize={textFontSize}
         suggestions={suggestions}
         dwellTime={dwellTime} />
       {alarmActive && <AlarmPopup onClose={() => setAlarmActive(false)} dwellTime={dwellTime} />}

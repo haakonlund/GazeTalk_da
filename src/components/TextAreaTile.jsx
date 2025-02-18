@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { globalCursorPosition, cursorEventTarget, updateGlobalCursorPosition } from "../cursorSingleton";
 
-const TextAreaTile = ({ value, onChange, colspan = 2 }) => {
+const TextAreaTile = ({ value, onChange, colspan = 2, customStyle }) => {
   const inputRef = useRef(null);
   useEffect(() => {
     const handleCursorUpdate = (event) => {
@@ -25,7 +25,7 @@ const TextAreaTile = ({ value, onChange, colspan = 2 }) => {
 
   return (
     <div className="tile textarea-tile" style={{ gridColumn: `span ${colspan}` }}>
-      <textarea ref={inputRef} value={value}  id="text_region" />
+      <textarea ref={inputRef} value={value}  id="text_region" style={customStyle} />
     </div>
   );
 };
