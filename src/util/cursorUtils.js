@@ -1,4 +1,4 @@
-import { globalCursorPosition } from "../cursorSingleton";
+import { globalCursorPosition } from "../singleton/cursorSingleton";
 
 export const getPreviousSection = (textValue) => {
     let start = globalCursorPosition.value;

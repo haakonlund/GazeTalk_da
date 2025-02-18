@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { globalCursorPosition, cursorEventTarget, updateGlobalCursorPosition } from "../cursorSingleton";
+import { globalCursorPosition, cursorEventTarget, updateGlobalCursorPosition } from "../singleton/cursorSingleton";
 
 const TextAreaTile = ({ value, onChange, colspan = 2, customStyle }) => {
   const inputRef = useRef(null);

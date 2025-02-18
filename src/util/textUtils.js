@@ -1,4 +1,4 @@
-import { globalCursorPosition } from "../cursorSingleton";
+import { globalCursorPosition } from "../singleton/cursorSingleton";
 export const getLastSentence = (text) => {
     let start = globalCursorPosition.value
     while (start > 0 && text[start-1] !== ".") {

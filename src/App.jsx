@@ -4,7 +4,7 @@ import settings from "./settings.json";
 import { useTranslation } from "react-i18next";
 import { changeLanguage } from "i18next";
 import "./App.css";
-import { globalCursorPosition, cursorEventTarget, updateGlobalCursorPosition } from "./cursorSingleton";
+import { globalCursorPosition, cursorEventTarget, updateGlobalCursorPosition } from "./singleton/cursorSingleton";
 
 import GenericView from "./views/GenericView";
 import AlarmPopup from "./components/AlarmPopup";
