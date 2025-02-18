@@ -25,7 +25,7 @@ const TextAreaTile = ({ value, onChange, colspan = 2, customStyle }) => {
 
   return (
     <div className="tile textarea-tile" style={{ gridColumn: `span ${colspan}` }}>
-      <textarea ref={inputRef} value={value}  id="text_region" style={customStyle} />
+      <textarea readOnly ref={inputRef} value={value}  id="text_region" style={customStyle} />
     </div>
   );
 };

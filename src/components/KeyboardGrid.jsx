@@ -33,10 +33,10 @@ const KeyboardGrid = ({ layout, textValue, setTextValue, onTileActivate, suggest
                   ...tile, 
                   label: suggestionsPreview || "", 
                   action: { type: "show_suggestions" }, 
-                  customStyle: { fontSize: "24px", whiteSpace: "pre-line", color : "00ff00" }
+                  customStyle: { fontSize: `${buttonFontSize}px`, whiteSpace: "pre-line", color : "00ff00" }
                 }} 
                 onActivate={onTileActivate}
-                dwellTime={dwellTime}
+                dwellTime={dwellTime*2}
               />
             );
           }

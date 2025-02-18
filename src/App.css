@@ -6,6 +6,29 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: rgb(24, 24, 24);
+}
+
+/* Force Landscape Mode */
+@media screen and (orientation: portrait) {
+  body {
+    transform: rotate(90deg);
+    transform-origin: left;
+    width: 100vh;
+    height: 100vw;
+    overflow: hidden;
+    position: fixed;
+    
+  }
+}
+
+
+html, body {
+  touch-action: manipulation; /* Disables double-tap zoom */
+  -webkit-user-select: none; /* Prevents text selection */
+  -ms-user-select: none;
+  user-select: none;
+  overflow: hidden; /* Prevents scrolling and accidental zooming */
 }
 
 .generic-view {
@@ -106,7 +129,6 @@
 /* New styles for surrounding letters */
 .surrounding-letter {
   position: absolute;
-  /* transform: translateX(-50%); */
   color: #ffeb3b;
   font-size: 2rem;
   pointer-events: none;

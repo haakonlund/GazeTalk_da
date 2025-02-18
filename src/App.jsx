@@ -100,7 +100,6 @@ function App() {
       const letter = isCapsOn ? action.value.toUpperCase() : action.value.toLowerCase();
       const newText = textValue.slice(0, globalCursorPosition.value) + letter + textValue.slice(globalCursorPosition.value);
       setTextValue(newText);
-
       
       updateGlobalCursorPosition(input.selectionStart + 1);
       // always go back to writing layout after entering a letter
