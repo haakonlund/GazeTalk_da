@@ -1,21 +1,17 @@
 import { globalCursorPosition } from "../singleton/cursorSingleton";
 export const getLastSentence = (text) => {
     let start = globalCursorPosition.value
-    while (start > 0 && text[start-1] !== ".") {
-      start--;
+    let punctuationCnt = 1
+    while (start > 0 ) {
+      if (text[start-1] === ".") {
+        punctuationCnt--;
+        if (punctuationCnt === 0) break;
+      }
+        start--;
     }
-    return text.slice(start, globalCursorPosition.value)
+    return start
   };
 
-export const speakText = (text) => {
-    const synth = window.speechSynthesis;
-    if (synth.speaking) {
-      synth.cancel();
-    }
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = 0.75;
-    synth.speak(utterance);
-  };
 
 export const matchCase = (suggestion, existingWord = "") => {
     if (!existingWord) return suggestion;
@@ -88,7 +84,10 @@ export const getWordBoundaries = (text, cursorPosition) => {
   export const deleteSentence = (textValue, cursorPosition) => {
     let start = cursorPosition;
     let end = start;
-  
+    
+    if (start > 0 && (textValue[start - 1] === ".")) {
+        start--; 
+    }
     while (start > 0 && !(textValue[start - 1] === ".")) {
       start--;
     }

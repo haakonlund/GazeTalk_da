@@ -1,7 +1,6 @@
 import React, { useState, useRef } from "react";
 import axios from "axios";
 import settings from "./settings.json";
-import { useTranslation } from "react-i18next";
 import { changeLanguage } from "i18next";
 import "./App.css";
 import { globalCursorPosition, cursorEventTarget, updateGlobalCursorPosition } from "./singleton/cursorSingleton";
@@ -9,6 +8,7 @@ import { globalCursorPosition, cursorEventTarget, updateGlobalCursorPosition } f
 import GenericView from "./views/GenericView";
 import AlarmPopup from "./components/AlarmPopup";
 import { config } from "./config/config";
+import {speakText} from './singleton/textToSpeachSingleton'
 import {
   deleteWordAtCursor,
   deleteSentence,
@@ -17,7 +17,6 @@ import {
   getCharDistance,
   calcCursorDistance,
   getLastSentence,
-  speakText,
   matchCase,
 } from './util/textUtils';
 import {
@@ -54,12 +53,7 @@ function App() {
       setSuggestions([]);
       return;
     }
-    if (textValue.endsWith(".") || textValue.endsWith(". ")) {
-      const lastSentence = getLastSentence(textValue);
-      if (lastSentence) {
-        speakText(lastSentence);
-      }
-    }
+    
 
     const fetchSuggestions = async () => {
 
@@ -107,9 +101,18 @@ function App() {
       const newText = textValue.slice(0, globalCursorPosition.value) + letter + textValue.slice(globalCursorPosition.value);
       setTextValue(newText);
 
+      
       updateGlobalCursorPosition(input.selectionStart + 1);
       // always go back to writing layout after entering a letter
       setCurrentLayoutName("writing");
+
+      // if the last letter was punctuation speak it
+      if (action.value === ".") {
+        const lastSentenceStart = getLastSentence(textValue)
+        const lastSentence = textValue.slice(lastSentenceStart, globalCursorPosition.value)
+        console.log("last sentence : ", lastSentence)
+        speakText(lastSentence)
+      }
 
     } else if (action.type === "newline") {
       // insert a newline at the global cursor position
