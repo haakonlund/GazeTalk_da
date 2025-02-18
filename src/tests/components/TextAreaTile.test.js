@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import TextAreaTile from '../../components/TextAreaTile';
-import { globalCursorPosition, cursorEventTarget } from '../../cursorSingleton';
+import { globalCursorPosition, cursorEventTarget } from '../../singleton/cursorSingleton';
 
 const cursorPosition = 0;
 
