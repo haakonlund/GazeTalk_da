@@ -34,7 +34,22 @@ const Tile = ({ tile, onActivate, dwellTime }) => {
     };
 
     if (hovering) {
-      animationFrameId = requestAnimationFrame(updateProgress);
+      const startTime = Date.now();
+      // how do i set a timer here 
+
+      
+      timer = setInterval(() => {
+        const elapsed = Date.now() - startTime;
+        const percentage = 100 - (elapsed / dwellTime) * 100;
+        if (percentage <= 0) {
+          clearInterval(timer);
+          onActivate(tile.action);
+          // setHovering(false);
+          setProgress(100);
+        } else {
+          setProgress(percentage);
+        }
+      }, 50);
     } else {
       startTime = null;
       if (progress === 0)
@@ -53,15 +68,7 @@ const Tile = ({ tile, onActivate, dwellTime }) => {
       className="tile"
       style={tile.customStyle || {}}
       onMouseEnter={() => setHovering(true)}
-      onMouseLeave={() => {
-        setHovering(false);
-        setProgress(100);
-      }}
-      onTouchStart={() => setHovering(true)}
-      onTouchEnd={() => {
-        setHovering(false);
-        setProgress(100);
-      }}
+      onMouseLeave={() => setHovering(false)}
       // onClick={() => onActivate(tile.action)}
     >
       <div className="label">
