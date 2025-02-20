@@ -37,6 +37,10 @@ function App() {
   const [isCapsOn, setIsCapsOn] = useState(false);
   const [alarmActive, setAlarmActive] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
+  const [letterSuggestions, setLetterSuggestions] = useState([])
+  const defaultLetterSuggestions  = useState(["e","t,","a","space","o","i"])
+  
+  
   const textAreaRef = useRef(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const layout = config.layouts[currentLayoutName] || config.layouts["main_menu"];
@@ -49,15 +53,10 @@ function App() {
 
 
   React.useEffect(() => {
-    if (textValue.trim() === "") {
-      setSuggestions([]);
-      return;
-    }
-    
+    const textUpToCursor = textValue.slice(0, globalCursorPosition.value)
 
     const fetchSuggestions = async () => {
 
-      const textUpToCursor = textValue.slice(0, globalCursorPosition.value)
       try {
         const response = await axios.post("https://cloudapidemo.azurewebsites.net/continuations", {
           locale: "en_US",
@@ -71,6 +70,47 @@ function App() {
     };
 
     fetchSuggestions();
+
+    const fetchLetterSuggestions = async () => {
+      try {
+        const response = await axios.post("https://cloudapidemo.azurewebsites.net/lettercontinuations", {
+          locale: "en_US",
+          prompt: textUpToCursor,
+        });
+        // setLetterSuggestions(response.data.continuations.slice(0, 6) || []);
+        const suggestionsString = response.data.continuations
+        let suggestionArray = []
+        for (let i = 0; i < suggestionsString.length; i++) {
+          suggestionArray.push(suggestionsString[i])
+        }
+        console.log("suggestionArray : ",suggestionArray)
+
+        if (suggestionsString) {
+          const topSuggestion = suggestionArray.slice(0, 7)
+          // insert space
+          let newArr = []
+          for (let i = 0; i < topSuggestion.length; i++) {
+            if (i == 3) {
+              newArr[i] = "space";
+              continue;
+            }
+            newArr[i] = topSuggestion[i]
+            
+          }
+          setLetterSuggestions(newArr);
+        } else {
+          setLetterSuggestions(defaultLetterSuggestions)
+        }
+      
+      } catch (error) {
+        console.error("Error fetching suggestions:", error);
+        setLetterSuggestions([]);
+        
+      }
+    }
+    
+    fetchLetterSuggestions();
+    console.log("letter suggestions : ", letterSuggestions)
   }, [textValue]);
 
   React.useEffect(() => {
@@ -280,6 +320,8 @@ function App() {
     } else if (action.type === "decrease_text_font_size") {
       setTextFontSize(textFontSize > 0 ? textFontSize - 1 : textFontSize)
 
+    } else if (action.type === "insert_letter_suggestion") {
+      console.log("todo")
     }
     input.focus();    
   };
@@ -294,6 +336,7 @@ function App() {
         fontSize={buttonFontSize}
         textFontSize={textFontSize}
         suggestions={suggestions}
+        letterSuggestions={letterSuggestions}
         dwellTime={dwellTime} />
       {alarmActive && <AlarmPopup onClose={() => setAlarmActive(false)} dwellTime={dwellTime} />}
     </div>

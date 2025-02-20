@@ -74,8 +74,9 @@ const Tile = ({ tile, onActivate, dwellTime }) => {
       <div className="label">
         {t(tile.label)}
       </div>
-      
-      {hovering && tile.surroundingLetters?.map((letter, index) => (
+
+      {/* Surrounding letters
+      {hovering && tile.surroundingLetters && tile.surroundingLetters.map((letter, index) => (
         <span
           key={index}
           className="surrounding-letter"
@@ -83,8 +84,9 @@ const Tile = ({ tile, onActivate, dwellTime }) => {
         >
           {letter}
         </span>
-      ))}
-      
+      ))} */}
+
+      {/* Progress bar */}
       {hovering && (
         <div className="progress-bar">
           <div 
