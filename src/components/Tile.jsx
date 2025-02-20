@@ -18,6 +18,7 @@ const Tile = ({ tile, onActivate, dwellTime }) => {
   useEffect(() => {
     let animationFrameId;
     let startTime;
+    let timer
 
     const updateProgress = (timestamp) => {
       if (!startTime) startTime = timestamp;
@@ -52,8 +53,8 @@ const Tile = ({ tile, onActivate, dwellTime }) => {
       }, 50);
     } else {
       startTime = null;
-      if (progress === 0)
-        setProgress(100);
+      
+      setProgress(100);
     }
 
     return () => {
