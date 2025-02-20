@@ -29,7 +29,7 @@ import {
 } from './util/cursorUtils'
 
 
-let dwellTime = 500;
+let dwellTime = 2000;
 
 function App() {
   const [currentLayoutName, setCurrentLayoutName] = useState("main_menu");

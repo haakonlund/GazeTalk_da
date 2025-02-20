@@ -6,56 +6,69 @@ const Tile = ({ tile, onActivate, dwellTime }) => {
   const [hovering, setHovering] = useState(false);
   const [progress, setProgress] = useState(100);
 
-  // Calculate positions for surrounding letters
   const positions = [
-    { top: '10%',    left: '10%' },  // Top-left
-    { top: '10%',    left: '50%' },  // Top-center
-    { top: '10%',    right: '10%' }, // Top-right
-    { bottom: '10%', left: '10%' },  // Bottom-left
-    { bottom: '10%', left: '50%' },  // Bottom-center
-    { bottom: '10%', right: '10%' }  // Bottom-right
+    { top: '10%',    left: '10%' },
+    { top: '10%',    left: '50%' },
+    { top: '10%',    right: '10%' },
+    { bottom: '10%', left: '10%' },
+    { bottom: '10%', left: '50%' },
+    { bottom: '10%', right: '10%' }
   ];
 
   useEffect(() => {
-    let timer;
+    let animationFrameId;
+    let startTime;
+
+    const updateProgress = (timestamp) => {
+      if (!startTime) startTime = timestamp;
+      const elapsed = timestamp - startTime;
+      const percentage = 100 - (elapsed / dwellTime) * 100;
+
+      if (percentage <= 0) {
+        onActivate(tile.action);
+        setProgress(0);
+      } else {
+        setProgress(percentage);
+        animationFrameId = requestAnimationFrame(updateProgress);
+      }
+    };
+
     if (hovering) {
-      const startTime = Date.now();
-      timer = setInterval(() => {
-        const elapsed = Date.now() - startTime;
-        const percentage = 100 - (elapsed / dwellTime) * 100;
-        if (percentage <= 0) {
-          clearInterval(timer);
-          onActivate(tile.action);
-          setHovering(false);
-          setProgress(100);
-        } else {
-          setProgress(percentage);
-        }
-      }, 50);
+      animationFrameId = requestAnimationFrame(updateProgress);
     } else {
-      setProgress(100);
+      startTime = null;
+      if (progress === 0)
+        setProgress(100);
     }
 
     return () => {
-      if (timer) clearInterval(timer);
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
     };
-  }, [hovering, onActivate, tile]);
+  }, [hovering, onActivate, tile, dwellTime]);
 
   return (
-    <div 
+    <div
       className="tile"
       style={tile.customStyle || {}}
       onMouseEnter={() => setHovering(true)}
-      onMouseLeave={() => setHovering(false)}
-      onClick={() => onActivate(tile.action)}
+      onMouseLeave={() => {
+        setHovering(false);
+        setProgress(100);
+      }}
+      onTouchStart={() => setHovering(true)}
+      onTouchEnd={() => {
+        setHovering(false);
+        setProgress(100);
+      }}
+      // onClick={() => onActivate(tile.action)}
     >
-      {/* Main letter */}
       <div className="label">
         {t(tile.label)}
       </div>
-
-      {/* Surrounding letters */}
-      {hovering && tile.surroundingLetters && tile.surroundingLetters.map((letter, index) => (
+      
+      {hovering && tile.surroundingLetters?.map((letter, index) => (
         <span
           key={index}
           className="surrounding-letter"
@@ -64,11 +77,15 @@ const Tile = ({ tile, onActivate, dwellTime }) => {
           {letter}
         </span>
       ))}
-
-      {/* Progress bar */}
+      
       {hovering && (
         <div className="progress-bar">
-          <div className="progress" style={{width: `${progress}%`}}></div>
+          <div 
+            className="progress" 
+            style={{
+              width: `${Math.max(0, Math.min(100, progress))}%`
+            }}
+          />
         </div>
       )}
     </div>
