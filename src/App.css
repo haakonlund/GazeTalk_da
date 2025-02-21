@@ -12,10 +12,10 @@
 /* Force Landscape Mode */
 @media screen and (orientation: portrait) {
   body {
-    transform: rotate(90deg);
+    /* transform: rotate(90deg); */
     transform-origin: left;
-    width: 100vh;
-    height: 100vw;
+    /* width: 100vh;
+    height: 100vw; */
     overflow: hidden;
     position: fixed;
     

@@ -29,7 +29,7 @@ import {
 } from './util/cursorUtils'
 
 
-let dwellTime = 500;
+let dwellTime = 2000;
 
 function App() {
   const [currentLayoutName, setCurrentLayoutName] = useState("main_menu");
@@ -37,6 +37,10 @@ function App() {
   const [isCapsOn, setIsCapsOn] = useState(false);
   const [alarmActive, setAlarmActive] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
+  const [letterSuggestions, setLetterSuggestions] = useState([])
+  const defaultLetterSuggestions  = useState(["e","t,","a","space","o","i"])
+  
+  
   const textAreaRef = useRef(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const layout = config.layouts[currentLayoutName] || config.layouts["main_menu"];
@@ -49,15 +53,10 @@ function App() {
 
 
   React.useEffect(() => {
-    if (textValue.trim() === "") {
-      setSuggestions([]);
-      return;
-    }
-    
+    const textUpToCursor = textValue.slice(0, globalCursorPosition.value)
 
     const fetchSuggestions = async () => {
 
-      const textUpToCursor = textValue.slice(0, globalCursorPosition.value)
       try {
         const response = await axios.post("https://cloudapidemo.azurewebsites.net/continuations", {
           locale: "en_US",
@@ -71,6 +70,47 @@ function App() {
     };
 
     fetchSuggestions();
+
+    const fetchLetterSuggestions = async () => {
+      try {
+        const response = await axios.post("https://cloudapidemo.azurewebsites.net/lettercontinuations", {
+          locale: "en_US",
+          prompt: textUpToCursor,
+        });
+        // setLetterSuggestions(response.data.continuations.slice(0, 6) || []);
+        const suggestionsString = response.data.continuations
+        let suggestionArray = []
+        for (let i = 0; i < suggestionsString.length; i++) {
+          suggestionArray.push(suggestionsString[i])
+        }
+        console.log("suggestionArray : ",suggestionArray)
+
+        if (suggestionsString) {
+          const topSuggestion = suggestionArray.slice(0, 7)
+          // insert space
+          let newArr = []
+          for (let i = 0; i < topSuggestion.length; i++) {
+            if (i == 3) {
+              newArr[i] = "space";
+              continue;
+            }
+            newArr[i] = topSuggestion[i]
+            
+          }
+          setLetterSuggestions(newArr);
+        } else {
+          setLetterSuggestions(defaultLetterSuggestions)
+        }
+      
+      } catch (error) {
+        console.error("Error fetching suggestions:", error);
+        setLetterSuggestions([]);
+        
+      }
+    }
+    
+    fetchLetterSuggestions();
+    console.log("letter suggestions : ", letterSuggestions)
   }, [textValue]);
 
   React.useEffect(() => {
@@ -130,8 +170,8 @@ function App() {
       updateGlobalCursorPosition(input.selectionStart - 1);
       setTextValue(newText);
 
-
-      setCurrentLayoutName("writing");
+      if (currentLayoutName !== "suggestions")
+        setCurrentLayoutName("writing");
     } else if (action.type === "delete_letter_edit") {
       const newText = textValue.slice(0, globalCursorPosition.value - 1) + textValue.slice(globalCursorPosition.value);
       updateGlobalCursorPosition(input.selectionStart - 1);
@@ -280,6 +320,26 @@ function App() {
     } else if (action.type === "decrease_text_font_size") {
       setTextFontSize(textFontSize > 0 ? textFontSize - 1 : textFontSize)
 
+    } else if (action.type === "insert_letter_suggestion") {
+       // insert the letter at the global cursor position
+
+
+       const letter = action.value === "space" ? " " : 
+                      isCapsOn ? action.value.toUpperCase() : action.value.toLowerCase();
+       const newText = textValue.slice(0, globalCursorPosition.value) + letter + textValue.slice(globalCursorPosition.value);
+       setTextValue(newText);
+       
+       updateGlobalCursorPosition(input.selectionStart + 1);
+       // always go back to writing layout after entering a letter
+       setCurrentLayoutName("writing");
+ 
+       // if the last letter was punctuation speak it
+       if (action.value === ".") {
+         const lastSentenceStart = getLastSentence(textValue)
+         const lastSentence = textValue.slice(lastSentenceStart, globalCursorPosition.value)
+         console.log("last sentence : ", lastSentence)
+         speakText(lastSentence)
+       }
     }
     input.focus();    
   };
@@ -294,6 +354,7 @@ function App() {
         fontSize={buttonFontSize}
         textFontSize={textFontSize}
         suggestions={suggestions}
+        letterSuggestions={letterSuggestions}
         dwellTime={dwellTime} />
       {alarmActive && <AlarmPopup onClose={() => setAlarmActive(false)} dwellTime={dwellTime} />}
     </div>

@@ -1,7 +1,7 @@
 import React from "react";
 import KeyboardGrid from "../components/KeyboardGrid";
 
-const GenericView = ({ layout, textValue, setTextValue, handleAction, suggestions, dwellTime,buttonFontSize,textFontSize }) => {
+const GenericView = ({ layout, textValue, setTextValue, handleAction, suggestions, letterSuggestions, dwellTime,buttonFontSize,textFontSize }) => {
   return (
     <div className="generic-view">
       <KeyboardGrid 
@@ -12,6 +12,7 @@ const GenericView = ({ layout, textValue, setTextValue, handleAction, suggestion
         fontSize={buttonFontSize}
         textFontSize={textFontSize}
         suggestions={suggestions}
+        letterSuggestions={letterSuggestions}
         dwellTime={dwellTime}
       />
     </div>

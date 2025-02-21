@@ -26,7 +26,7 @@ const Tile = ({ tile, onActivate, dwellTime }) => {
         if (percentage <= 0) {
           clearInterval(timer);
           onActivate(tile.action);
-          setHovering(false);
+          // setHovering(false);
           setProgress(100);
         } else {
           setProgress(percentage);
