@@ -170,8 +170,8 @@ function App() {
       updateGlobalCursorPosition(input.selectionStart - 1);
       setTextValue(newText);
 
-
-      setCurrentLayoutName("writing");
+      if (currentLayoutName !== "suggestions")
+        setCurrentLayoutName("writing");
     } else if (action.type === "delete_letter_edit") {
       const newText = textValue.slice(0, globalCursorPosition.value - 1) + textValue.slice(globalCursorPosition.value);
       updateGlobalCursorPosition(input.selectionStart - 1);
@@ -321,7 +321,25 @@ function App() {
       setTextFontSize(textFontSize > 0 ? textFontSize - 1 : textFontSize)
 
     } else if (action.type === "insert_letter_suggestion") {
-      console.log("todo")
+       // insert the letter at the global cursor position
+
+
+       const letter = action.value === "space" ? " " : 
+                      isCapsOn ? action.value.toUpperCase() : action.value.toLowerCase();
+       const newText = textValue.slice(0, globalCursorPosition.value) + letter + textValue.slice(globalCursorPosition.value);
+       setTextValue(newText);
+       
+       updateGlobalCursorPosition(input.selectionStart + 1);
+       // always go back to writing layout after entering a letter
+       setCurrentLayoutName("writing");
+ 
+       // if the last letter was punctuation speak it
+       if (action.value === ".") {
+         const lastSentenceStart = getLastSentence(textValue)
+         const lastSentence = textValue.slice(lastSentenceStart, globalCursorPosition.value)
+         console.log("last sentence : ", lastSentence)
+         speakText(lastSentence)
+       }
     }
     input.focus();    
   };
