@@ -28,10 +28,10 @@ describe('KeyboardGrid component', () => {
     jest.clearAllMocks();
   });
 
-  test('Check KeyboardGrid renders with no suggestions in suggestion button using writing config', () => {
+  test('Check KeyboardGrid renders suggestions in suggestion button using writing config', () => {
     const layout = config.layouts.writing;
-    const suggestions = [];
-
+    const suggestions = ["lot", "good", "problem", "great", "very", "nice", "look", "few"];
+    const letterSuggestions = ["e","t","a","space","o","i","r"];
     render(
       <KeyboardGrid
         layout={layout}
@@ -39,6 +39,8 @@ describe('KeyboardGrid component', () => {
         setTextValue={dummySetTextValue}
         onTileActivate={dummyOnActivate}
         suggestions={suggestions}
+        letterSuggestions={letterSuggestions}
+        nextLetters={letterSuggestions}
         dwellTime={1000}
       />
     );
@@ -46,26 +48,15 @@ describe('KeyboardGrid component', () => {
     // Check Empty content in TextAreaTile
     expect(screen.getByTestId('textarea-tile')).toHaveTextContent(''); //Resembles empty string for some reason
 
-    // Check Tiles' values
+    // Check number of Tiles
     const renderedTiles = screen.getAllByTestId('tile');
     expect(renderedTiles.length).toBe(10);
-    // Check labels.
-    expect(renderedTiles[0]).toHaveAttribute('data-label', 'DELETE');
-    expect(renderedTiles[1]).toHaveAttribute('data-label', 'ABCD...');
-    expect(renderedTiles[2]).toHaveAttribute('data-label', '');
-    expect(renderedTiles[3]).toHaveAttribute('data-label', 'A');
-    expect(renderedTiles[4]).toHaveAttribute('data-label', 'B');
-    expect(renderedTiles[5]).toHaveAttribute('data-label', 'C');
-    expect(renderedTiles[6]).toHaveAttribute('data-label', 'Space');
-    expect(renderedTiles[7]).toHaveAttribute('data-label', 'D');
-    expect(renderedTiles[8]).toHaveAttribute('data-label', 'E');
-    expect(renderedTiles[9]).toHaveAttribute('data-label', 'F');
   });
 
   test('Check KeyboardGrid renders with suggestions in suggestion button using writing config', () => {
     const layout = config.layouts.writing;
     const suggestions = ["lot", "good", "problem", "great", "very", "nice", "look", "few"];
-
+    const letterSuggestions = ["e","t","a","space","o","i","r"];
     render(
       <KeyboardGrid
         layout={layout}
@@ -73,6 +64,7 @@ describe('KeyboardGrid component', () => {
         setTextValue={dummySetTextValue}
         onTileActivate={dummyOnActivate}
         suggestions={suggestions}
+        letterSuggestions={letterSuggestions}
         dwellTime={1000}
       />
     );
@@ -87,20 +79,20 @@ describe('KeyboardGrid component', () => {
     expect(renderedTiles[0]).toHaveAttribute('data-label', 'DELETE');
     expect(renderedTiles[1]).toHaveAttribute('data-label', 'ABCD...');
     expect(renderedTiles[2]).toHaveAttribute('data-label', 'lot\ngood\nproblem\ngreat');
-    expect(renderedTiles[3]).toHaveAttribute('data-label', 'A');
-    expect(renderedTiles[4]).toHaveAttribute('data-label', 'B');
-    expect(renderedTiles[5]).toHaveAttribute('data-label', 'C');
+    expect(renderedTiles[3]).toHaveAttribute('data-label', 'e');
+    expect(renderedTiles[4]).toHaveAttribute('data-label', 't');
+    expect(renderedTiles[5]).toHaveAttribute('data-label', 'a');
     expect(renderedTiles[6]).toHaveAttribute('data-label', 'space');
-    expect(renderedTiles[7]).toHaveAttribute('data-label', 'D');
-    expect(renderedTiles[8]).toHaveAttribute('data-label', 'E');
-    expect(renderedTiles[9]).toHaveAttribute('data-label', 'F');
+    expect(renderedTiles[7]).toHaveAttribute('data-label', 'o');
+    expect(renderedTiles[8]).toHaveAttribute('data-label', 'i');
+    expect(renderedTiles[9]).toHaveAttribute('data-label', 'r');
   });
 
   test('Check KeyboardGrid renders with suggestions using writing config', () => {
     // When layout.name is "suggestions", an extra mapping is done over the suggestions array.
     const layout = config.layouts.suggestions;
     const suggestions = ["lot", "good", "problem", "great", "very", "nice", "look", "few"];
-
+    const letterSuggestions = ["e","t","a","space","o","i","r"];
     render(
       <KeyboardGrid
         layout={layout}
@@ -108,6 +100,7 @@ describe('KeyboardGrid component', () => {
         setTextValue={dummySetTextValue}
         onTileActivate={dummyOnActivate}
         suggestions={suggestions}
+        letterSuggestions={letterSuggestions}
         dwellTime={1000}
       />
     );

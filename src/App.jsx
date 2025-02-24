@@ -39,7 +39,7 @@ function App() {
   const [suggestions, setSuggestions] = useState([]);
   const [letterSuggestions, setLetterSuggestions] = useState([])
   const [nextLetters, setNextLetters] = useState([[],[],[],[],[],[],[]])
-  const defaultLetterSuggestions  = useState(["e","t,","a","space","o","i"])
+  const defaultLetterSuggestions  = useState(["e","t","a","space","o","i"])
   
   
   const textAreaRef = useRef(null);

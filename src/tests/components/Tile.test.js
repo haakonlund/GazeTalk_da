@@ -29,12 +29,12 @@ describe("Tile component", () => {
         expect(screen.getByText(tileLabel)).toBeInTheDocument();
     });
 
-    test("Call onActivate", () => {
+    test("Clicking does not work on button", () => {
         render(<Tile tile={tile} onActivate={onActivateMock} dwellTime={1000} />);
         const tileDiv = screen.getByText(tileLabel).closest(".tile");
         fireEvent.click(tileDiv);
-        expect(onActivateMock).toHaveBeenCalledWith(curAction);
-    });
+        expect(onActivateMock).not.toHaveBeenCalled();
+      });
 
     test("Progress bar shows on hover", () => {
         render(<Tile tile={tile} onActivate={onActivateMock} dwellTime={1000} />);

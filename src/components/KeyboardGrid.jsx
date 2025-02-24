@@ -2,7 +2,19 @@ import React from "react";
 import TextAreaTile from "./TextAreaTile";
 import Tile from "./Tile";
 
-const KeyboardGrid = ({ layout, textValue, setTextValue, onTileActivate, suggestions, letterSuggestions, handleTextAreaChange, dwellTime, buttonFontSize, textFontSize, nextLetters,getNext }) => {
+const KeyboardGrid = ({ 
+        layout, 
+        textValue,
+        setTextValue, 
+        onTileActivate, 
+        suggestions, 
+        letterSuggestions = ["e","t","a","space","o","i","r"], 
+        handleTextAreaChange, 
+        dwellTime, 
+        buttonFontSize, 
+        textFontSize, 
+        nextLetters = [],
+        getNext }) => {
   return (
         <div className="keyboard-grid">
         <TextAreaTile 

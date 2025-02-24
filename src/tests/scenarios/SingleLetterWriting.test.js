@@ -41,10 +41,11 @@ describe('KeyboardGrid component', () => {
     jest.clearAllMocks();
   });
 
-  test('Check Writing ABC ', () => {
+  test('Check Writing \"eat\"', () => {
     const layout = config.layouts.writing;
     const suggestions = [];
     const dwellTime = 1000;
+    const letterSuggestions = ["e","t","a","space","o","i","r"];
     render(
       <KeyboardGridWrapper
         layout={layout}
@@ -52,46 +53,47 @@ describe('KeyboardGrid component', () => {
         setTextValue={dummySetTextValue}
         onTileActivate={dummyOnActivate}
         suggestions={suggestions}
+        letterSuggestions={letterSuggestions}
         dwellTime={dwellTime}
       />
     );
     // Check Empty content in TextAreaTile
     expect(screen.getByTestId('textarea-tile')).toHaveTextContent(''); //Resembles empty string for some reason
 
-    // Click on A
-    const tileA = screen.getByText('A');
+    // Click on e
+    const tile1 = screen.getByText('e');
     jest.useFakeTimers();
-    fireEvent.mouseEnter(tileA); 
+    fireEvent.mouseEnter(tile1); 
     act(() => {
         jest.advanceTimersByTime(dwellTime); 
     });
-    fireEvent.mouseLeave(tileA);
+    fireEvent.mouseLeave(tile1);
     jest.useRealTimers();
 
-    expect(screen.getByTestId('textarea-tile')).toHaveTextContent('A');
+    expect(screen.getByTestId('textarea-tile')).toHaveTextContent('e');
 
-    // Click on B
-    const tileB = screen.getByText('B');
+    // Click on a
+    const tile2 = screen.getByText('a');
     jest.useFakeTimers();
-    fireEvent.mouseEnter(tileB); 
+    fireEvent.mouseEnter(tile2); 
     act(() => {
         jest.advanceTimersByTime(dwellTime); 
     });
-    fireEvent.mouseLeave(tileB);
+    fireEvent.mouseLeave(tile2);
     jest.useRealTimers();
 
-    expect(screen.getByTestId('textarea-tile')).toHaveTextContent('AB');
+    expect(screen.getByTestId('textarea-tile')).toHaveTextContent('ea');
 
-    // Click on C
-    const tileC = screen.getByText('C');
+    // Click on t
+    const tile3 = screen.getByText('t');
     jest.useFakeTimers();
-    fireEvent.mouseEnter(tileC); 
+    fireEvent.mouseEnter(tile3); 
     act(() => {
         jest.advanceTimersByTime(dwellTime); 
     });
-    fireEvent.mouseLeave(tileC);
+    fireEvent.mouseLeave(tile3);
     jest.useRealTimers();
 
-    expect(screen.getByTestId('textarea-tile')).toHaveTextContent('ABC');
+    expect(screen.getByTestId('textarea-tile')).toHaveTextContent('eat');
   });
 });
