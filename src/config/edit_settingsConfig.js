@@ -17,8 +17,8 @@ export const edit_settingsConfig = {
         },
         {
           type: "switch",
-          label: "linger time",
-          action: { type: "switch_layout", layout: "edit_lingertime" }
+          label: "dwell time",
+          action: { type: "switch_layout", layout: "edit_dwelltime" }
         },
         {
           type: "switch",

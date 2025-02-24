@@ -12,7 +12,7 @@ import { main_menuConfig } from "./main_menuConfig";
 import { writing_submenuConfig } from "./writing_submenuConfig";
 import { navigation_menuConfig } from "./navigation_menuConfig";
 import { edit_menuConfig } from "./edit_menuConfig";
-import { edit_lingertimeConfig } from "./edit_lingertimeConfig";
+import { edit_dwelltimeConfig } from "./edit_dwelltimeConfig";
 import { edit_settingsConfig } from "./edit_settingsConfig";
 import { more_function_menuConfig } from "./more_function_menuConfig";
 import { special_chars1Config } from "./special_chars1Config";
@@ -29,7 +29,7 @@ export const config = {
       "writing_submenu": writing_submenuConfig,
       "navigation_menu": navigation_menuConfig,
       "edit_menu": edit_menuConfig,
-      "edit_lingertime": edit_lingertimeConfig,
+      "edit_dwelltime": edit_dwelltimeConfig,
       "edit_settings": edit_settingsConfig,
       "more_function_menu": more_function_menuConfig,
       "ABCDEFGH_menu": ABCDEFGH_menuConfig,

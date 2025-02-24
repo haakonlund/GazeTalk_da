@@ -33,7 +33,7 @@ const KeyboardGrid = ({ layout, textValue, setTextValue, onTileActivate, suggest
                   ...tile, 
                   label: suggestionsPreview || "", 
                   action: { type: "show_suggestions" }, 
-                  customStyle: { fontSize: `${buttonFontSize}px`, whiteSpace: "pre-line", color : "00ff00" }
+                  customStyle: { whiteSpace: "pre-line", color: "#00ff00" }
                 }} 
                 onActivate={onTileActivate}
                 dwellTime={dwellTime*2}
@@ -54,8 +54,7 @@ const KeyboardGrid = ({ layout, textValue, setTextValue, onTileActivate, suggest
                 color: 
                   tile.label ==  "back" ? "#0f0" : 
                   tile.type == "switch" ? "#ff0" :
-                                          "#fff",
-                fontSize : `${buttonFontSize}px`
+                                          "#fff"
           }}}
             onActivate={onTileActivate} 
             dwellTime={dwellTime} />;

@@ -1,5 +1,5 @@
-export const edit_lingertimeConfig = {
-    name: "edit_lingertime",
+export const edit_dwelltimeConfig = {
+    name: "edit_dwelltime",
     tiles: [
         {
           type: "textarea",
@@ -13,47 +13,47 @@ export const edit_lingertimeConfig = {
         {
           type: "switch",
           label: "0,5 sekunder",
-          action: { type: "change_linger_time", value: "500" }
+          action: { type: "change_dwell_time", value: "500" }
+        },
+        {
+          type: "switch",
+          label: "0,75 sekund",
+          action: { type: "change_dwell_time", value: "600" }
         },
         {
           type: "switch",
           label: "1 sekund",
-          action: { type: "change_linger_time", value: "1000" }
+          action: { type: "change_dwell_time", value: "1000" }
         },
         {
           type: "switch",
-          label: "1,5 sekund",
-          action: { type: "change_linger_time", value: "1500" }
+          label: "1,25 sekunder",
+          action: { type: "change_dwell_time", value: "1250" }
+        },
+        {
+          type: "switch",
+          label: "1,5 sekunder",
+          action: { type: "change_dwell_time", value: "1500" }
+        },
+        {
+          type: "switch",
+          label: "1,75 sekunder",
+          action: { type: "change_dwell_time", value: "1750" }
         },
         {
           type: "switch",
           label: "2 sekunder",
-          action: { type: "change_linger_time", value: "2000" }
+          action: { type: "change_dwell_time", value: "2000" }
         },
         {
           type: "switch",
           label: "2,5 sekunder",
-          action: { type: "change_linger_time", value: "2500" }
+          action: { type: "change_dwell_time", value: "2500" }
         },
         {
           type: "switch",
           label: "3 sekunder",
-          action: { type: "change_linger_time", value: "3000" }
-        },
-        {
-          type: "switch",
-          label: "5 sekunder",
-          action: { type: "change_linger_time", value: "5000" }
-        },
-        {
-          type: "switch",
-          label: "7,5 sekunder",
-          action: { type: "change_linger_time", value: "7500" }
-        },
-        {
-          type: "switch",
-          label: "10 sekunder",
-          action: { type: "change_linger_time", value: "1000" }
+          action: { type: "change_dwell_time", value: "3000" }
         }
       ]
   };
