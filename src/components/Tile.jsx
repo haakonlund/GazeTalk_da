@@ -47,7 +47,7 @@ const Tile = ({ tile, onActivate, dwellTime }) => {
       style={tile.customStyle || {}}
       onMouseEnter={() => setHovering(true)}
       onMouseLeave={() => setHovering(false)}
-      onClick={() => onActivate(tile.action)}
+      // onClick={() => onActivate(tile.action)}
     >
       {/* Main letter */}
       <div className="label">

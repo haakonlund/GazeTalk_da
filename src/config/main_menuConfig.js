@@ -23,8 +23,9 @@ export const main_menuConfig = {
           action: { type: "play_alarm" }
         },
         {
-          type: "empty",
-          label: "",
+          type: "switch",
+          label: "Pause",
+          action :{type :"switch_layout", layout : "pause" }
         },
         {
           type: "empty",
