@@ -227,7 +227,7 @@ function App() {
       // insert a newline at the global cursor position 
       const newText = textValue.slice(0, globalCursorPosition.value) + "\n" + textValue.slice(globalCursorPosition.value, textValue.length);
       setTextValue(newText);
-      // move the cursor to the next line after inserting a newline 
+      // move the cursor to the next line after inserting a newline
       updateGlobalCursorPosition(globalCursorPosition.value + 1);
     } else if (action.type === "switch_layout") {
       if (config.layouts[action.layout]) {
