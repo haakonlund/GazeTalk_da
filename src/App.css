@@ -57,9 +57,9 @@ html, body {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  overflow: visible;
+  overflow: hidden;
   padding: 5px;
-  font-size: 2rem;
+  font-size: var(--tile-font-size, 2rem);
   box-sizing: border-box;
   color: #fff;
 }

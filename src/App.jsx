@@ -54,6 +54,19 @@ function App() {
 
 
   React.useEffect(() => {
+    const setTileFontSize = () => {
+      const tileHeight = window.innerHeight / 3;
+      const maxAllowedFontSize = tileHeight * 0.4;
+      const newTileFontSize = Math.min(buttonFontSize, maxAllowedFontSize);
+      console.log(buttonFontSize);
+      document.documentElement.style.setProperty('--tile-font-size', `${newTileFontSize}px`);
+    };
+    setTileFontSize();
+    window.addEventListener("resize", setTileFontSize);
+    return () => window.removeEventListener("resize", setTileFontSize);
+  }, [buttonFontSize]);
+
+  React.useEffect(() => {
     const textUpToCursor = textValue.slice(0, globalCursorPosition.value)
 
     const fetchSuggestions = async () => {
@@ -357,7 +370,7 @@ function App() {
     } else if (action.type === "change_language") {
       // language = action.value;
       changeLanguage(action.value);
-    } else if (action.type === "change_linger_time") {
+    } else if (action.type === "change_dwell_time") {
       dwellTime = parseFloat(action.value);
       let goBack = {
         type: "switch_layout", layout: "main_menu"
@@ -368,10 +381,11 @@ function App() {
     } else if (action.type === 'close_alarm') {
       setAlarmActive(false);
     } else if (action.type === "increase_button_font_size") {
+      console.log("increase button font size ", buttonFontSize);
       setButtonFontSize(buttonFontSize < 96 ? buttonFontSize + 1 : buttonFontSize)
     } else if (action.type === "decrease_button_font_size") {
       setButtonFontSize(buttonFontSize > 0 ? buttonFontSize - 1 : buttonFontSize)
-
+      console.log("decrease button font size ", buttonFontSize);
     } else if (action.type === "increase_text_font_size") {
       setTextFontSize(textFontSize < 96 ? textFontSize + 1 : textFontSize)
     } else if (action.type === "decrease_text_font_size") {
