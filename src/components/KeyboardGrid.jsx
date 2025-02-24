@@ -2,8 +2,8 @@ import React from "react";
 import TextAreaTile from "./TextAreaTile";
 import Tile from "./Tile";
 
-const KeyboardGrid = ({ layout, textValue, setTextValue, onTileActivate, suggestions, letterSuggestions, handleTextAreaChange, dwellTime, buttonFontSize, textFontSize }) => {
-    return (
+const KeyboardGrid = ({ layout, textValue, setTextValue, onTileActivate, suggestions, letterSuggestions, handleTextAreaChange, dwellTime, buttonFontSize, textFontSize, nextLetters,getNext }) => {
+  return (
         <div className="keyboard-grid">
         <TextAreaTile 
           value={textValue} 
@@ -82,6 +82,7 @@ const KeyboardGrid = ({ layout, textValue, setTextValue, onTileActivate, suggest
               { 
                 label: suggestion, 
                 action: { type: "insert_letter_suggestion", value: suggestion },
+                surroundingLetters : nextLetters[i]
               }
                 
               } 
