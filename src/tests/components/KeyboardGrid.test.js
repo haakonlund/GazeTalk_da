@@ -90,7 +90,7 @@ describe('KeyboardGrid component', () => {
     expect(renderedTiles[3]).toHaveAttribute('data-label', 'A');
     expect(renderedTiles[4]).toHaveAttribute('data-label', 'B');
     expect(renderedTiles[5]).toHaveAttribute('data-label', 'C');
-    expect(renderedTiles[6]).toHaveAttribute('data-label', 'aølsikjdhaSILJDHKBGA');
+    expect(renderedTiles[6]).toHaveAttribute('data-label', 'space');
     expect(renderedTiles[7]).toHaveAttribute('data-label', 'D');
     expect(renderedTiles[8]).toHaveAttribute('data-label', 'E');
     expect(renderedTiles[9]).toHaveAttribute('data-label', 'F');
