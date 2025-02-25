@@ -7,6 +7,7 @@ import { globalCursorPosition, cursorEventTarget, updateGlobalCursorPosition } f
 
 import GenericView from "./views/GenericView";
 import AlarmPopup from "./components/AlarmPopup";
+import PausePopup from "./components/PausePopup";
 import { config } from "./config/config";
 import {speakText} from './singleton/textToSpeachSingleton'
 import {
@@ -36,6 +37,7 @@ function App() {
   const [textValue, setTextValue] = useState("");
   const [isCapsOn, setIsCapsOn] = useState(false);
   const [alarmActive, setAlarmActive] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
   const [letterSuggestions, setLetterSuggestions] = useState([])
   const [nextLetters, setNextLetters] = useState([[],[],[],[],[],[],[]])
@@ -412,6 +414,9 @@ function App() {
          speakText(lastSentence)
        }
     }
+    if (action.type === "toggle_pause") {
+      setIsPaused((prev) => !prev);
+    }
     input.focus();    
   };
 
@@ -429,6 +434,13 @@ function App() {
         nextLetters={nextLetters}
         dwellTime={dwellTime} />
       {alarmActive && <AlarmPopup onClose={() => setAlarmActive(false)} dwellTime={dwellTime} />}
+        {
+          // Uncomment to show debug button
+          //<PausePopup isPaused={isPaused} /> 
+        }
+        {
+          //<button onClick={() => setIsPaused((prev) => !prev)}>Toggle Pause</button> 
+        }
     </div>
   );
 }
