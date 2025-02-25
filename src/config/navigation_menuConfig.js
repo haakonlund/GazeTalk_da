@@ -1,4 +1,5 @@
 export const navigation_menuConfig = {
+    name : "navigation_menu",
     tiles : [
         {
           type: "textarea",

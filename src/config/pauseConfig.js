@@ -1,4 +1,5 @@
-export const pause = {
+export const pauseConfig = {
+    name: "pause",
     tiles: [
         {
           type: "textarea",

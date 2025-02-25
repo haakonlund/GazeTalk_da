@@ -32,8 +32,8 @@ import {
 
 let dwellTime = 2000;
 
-function App() {
-  const [currentLayoutName, setCurrentLayoutName] = useState("main_menu");
+function App({ initialLayout = "main_menu" }) {
+  const [currentLayoutName, setCurrentLayoutName] = useState(initialLayout);
   const [textValue, setTextValue] = useState("");
   const [isCapsOn, setIsCapsOn] = useState(false);
   const [alarmActive, setAlarmActive] = useState(false);
@@ -60,7 +60,6 @@ function App() {
       const tileHeight = window.innerHeight / 3;
       const maxAllowedFontSize = tileHeight * 0.4;
       const newTileFontSize = Math.min(buttonFontSize, maxAllowedFontSize);
-      console.log(buttonFontSize);
       document.documentElement.style.setProperty('--tile-font-size', `${newTileFontSize}px`);
     };
     setTileFontSize();
@@ -111,7 +110,6 @@ function App() {
           for (let i = 0; i < suggestionsString.length; i++) {
             suggestionArray.push(suggestionsString[i])
           }
-          console.log("suggestionArray : ",suggestionArray)
 
           //  if (suggestionsString) {
           const topSuggestion = suggestionArray.slice(0, 7)
@@ -150,13 +148,11 @@ function App() {
         // }
         // console.log("suggestionArray : ",suggestionArray)
         const currentSuggestion = (await getSug(textUpToCursor))
-        console.log("currentSuggestion : ",currentSuggestion)
         setLetterSuggestions(currentSuggestion)
         const letterSuggestionsArray = []
         for (let i = 0; i < 7; i++) {
           if (currentSuggestion[i] === "space") continue;
           const nextSug = await getSug(textUpToCursor + currentSuggestion[i])
-          console.log("nextSug", stripSpace(nextSug))
           letterSuggestionsArray[i] = stripSpace(nextSug)
         }
         setNextLetters(letterSuggestionsArray);
@@ -182,7 +178,6 @@ function App() {
     }
     
     fillLetterSuggestions();
-    console.log("letter suggestions : ", letterSuggestions)
   }, [textValue]);
 
   React.useEffect(() => {
@@ -221,7 +216,6 @@ function App() {
       if (action.value === ".") {
         const lastSentenceStart = getLastSentence(textValue)
         const lastSentence = textValue.slice(lastSentenceStart, globalCursorPosition.value)
-        console.log("last sentence : ", lastSentence)
         speakText(lastSentence)
       }
 
@@ -383,15 +377,13 @@ function App() {
     } else if (action.type === 'close_alarm') {
       setAlarmActive(false);
     } else if (action.type === "increase_button_font_size") {
-      console.log("increase button font size ", buttonFontSize);
-      setButtonFontSize(buttonFontSize < 96 ? buttonFontSize + 1 : buttonFontSize)
+      setButtonFontSize(buttonFontSize < 96 ? buttonFontSize + 1 : buttonFontSize);
     } else if (action.type === "decrease_button_font_size") {
-      setButtonFontSize(buttonFontSize > 0 ? buttonFontSize - 1 : buttonFontSize)
-      console.log("decrease button font size ", buttonFontSize);
+      setButtonFontSize(buttonFontSize > 0 ? buttonFontSize - 1 : buttonFontSize);
     } else if (action.type === "increase_text_font_size") {
-      setTextFontSize(textFontSize < 96 ? textFontSize + 1 : textFontSize)
+      setTextFontSize(textFontSize < 96 ? textFontSize + 1 : textFontSize);
     } else if (action.type === "decrease_text_font_size") {
-      setTextFontSize(textFontSize > 0 ? textFontSize - 1 : textFontSize)
+      setTextFontSize(textFontSize > 0 ? textFontSize - 1 : textFontSize);
 
     } else if (action.type === "insert_letter_suggestion") {
        // insert the letter at the global cursor position
@@ -410,7 +402,6 @@ function App() {
        if (action.value === ".") {
          const lastSentenceStart = getLastSentence(textValue)
          const lastSentence = textValue.slice(lastSentenceStart, globalCursorPosition.value)
-         console.log("last sentence : ", lastSentence)
          speakText(lastSentence)
        }
     }

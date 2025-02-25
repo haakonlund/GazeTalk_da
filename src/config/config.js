@@ -18,8 +18,8 @@ import { more_function_menuConfig } from "./more_function_menuConfig";
 import { special_chars1Config } from "./special_chars1Config";
 import { special_chars2Config } from "./special_chars2Config";
 import { special_chars3Config } from "./special_chars3Config";
-import { adjust_font_size } from "./adjust_font_sizeConfig"
-import {pause } from "./pause"
+import { adjust_font_sizeConfig } from "./adjust_font_sizeConfig"
+import {pauseConfig } from "./pauseConfig"
 export const config = {
   layouts: {
       "numbers2": numbers2Config,
@@ -41,7 +41,7 @@ export const config = {
       "special_chars1": special_chars1Config,
       "special_chars2": special_chars2Config,
       "special_chars3": special_chars3Config,
-      "adjust_font_size" : adjust_font_size,
-      "pause" : pause
+      "adjust_font_size" : adjust_font_sizeConfig,
+      "pause" : pauseConfig
     }
 };
