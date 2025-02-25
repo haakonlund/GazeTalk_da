@@ -27,7 +27,7 @@ import {
   getPreviousWord, 
   getPreviousSentence
 } from './util/cursorUtils'
-
+import {rank, updateRank, stripSpace} from "./util/ranking"
 
 let dwellTime = 2000;
 
@@ -98,10 +98,8 @@ function App() {
         
       }
     }
-
+    
     const fillLetterSuggestions = async () => {
-      
-        // setLetterSuggestions(response.data.continuations.slice(0, 6) || []);
         const getSug = async (text) => {
           const response = await fetchLetterSuggestions(text)
           const suggestionsString = response.data.continuations
@@ -109,9 +107,6 @@ function App() {
           for (let i = 0; i < suggestionsString.length; i++) {
             suggestionArray.push(suggestionsString[i])
           }
-          console.log("suggestionArray : ",suggestionArray)
-
-          //  if (suggestionsString) {
           const topSuggestion = suggestionArray.slice(0, 7)
           // insert space
           let newArr = []
@@ -122,65 +117,25 @@ function App() {
               continue;
             }
             newArr[i] = topSuggestion[i]
-            // }
           }
           return newArr
       }
-      const stripSpace = (arr) => {
-        let newArr = []
-        let offset = 0
-        for (let i = 0; i < arr.length; i++) {
-          if (arr[i] === "space") {
-            offset = 1;
-            continue
-          }
-          newArr[i - offset] = arr[i];
-          
-        }
-        return newArr;
-      }
+    
         
-        // const response = await fetchLetterSuggestions(textUpToCursor)
-        // const suggestionsString = response.data.continuations
-        // let suggestionArray = []
-        // for (let i = 0; i < suggestionsString.length; i++) {
-        //   suggestionArray.push(suggestionsString[i])
-        // }
-        // console.log("suggestionArray : ",suggestionArray)
-        const currentSuggestion = (await getSug(textUpToCursor))
-        console.log("currentSuggestion : ",currentSuggestion)
-        setLetterSuggestions(currentSuggestion)
-        const letterSuggestionsArray = []
-        for (let i = 0; i < 7; i++) {
-          if (currentSuggestion[i] === "space") continue;
-          const nextSug = await getSug(textUpToCursor + currentSuggestion[i])
-          console.log("nextSug", stripSpace(nextSug))
-          letterSuggestionsArray[i] = stripSpace(nextSug)
-        }
-        setNextLetters(letterSuggestionsArray);
-
-
-        // if (suggestionsString) {
-        //   const topSuggestion = suggestionArray.slice(0, 7)
-        //   // insert space
-        //   let newArr = []
-        //   for (let i = 0; i < topSuggestion.length; i++) {
-        //     if (i == 3) {
-        //       newArr[i] = "space";
-        //       continue;
-        //     }
-        //     newArr[i] = topSuggestion[i]
-            
-        //   }
-        //   setLetterSuggestions(newArr);
-        // } else {
-        //   setLetterSuggestions(defaultLetterSuggestions)
-        // }
-      
+      const currentSuggestion = (await getSug(textUpToCursor))
+      rank(currentSuggestion)
+      setLetterSuggestions(currentSuggestion)
+      const letterSuggestionsArray = []
+      for (let i = 0; i < 7; i++) {
+        if (currentSuggestion[i] === "space") continue;
+        const nextSug = await getSug(textUpToCursor + currentSuggestion[i])
+        letterSuggestionsArray[i] = stripSpace(nextSug)
+      }
+      setNextLetters(letterSuggestionsArray);
     }
     
     fillLetterSuggestions();
-    console.log("letter suggestions : ", letterSuggestions)
+
   }, [textValue]);
 
   React.useEffect(() => {

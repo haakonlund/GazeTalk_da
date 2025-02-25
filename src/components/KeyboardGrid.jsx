@@ -96,9 +96,10 @@ const KeyboardGrid = ({
                 surroundingLetters : nextLetters[i]
               }
                 
-              } 
+            } 
             onActivate={onTileActivate} 
             dwellTime={dwellTime} 
+            otherLetters={letterSuggestions}
           />
         ))}
 

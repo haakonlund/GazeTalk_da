@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { updateRank, stripSpace } from "../util/ranking";
 
-const Tile = ({ tile, onActivate, dwellTime }) => {
+const Tile = ({ tile, onActivate, dwellTime, otherLetters }) => {
   const { t } = useTranslation();
   const [hovering, setHovering] = useState(false);
   const [progress, setProgress] = useState(100);
@@ -26,6 +27,9 @@ const Tile = ({ tile, onActivate, dwellTime }) => {
         if (percentage <= 0) {
           clearInterval(timer);
           onActivate(tile.action);
+          const letter = tile.label;
+          if (otherLetters)
+            updateRank(stripSpace(otherLetters), letter)
           // setHovering(false);
           setProgress(100);
         } else {
