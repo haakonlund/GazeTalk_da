@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { updateRank, stripSpace } from "../util/ranking";
 
-const Tile = ({ tile, onActivate, dwellTime, otherLetters }) => {
+const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected }) => {
   const { t } = useTranslation();
   const [hovering, setHovering] = useState(false);
   const [progress, setProgress] = useState(100);
@@ -28,8 +28,12 @@ const Tile = ({ tile, onActivate, dwellTime, otherLetters }) => {
           clearInterval(timer);
           onActivate(tile.action);
           const letter = tile.label;
-          if (otherLetters)
+          if (otherLetters) {
             updateRank(stripSpace(otherLetters), letter)
+            if (onLetterSelected) {
+              onLetterSelected(stripSpace(otherLetters), letter);
+            }
+          }
           // setHovering(false);
           setProgress(100);
         } else {

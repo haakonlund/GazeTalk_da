@@ -14,7 +14,7 @@ const KeyboardGrid = ({
         buttonFontSize, 
         textFontSize, 
         nextLetters = [],
-        getNext }) => {
+        handleLetterSelected }) => {
   return (
         <div className="keyboard-grid">
         <TextAreaTile 
@@ -100,6 +100,7 @@ const KeyboardGrid = ({
             onActivate={onTileActivate} 
             dwellTime={dwellTime} 
             otherLetters={letterSuggestions}
+            onLetterSelected={handleLetterSelected}
           />
         ))}
 

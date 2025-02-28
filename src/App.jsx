@@ -40,7 +40,7 @@ function App() {
   const [letterSuggestions, setLetterSuggestions] = useState([])
   const [nextLetters, setNextLetters] = useState([[],[],[],[],[],[],[]])
   const defaultLetterSuggestions  = useState(["e","t","a","space","o","i"])
-  
+  const [nextLetterSuggestion,setNextLetterSuggestion]  = useState(null)
   
   const textAreaRef = useRef(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -51,7 +51,20 @@ function App() {
   const [textFontSize, setTextFontSize] = useState(20)
 
 
-
+  const handleLetterSelected = (otherLetters, selectedLetter) => {
+    // Do whatever you need with the values here
+    console.log("Other letters:", otherLetters, "Selected:", selectedLetter);
+    let index = 0;
+    for (let i = 0; i < otherLetters.length; i++) {
+      if ( otherLetters[i] === selectedLetter) {
+        index = i;
+      }
+    }
+    if (nextLetters[index].length !== 0) {
+      setNextLetterSuggestion(nextLetters[index])
+      
+    }
+  };
 
   React.useEffect(() => {
     const setTileFontSize = () => {
@@ -107,30 +120,36 @@ function App() {
           for (let i = 0; i < suggestionsString.length; i++) {
             suggestionArray.push(suggestionsString[i])
           }
-          const topSuggestion = suggestionArray.slice(0, 7)
-          // insert space
-          let newArr = []
-          for (let i = 0; i < topSuggestion.length; i++) {
-            if (i == 3) {
-    
-              newArr[i] = "space";
-              continue;
-            }
-            newArr[i] = topSuggestion[i]
-          }
-          return newArr
+          const topSuggestion = suggestionArray.slice(0, 6)
+          topSuggestion.reverse()
+          return topSuggestion
       }
-    
-        
-      const currentSuggestion = (await getSug(textUpToCursor))
-      rank(currentSuggestion)
-      setLetterSuggestions(currentSuggestion)
+      // if there is already a selection use that
+      let rankedSuggestion = []
+      if (nextLetterSuggestion) {
+        rankedSuggestion = nextLetterSuggestion
+      } else {
+        const currentSuggestion = (await getSug(textUpToCursor))
+        rankedSuggestion = rank(currentSuggestion, null, null)
+      }
+      setNextLetterSuggestion(null)
+      // insert space
+
       const letterSuggestionsArray = []
       for (let i = 0; i < 7; i++) {
-        if (currentSuggestion[i] === "space") continue;
-        const nextSug = await getSug(textUpToCursor + currentSuggestion[i])
-        letterSuggestionsArray[i] = stripSpace(nextSug)
+        if (i === 3) {
+          letterSuggestionsArray[i] = []
+          continue;
+        };
+        const nextSug = await getSug(textUpToCursor + rankedSuggestion[i])
+        letterSuggestionsArray[i] = rank(nextSug, rankedSuggestion[i], i)
       }
+      rankedSuggestion.splice(3,0,"space") // add space
+      
+      setLetterSuggestions(rankedSuggestion)
+
+
+
       setNextLetters(letterSuggestionsArray);
     }
     
@@ -382,7 +401,9 @@ function App() {
         suggestions={suggestions}
         letterSuggestions={letterSuggestions}
         nextLetters={nextLetters}
-        dwellTime={dwellTime} />
+        dwellTime={dwellTime} 
+        handleLetterSelected={handleLetterSelected}
+        />
       {alarmActive && <AlarmPopup onClose={() => setAlarmActive(false)} dwellTime={dwellTime} />}
     </div>
   );
