@@ -3,7 +3,7 @@ export const getLastSentence = (text) => {
     let start = globalCursorPosition.value
     let punctuationCnt = 1
     while (start > 0 ) {
-      if (text[start-1] === ".") {
+      if (text[start-1] === "." || text[start-1] === "!" || text[start-1] === "?") {
         punctuationCnt--;
         if (punctuationCnt === 0) break;
       }

@@ -4,6 +4,7 @@ import App from '../../App';
 import { config } from '../../config/config';
 import '@testing-library/jest-dom';
 import axios from 'axios';
+import { act } from '@testing-library/react';
 
 // Mock react-i18next to provide a simple translation function.
 jest.mock('react-i18next', () => ({
@@ -59,15 +60,14 @@ describe('Checking configurations', () => {
     ];
     for (let i = 0; i < staticConfigs.length; i++) {
         test(`Static configuration: ${staticConfigs[i].name} renders correctly`, async () => {
-            render(<App initialLayout={staticConfigs[i].name} />);
+            await act(async () => {
+                render(<App initialLayout={staticConfigs[i].name} />);
+              });
             const textArea = document.getElementById('text_region');
             expect(textArea).toBeInTheDocument();
             const tiles = staticConfigs[i].tiles.filter(tile => tile.type !== 'textarea');
-            console.log("RYAAGH");
             tiles.forEach(tile => {
-                console.log(tile.label);
                 if (tile.label.trim() !== "") {
-                    console.log(tile.label);
                     expect(
                         screen.getByText((content, element) =>
                           element.classList.contains("label") &&

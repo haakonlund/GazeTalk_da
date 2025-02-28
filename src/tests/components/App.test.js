@@ -3,6 +3,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import App from '../../App';
 import '@testing-library/jest-dom';
 import axios from 'axios';
+import { act } from '@testing-library/react';
 
 // Optionally, if your App uses axios, you can mock it:
 jest.mock('axios');
@@ -20,7 +21,9 @@ jest.mock('react-i18next', () => ({
     test('Check rendering of homepage "main_menuConfig" ', async () => {
         // Make some dummy values for post request.
         axios.post.mockResolvedValue({ data: { continuations: ["dummy1", "dummy2", "dummy3", "dummy4"] } });
-        render(<App />);
+        await act(async () => {
+          render(<App />);
+        });
         
         // Check that the text area is present.
         await waitFor(() => {
