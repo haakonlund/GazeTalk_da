@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 . "$(dirname "$0")/_/husky.sh"
 
-echo "Running tests..."
+echo "If this pops up when committing the tests failed. Run 'npm test' to see what's wrong."
 npm test || {
   echo "Tests failed. Commit aborted.";
   exit 1;
