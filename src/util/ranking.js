@@ -121,14 +121,14 @@ export const rank = (arr, suggestionLetter, currentSelection) => {
     }
     // if there exists a suggestionletter, add one to it
     
-    console.log("before! : ", selectionArr, " letter : ", suggestionLetter);
+    // console.log("before! : ", selectionArr, " letter : ", suggestionLetter);
     if (suggestionLetter) {
         const letterIndex = getLetter(arr, suggestionLetter)
         if (letterIndex !== -1) {
             selectionArr[letterIndex][currentSelection] = selectionArr[letterIndex][currentSelection] + 1
         }
     }
-    console.log("after! : ", selectionArr, " letter : ", suggestionLetter);
+    // console.log("after! : ", selectionArr, " letter : ", suggestionLetter);
     
     
 
