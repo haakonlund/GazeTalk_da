@@ -194,34 +194,121 @@ describe('getCharDistance', () => {
     });
   
     test('calculates correct distance for a single previous line', () => {
-      // For line = 1, the result should be:
-      // previousDistance = length of lines[0] + 1 newline (i.e., 1)
       const lines = ["Hello", "world"];
-      const expected = "Hello".length + 1; // 5 + 1 = 6
+      const expected = "Hello".length + 1;
       expect(getCharDistance(lines, 1)).toBe(expected);
     });
   
     test('calculates correct distance for multiple previous lines', () => {
-      // For line = 2, the result should be:
-      // previousDistance = length of lines[0] + length of lines[1] + 2 newlines
       const lines = ["Hello", "world", "this is"];
-      const expected = "Hello".length + "world".length + 2; // 5 + 5 + 2 = 12
+      const expected = "Hello".length + "world".length + 2;
       expect(getCharDistance(lines, 2)).toBe(expected);
-  
-      // For line = 3:
-      // previousDistance = length of lines[0] + length of lines[1] + length of lines[2] + 3 newlines
       const expected3 = "Hello".length + "world".length + "this is".length + 3;
       expect(getCharDistance(lines, 3)).toBe(expected3);
     });
   
     test('handles empty lines correctly', () => {
-      // If there are empty lines, they contribute 0 characters but still add the newline counts.
       const lines = ["", "", "test"];
-      // For line = 0, expected = 0.
-      // For line = 1, expected = 0 (length of first line) + 1 = 1.
-      // For line = 2, expected = 0 + 0 + 2 = 2.
       expect(getCharDistance(lines, 0)).toBe(0);
       expect(getCharDistance(lines, 1)).toBe(1);
       expect(getCharDistance(lines, 2)).toBe(2);
     });
+});
+describe('calcCursorDistance', () => {
+  test('returns 0 when cursor is at the beginning of the first line', () => {
+    const textValue = "Hello\nWorld";
+    const currentLines = textValue.split("\n");
+    const input = { selectionStart: 0 };
+    expect(calcCursorDistance(textValue, input, currentLines)).toBe(0);
+  });
+
+  test('returns the correct distance when the cursor is in the middle of the first line', () => {
+    const textValue = "Hello\nWorld";
+    const currentLines = textValue.split("\n");
+    const input = { selectionStart: 3 };
+    expect(calcCursorDistance(textValue, input, currentLines)).toBe(3);
+  });
+
+  test('returns 0 when the cursor is at the beginning of the second line', () => {
+    const textValue = "Hello\nWorld";
+    const currentLines = textValue.split("\n");
+    const input = { selectionStart: 6 };
+    expect(calcCursorDistance(textValue, input, currentLines)).toBe(0);
+  });
+
+  test('returns the correct distance when the cursor is in the middle of the second line', () => {
+    const textValue = "Hello\nWorld";
+    const currentLines = textValue.split("\n");
+    const input = { selectionStart: 8 };
+    expect(calcCursorDistance(textValue, input, currentLines)).toBe(2);
+  });
+});
+
+describe('deleteWordAtCursor', () => {
+  test('deletes a word when the cursor is in the middle of the word', () => {
+    const text = "Hello world";
+    const cursorPosition = 8; 
+    const { newText, newCursorPosition } = deleteWordAtCursor(text, cursorPosition);
+    expect(newText).toBe("Hello ");
+    expect(newCursorPosition).toBe(6);
+  });
+
+  test('deletes the entire word when the cursor is at the beginning of the word', () => {
+    const text = "Hello world";
+    const cursorPosition = 6;
+    const { newText, newCursorPosition } = deleteWordAtCursor(text, cursorPosition);
+    expect(newText).toBe("Hello ");
+    expect(newCursorPosition).toBe(6);
+  });
+
+  test('deletes the entire word when the cursor is at the end of the word', () => {
+    const text = "Hello world";
+    const cursorPosition = 11;
+    const { newText, newCursorPosition } = deleteWordAtCursor(text, cursorPosition);
+    expect(newText).toBe("Hello ");
+    expect(newCursorPosition).toBe(6);
+  });
+
+  test('returns the original text and cursor position when there is no word (cursor in whitespace)', () => {
+    const text = "Hello  world";
+    const cursorPosition = 6;
+    const { newText, newCursorPosition } = deleteWordAtCursor(text, cursorPosition);
+    expect(newText).toBe(text);
+    expect(newCursorPosition).toBe(cursorPosition);
+  });
+});
+
+describe('deleteSentence', () => {
+  test('deletes sentence even without sentence delimiter', () => {
+    const text = "Hello world";
+    const cursorPosition = 11;
+    const { newText, newCursorPosition } = deleteSentence(text, cursorPosition);
+    expect(newText).toBe("");
+    expect(newCursorPosition).toBe(0);
+  });
+
+  test('deletes the last sentence when the cursor is at the end', () => {
+    const text = "Hello world. I have a dog.";
+    const cursorPosition = text.length;
+    const { newText, newCursorPosition } = deleteSentence(text, cursorPosition);
+    expect(newText).toBe("Hello world.");
+    expect(newCursorPosition).toBe("Hello world.".length);
+  });
+
+  test('deletes the sentence when the cursor is in the middle of the last sentence', () => {
+    const text = "Hello world. I have a dog.";
+    const cursorPosition = 18;
+    const { newText, newCursorPosition } = deleteSentence(text, cursorPosition);
+    expect(newText).toBe("Hello world.");
+    expect(newCursorPosition).toBe("Hello world.".length);
+  });
+
+  test('handles multiple sentence delimiters correctly', () => {
+    const text = "Hello world. How are you? I am fine!";
+    const cursorPosition = text.length;
+    const expectedText = "Hello world. How are you?";
+    const { newText, newCursorPosition } = deleteSentence(text, cursorPosition);
+    expect(newText).toBe(expectedText);
+    expect(newCursorPosition).toBe(expectedText.length);
+  });
 });
