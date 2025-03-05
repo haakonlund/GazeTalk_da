@@ -1,6 +1,8 @@
 import React, { useState, useRef } from "react";
+import { useLocalStorage } from "@uidotdev/usehooks";
+
 import axios from "axios";
-import settings from "./settings.json";
+// import {settings, setSettings} from "./util/userData.js"
 import { changeLanguage } from "i18next";
 import "./App.css";
 import { globalCursorPosition, cursorEventTarget, updateGlobalCursorPosition } from "./singleton/cursorSingleton";
@@ -27,8 +29,9 @@ import {
   getPreviousWord, 
   getPreviousSentence
 } from './util/cursorUtils'
-import {rank, updateRank, stripSpace} from "./util/ranking"
-
+import { updateSetting } from "./util/settingUtil";
+import {rank, updateRank, stripSpace, getRank} from "./util/ranking"
+import { DEFAULT_LANGUAGE, LANGUAGE, SETTINGS, USERDATA, RANKING, DEFAULT_RANKING, DEFAULT_DWELLTIME, DWELLTIME, BUTTON_FONT_SIZE, TEXT_FONT_SIZE, DEFAULT_BUTTON_FONT_SIZE, DEFAULT_TEXT_FONT_SIZE } from "./util/constants";
 let dwellTime = 2000;
 
 function App() {
@@ -50,6 +53,20 @@ function App() {
   const [buttonFontSize, setButtonFontSize] = useState(30)
   const [textFontSize, setTextFontSize] = useState(20)
 
+  const [userData, setUserData] = useLocalStorage(
+    USERDATA,  {
+        settings : {
+          language : DEFAULT_LANGUAGE,
+          dwelltime: DEFAULT_DWELLTIME,
+          button_font_size : DEFAULT_BUTTON_FONT_SIZE,
+          text_font_size : DEFAULT_TEXT_FONT_SIZE,
+        },
+        ranking : DEFAULT_RANKING
+    },
+  )
+
+
+
 
   const handleLetterSelected = (otherLetters, selectedLetter) => {
     // Do whatever you need with the values here
@@ -65,6 +82,18 @@ function App() {
       
     }
   };
+  
+  // load settings initalially
+  React.useEffect(() => {
+    console.log("first load", userData)
+    const settings = userData.settings
+    changeLanguage(settings[LANGUAGE])
+    dwellTime = settings[DWELLTIME]
+
+    setButtonFontSize(settings[BUTTON_FONT_SIZE])
+    setTextFontSize(settings[TEXT_FONT_SIZE])
+
+  }, [userData]);
 
   React.useEffect(() => {
     const setTileFontSize = () => {
@@ -340,12 +369,16 @@ function App() {
       updateGlobalCursorPosition(globalCursorPosition.value + casedSuggestion.length + spaceLength)
 
     } else if (action.type === "choose_button_layout") {
-      settings.buttons_layout = action.value;
+      // settings.buttons_layout = action.value;
     } else if (action.type === "change_language") {
-      // language = action.value;
-      changeLanguage(action.value);
+      const newUserdata =  updateSetting(userData, LANGUAGE, action.value)
+      setUserData(newUserdata)
+      changeLanguage(userData[SETTINGS][LANGUAGE]);
     } else if (action.type === "change_dwell_time") {
+      
       dwellTime = parseFloat(action.value);
+      const newUserdata = updateSetting(userData, DWELLTIME, dwellTime)
+      setUserData(newUserdata)
       let goBack = {
         type: "switch_layout", layout: "main_menu"
       }
@@ -355,10 +388,15 @@ function App() {
     } else if (action.type === 'close_alarm') {
       setAlarmActive(false);
     } else if (action.type === "increase_button_font_size") {
-      console.log("increase button font size ", buttonFontSize);
-      setButtonFontSize(buttonFontSize < 96 ? buttonFontSize + 1 : buttonFontSize)
+      const size = buttonFontSize < 96 ? buttonFontSize + 1 : buttonFontSize
+      const newUserdata = updateSetting(userData, BUTTON_FONT_SIZE, size) 
+      setUserData(newUserdata)
+      setButtonFontSize(size)
     } else if (action.type === "decrease_button_font_size") {
-      setButtonFontSize(buttonFontSize > 0 ? buttonFontSize - 1 : buttonFontSize)
+      const size = buttonFontSize > 0 ? buttonFontSize - 1 : buttonFontSize
+      const newUserdata = updateSetting(userData, TEXT_FONT_SIZE, size)
+      setUserData(newUserdata)
+      setButtonFontSize(size)
       console.log("decrease button font size ", buttonFontSize);
     } else if (action.type === "increase_text_font_size") {
       setTextFontSize(textFontSize < 96 ? textFontSize + 1 : textFontSize)

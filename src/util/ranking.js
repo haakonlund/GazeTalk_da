@@ -80,10 +80,13 @@ const getPreferedSpaces = (arr) => {
     }
     return ordering;
 }
+export const getRank = () => {
+    return ranking;
+}
 /*
     gets the ranking for a letter if it exists otherwise create an empty one
 */
-const getRank = (letter) => {
+const getLetterRank = (letter) => {
     if (letter in ranking) {
         return ranking[letter]
     }
@@ -110,7 +113,7 @@ export const rank = (arr, suggestionLetter, currentSelection) => {
     let selectionArr = Array(buttonNum).fill(0)
     let rArr = Array(buttonNum)
     for (let i = 0; i < buttonNum; i++) {
-        let thisRank = getRank(arr[i])
+        let thisRank = getLetterRank(arr[i])
         // imagine if this letter is selected, and how it would effect the ranking without actually modifiying it
         // if (arr[i] === suggestionLetter) {
         //     console.log("before! : ", thisRank, " letter : ", arr[i]);
@@ -121,14 +124,14 @@ export const rank = (arr, suggestionLetter, currentSelection) => {
     }
     // if there exists a suggestionletter, add one to it
     
-    console.log("before! : ", selectionArr, " letter : ", suggestionLetter);
+    // console.log("before! : ", selectionArr, " letter : ", suggestionLetter);
     if (suggestionLetter) {
         const letterIndex = getLetter(arr, suggestionLetter)
         if (letterIndex !== -1) {
             selectionArr[letterIndex][currentSelection] = selectionArr[letterIndex][currentSelection] + 1
         }
     }
-    console.log("after! : ", selectionArr, " letter : ", suggestionLetter);
+    // console.log("after! : ", selectionArr, " letter : ", suggestionLetter);
     
     
 
@@ -166,9 +169,9 @@ export const rank = (arr, suggestionLetter, currentSelection) => {
 
             } else {
                 const thisLetter = arr[i];
-                const thisRanking = getRank(thisLetter)
+                const thisRanking = getLetterRank(thisLetter)
                 const otherLetter = newArr[preferedSpace];
-                const otherRanking = getRank(otherLetter);
+                const otherRanking = getLetterRank(otherLetter);
                 let otherI = 0
                 for (let k = 0; k < buttonNum; k++) {
                     if (arr[k] === otherLetter) {
