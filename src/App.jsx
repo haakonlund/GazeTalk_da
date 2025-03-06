@@ -225,7 +225,7 @@ function App({ initialLayout = "main_menu" }) {
       setTextValue(newText);
       // move the cursor to the next line after inserting a newline
       updateGlobalCursorPosition(globalCursorPosition.value + 1);
-    } else if (action.type === "switch_layout") {
+    } else if (action.type === "switch_view") {
       if (config.layouts[action.layout]) {
         setCurrentLayoutName(action.layout);
       }
@@ -369,7 +369,7 @@ function App({ initialLayout = "main_menu" }) {
     } else if (action.type === "change_dwell_time") {
       dwellTime = parseFloat(action.value);
       let goBack = {
-        type: "switch_layout", layout: "main_menu"
+        type: "switch_view", layout: "main_menu"
       }
       handleAction(goBack);
     } else if (action.type === "play_alarm") {
