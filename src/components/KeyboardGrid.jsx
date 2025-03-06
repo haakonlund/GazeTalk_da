@@ -3,7 +3,7 @@ import TextAreaTile from "./TextAreaTile";
 import Tile from "./Tile";
 
 const KeyboardGrid = ({ 
-        layout, 
+        view, 
         textValue,
         setTextValue, 
         onTileActivate, 
@@ -27,7 +27,7 @@ const KeyboardGrid = ({
 
         />
   
-        {layout.tiles.map((tile, i) => {
+        {view.tiles.map((tile, i) => {
           if (tile.type === "textarea") return null;
 
           if (tile.action && tile.action.type === "show_suggestions") {
@@ -72,7 +72,7 @@ const KeyboardGrid = ({
             dwellTime={dwellTime} />;
         })}
   
-        {layout.name === "suggestions" && suggestions.map((suggestion, i) => (
+        {view.name === "suggestions" && suggestions.map((suggestion, i) => (
           <Tile 
             key={i} 
             tile={
@@ -86,7 +86,7 @@ const KeyboardGrid = ({
             dwellTime={dwellTime} 
           />
         ))}
-        {layout.name === "writing" && letterSuggestions.map((suggestion, i) => (
+        {view.name === "writing" && letterSuggestions.map((suggestion, i) => (
           <Tile 
             key={i} 
             tile={

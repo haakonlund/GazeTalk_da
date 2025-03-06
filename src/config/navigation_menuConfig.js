@@ -8,12 +8,12 @@ export const navigation_menuConfig = {
         {
           type : "switch",
           label : "Edit",
-          action : { type : "switch_view", layout : "edit_menu"}
+          action : { type : "switch_view", view : "edit_menu"}
         },
         {
           type : "switch",
           label : "Back",
-          action : { type: "switch_view", layout : "writing"}
+          action : { type: "switch_view", view : "writing"}
         },
         {
           type : "cursor",
@@ -33,7 +33,7 @@ export const navigation_menuConfig = {
         {
           type : "switch",
           label : "More functions",
-          action:  {type : "switch_view", layout : "more_function_menu"}
+          action:  {type : "switch_view", view : "more_function_menu"}
         },
         {
           type: "newline",

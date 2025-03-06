@@ -8,12 +8,12 @@ export const more_function_menuConfig = {
         {
           type : "switch",
           label : "Edit",
-          action : {type : "switch_view", layout : "edit_menu"}
+          action : {type : "switch_view", view : "edit_menu"}
         },
         {
           type: "switch",
           label: "back to wrtiting",
-          action: { type: "switch_view", layout: "writing" }
+          action: { type: "switch_view", view: "writing" }
         },
         {
           type : "start_of_text",

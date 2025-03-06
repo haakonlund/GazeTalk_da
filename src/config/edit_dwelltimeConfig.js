@@ -8,7 +8,7 @@ export const edit_dwelltimeConfig = {
         {
           type: "switch",
           label: "back",
-          action: { type: "switch_view", layout: "main_menu" }
+          action: { type: "switch_view", view: "main_menu" }
         },
         {
           type: "switch",

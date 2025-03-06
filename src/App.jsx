@@ -32,8 +32,8 @@ import {
 
 let dwellTime = 2000;
 
-function App({ initialLayout = "main_menu" }) {
-  const [currentLayoutName, setCurrentLayoutName] = useState(initialLayout);
+function App({ initialView = "main_menu" }) {
+  const [currentViewName, setCurrentViewName] = useState(initialView);
   const [textValue, setTextValue] = useState("");
   const [isCapsOn, setIsCapsOn] = useState(false);
   const [alarmActive, setAlarmActive] = useState(false);
@@ -46,7 +46,7 @@ function App({ initialLayout = "main_menu" }) {
   
   const textAreaRef = useRef(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const layout = config.layouts[currentLayoutName] || config.layouts["main_menu"];
+  const view = config.views[currentViewName] || config.views["main_menu"];
   const input = document.getElementById('text_region');
 
   const [buttonFontSize, setButtonFontSize] = useState(30)
@@ -209,8 +209,8 @@ function App({ initialLayout = "main_menu" }) {
       setTextValue(newText);
       
       updateGlobalCursorPosition(input.selectionStart + 1);
-      // always go back to writing layout after entering a letter
-      setCurrentLayoutName("writing");
+      // always go back to writing view after entering a letter
+      setCurrentViewName("writing");
 
       // if the last letter was punctuation speak it
       if (action.value === ".") {
@@ -226,8 +226,8 @@ function App({ initialLayout = "main_menu" }) {
       // move the cursor to the next line after inserting a newline
       updateGlobalCursorPosition(globalCursorPosition.value + 1);
     } else if (action.type === "switch_view") {
-      if (config.layouts[action.layout]) {
-        setCurrentLayoutName(action.layout);
+      if (config.views[action.view]) {
+        setCurrentViewName(action.view);
       }
 
     } else if (action.type === "delete_letter") {
@@ -236,8 +236,8 @@ function App({ initialLayout = "main_menu" }) {
       updateGlobalCursorPosition(input.selectionStart - 1);
       setTextValue(newText);
 
-      if (currentLayoutName !== "suggestions")
-        setCurrentLayoutName("writing");
+      if (currentViewName !== "suggestions")
+        setCurrentViewName("writing");
     } else if (action.type === "delete_letter_edit") {
       const newText = textValue.slice(0, globalCursorPosition.value - 1) + textValue.slice(globalCursorPosition.value);
       updateGlobalCursorPosition(input.selectionStart - 1);
@@ -341,7 +341,7 @@ function App({ initialLayout = "main_menu" }) {
     } else if (action.type === "show_suggestions") {
       if (suggestions.length > 0 && suggestions.some(s => s !== undefined)) {
         setShowSuggestions(true);
-        setCurrentLayoutName("suggestions");
+        setCurrentViewName("suggestions");
       }
     } else if (action.type === "insert_suggestion") {
       const suggestion = action.value;
@@ -369,7 +369,7 @@ function App({ initialLayout = "main_menu" }) {
     } else if (action.type === "change_dwell_time") {
       dwellTime = parseFloat(action.value);
       let goBack = {
-        type: "switch_view", layout: "main_menu"
+        type: "switch_view", view: "main_menu"
       }
       handleAction(goBack);
     } else if (action.type === "play_alarm") {
@@ -395,8 +395,8 @@ function App({ initialLayout = "main_menu" }) {
        setTextValue(newText);
        
        updateGlobalCursorPosition(input.selectionStart + 1);
-       // always go back to writing layout after entering a letter
-       setCurrentLayoutName("writing");
+       // always go back to writing view after entering a letter
+       setCurrentViewName("writing");
  
        // if the last letter was punctuation speak it
        if (action.value === ".") {
@@ -414,7 +414,7 @@ function App({ initialLayout = "main_menu" }) {
   return (
     <div className="App">
       <GenericView
-        layout={layout}
+        view={view}
         textValue={textValue}
         setTextValue={setTextValue}
         handleAction={handleAction}

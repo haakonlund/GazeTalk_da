@@ -42,13 +42,13 @@ describe('KeyboardGrid component', () => {
   });
 
   test('Check Writing \"eat\"', () => {
-    const layout = config.layouts.writing;
+    const view = config.views.writing;
     const suggestions = [];
     const dwellTime = 1000;
     const letterSuggestions = ["e","t","a","space","o","i","r"];
     render(
       <KeyboardGridWrapper
-        layout={layout}
+      view={view}
         textValue=""
         setTextValue={dummySetTextValue}
         onTileActivate={dummyOnActivate}
