@@ -29,9 +29,10 @@ import {
   getPreviousWord, 
   getPreviousSentence
 } from './util/cursorUtils'
-import { updateSetting } from "./util/settingUtil";
+import { updateSetting, updateRanking } from "./util/settingUtil";
 import {rank, updateRank, stripSpace, getRank} from "./util/ranking"
-import { DEFAULT_LANGUAGE, LANGUAGE, SETTINGS, USERDATA, RANKING, DEFAULT_RANKING, DEFAULT_DWELLTIME, DWELLTIME, BUTTON_FONT_SIZE, TEXT_FONT_SIZE, DEFAULT_BUTTON_FONT_SIZE, DEFAULT_TEXT_FONT_SIZE } from "./util/constants";
+import * as UserDataConst from "./constants/userDataConstants"
+import * as CmdConst from "./constants/cmdConstants"
 let dwellTime = 2000;
 
 function App() {
@@ -54,14 +55,14 @@ function App() {
   const [textFontSize, setTextFontSize] = useState(20)
 
   const [userData, setUserData] = useLocalStorage(
-    USERDATA,  {
+    UserDataConst.USERDATA,  {
         settings : {
-          language : DEFAULT_LANGUAGE,
-          dwelltime: DEFAULT_DWELLTIME,
-          button_font_size : DEFAULT_BUTTON_FONT_SIZE,
-          text_font_size : DEFAULT_TEXT_FONT_SIZE,
+          language : UserDataConst.DEFAULT_LANGUAGE,
+          dwelltime: UserDataConst.DEFAULT_DWELLTIME,
+          button_font_size : UserDataConst.DEFAULT_BUTTON_FONT_SIZE,
+          text_font_size : UserDataConst.DEFAULT_TEXT_FONT_SIZE,
         },
-        ranking : DEFAULT_RANKING
+        ranking : UserDataConst.DEFAULT_RANKING
     },
   )
 
@@ -69,11 +70,16 @@ function App() {
 
 
   const handleLetterSelected = (otherLetters, selectedLetter) => {
-    // Do whatever you need with the values here
-    console.log("Other letters:", otherLetters, "Selected:", selectedLetter);
+    // debugger
+    let Letters = stripSpace(otherLetters)
+    updateRank(Letters, selectedLetter)
+    console.log(getRank())
+    const newUserdata = updateRanking(userData, getRank())
+    setUserData(newUserdata)
+    console.log("Other letters:", Letters, "Selected:", selectedLetter);
     let index = 0;
-    for (let i = 0; i < otherLetters.length; i++) {
-      if ( otherLetters[i] === selectedLetter) {
+    for (let i = 0; i < Letters.length; i++) {
+      if ( Letters[i] === selectedLetter) {
         index = i;
       }
     }
@@ -87,11 +93,11 @@ function App() {
   React.useEffect(() => {
     console.log("first load", userData)
     const settings = userData.settings
-    changeLanguage(settings[LANGUAGE])
-    dwellTime = settings[DWELLTIME]
+    changeLanguage(settings[UserDataConst.LANGUAGE])
+    dwellTime = settings[UserDataConst.DWELLTIME]
 
-    setButtonFontSize(settings[BUTTON_FONT_SIZE])
-    setTextFontSize(settings[TEXT_FONT_SIZE])
+    setButtonFontSize(settings[UserDataConst.BUTTON_FONT_SIZE])
+    setTextFontSize(settings[UserDataConst.TEXT_FONT_SIZE])
 
   }, [userData]);
 
@@ -371,13 +377,13 @@ function App() {
     } else if (action.type === "choose_button_layout") {
       // settings.buttons_layout = action.value;
     } else if (action.type === "change_language") {
-      const newUserdata =  updateSetting(userData, LANGUAGE, action.value)
+      const newUserdata =  updateSetting(userData, UserDataConst.LANGUAGE, action.value)
       setUserData(newUserdata)
-      changeLanguage(userData[SETTINGS][LANGUAGE]);
+      changeLanguage(userData[UserDataConst.SETTINGS][UserDataConst.LANGUAGE]);
     } else if (action.type === "change_dwell_time") {
       
       dwellTime = parseFloat(action.value);
-      const newUserdata = updateSetting(userData, DWELLTIME, dwellTime)
+      const newUserdata = updateSetting(userData, UserDataConst.DWELLTIME, dwellTime)
       setUserData(newUserdata)
       let goBack = {
         type: "switch_layout", layout: "main_menu"
@@ -389,19 +395,25 @@ function App() {
       setAlarmActive(false);
     } else if (action.type === "increase_button_font_size") {
       const size = buttonFontSize < 96 ? buttonFontSize + 1 : buttonFontSize
-      const newUserdata = updateSetting(userData, BUTTON_FONT_SIZE, size) 
+      const newUserdata = updateSetting(userData, UserDataConst.BUTTON_FONT_SIZE, size) 
       setUserData(newUserdata)
       setButtonFontSize(size)
     } else if (action.type === "decrease_button_font_size") {
       const size = buttonFontSize > 0 ? buttonFontSize - 1 : buttonFontSize
-      const newUserdata = updateSetting(userData, TEXT_FONT_SIZE, size)
+      const newUserdata = updateSetting(userData, UserDataConst.BUTTON_FONT_SIZE, size)
       setUserData(newUserdata)
       setButtonFontSize(size)
       console.log("decrease button font size ", buttonFontSize);
     } else if (action.type === "increase_text_font_size") {
-      setTextFontSize(textFontSize < 96 ? textFontSize + 1 : textFontSize)
+      const size = textFontSize < 96 ? textFontSize + 1 : textFontSize
+      const newUserdata = updateSetting(userData, UserDataConst.TEXT_FONT_SIZE, size)
+      setUserData(newUserdata)
+      setTextFontSize(size)
     } else if (action.type === "decrease_text_font_size") {
-      setTextFontSize(textFontSize > 0 ? textFontSize - 1 : textFontSize)
+      const size = textFontSize > 0 ? textFontSize - 1 : textFontSize
+      const newUserdata = updateSetting(userData, UserDataConst.TEXT_FONT_SIZE, size)
+      setUserData(newUserdata)
+      setTextFontSize(size)
 
     } else if (action.type === "insert_letter_suggestion") {
        // insert the letter at the global cursor position

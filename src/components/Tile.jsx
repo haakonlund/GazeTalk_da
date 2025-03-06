@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { updateRank, stripSpace } from "../util/ranking";
 
 const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected }) => {
   const { t } = useTranslation();
@@ -29,9 +28,8 @@ const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected }) =
           onActivate(tile.action);
           const letter = tile.label;
           if (otherLetters) {
-            updateRank(stripSpace(otherLetters), letter)
             if (onLetterSelected) {
-              onLetterSelected(stripSpace(otherLetters), letter);
+              onLetterSelected(otherLetters, letter);
             }
           }
           // setHovering(false);
