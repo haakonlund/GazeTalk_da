@@ -8,12 +8,12 @@ export const edit_menuConfig = {
         {
           type: "switch",
           label: "Navigation",
-          action: { type: "switch_layout", layout: "navigation_menu" }
+          action: { type: "switch_view", layout: "navigation_menu" }
         },
         {
           type: "switch",
           label: "Back",
-          action: { type: "switch_layout", layout: "writing" }
+          action: { type: "switch_view", layout: "writing" }
 
         },
         {
@@ -53,7 +53,7 @@ export const edit_menuConfig = {
         {
           type : "Switch",
           label : "File",
-          action : { type: "switch_layout", layout: "file_menu"}
+          action : { type: "switch_view", layout: "file_menu"}
         },
       ]
   };

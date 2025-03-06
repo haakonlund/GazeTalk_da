@@ -13,7 +13,7 @@ export const special_chars2Config = {
         {
           type: "switch",
           label: "back",
-          action: { type: "switch_layout", layout: "YZÆØÅ,?.._menu" }
+          action: { type: "switch_view", layout: "YZÆØÅ,?.._menu" }
         },
         {
           type: "letter",
@@ -53,7 +53,7 @@ export const special_chars2Config = {
         {
           type: "switch",
           label: "More9870",
-          action: { type: "switch_layout", layout: "$£€#__menu" }
+          action: { type: "switch_view", layout: "$£€#__menu" }
         }
       ]
   };

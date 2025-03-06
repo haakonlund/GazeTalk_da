@@ -13,7 +13,7 @@ export const YZ_menuConfig = {
         {
           type: "switch",
           label: "back",
-          action: { type: "switch_layout", layout: "writing" }
+          action: { type: "switch_view", layout: "writing" }
         },
         {
           type: "letter",
@@ -48,12 +48,12 @@ export const YZ_menuConfig = {
         {
           type: "switch",
           label: "():?+./=",
-          action: { type: "switch_layout", layout: "():?+./=_menu" }
+          action: { type: "switch_view", layout: "():?+./=_menu" }
         },
         {
           type: "switch",
           label: "More",
-          action: { type: "switch_layout", layout: "%@;!*" }
+          action: { type: "switch_view", layout: "%@;!*" }
         },
       ]
   };

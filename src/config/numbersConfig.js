@@ -13,7 +13,7 @@ export const numbersConfig = {
         {
           type : "switch",
           label : "back",
-          action : { type: "switch_layout", layout : "writing"}
+          action : { type: "switch_view", layout : "writing"}
         },
         {
           type: "letter",
@@ -43,7 +43,7 @@ export const numbersConfig = {
         {
           type: "switch",
           label: "67890",
-          action: { type: "switch_layout", layout: "67890_menu" }
+          action: { type: "switch_view", layout: "67890_menu" }
         },
         {
           type : "empty",
