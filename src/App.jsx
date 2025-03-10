@@ -151,45 +151,44 @@ function App({ initialView = "main_menu" }) {
     }
     
     const fillLetterSuggestions = async () => {
-        const getSug = async (text) => {
-          const response = await fetchLetterSuggestions(text)
-          const suggestionsString = response.data.continuations
-          let suggestionArray = []
-          for (let i = 0; i < suggestionsString.length; i++) {
-            suggestionArray.push(suggestionsString[i])
-          }
-          const topSuggestion = suggestionArray.slice(0, 6)
-          topSuggestion.reverse()
-          return topSuggestion
-      }
-      // if there is already a selection use that
-      let rankedSuggestion = []
+      const getSug = async (text) => {
+        const response = await fetchLetterSuggestions(text);
+        const suggestionsString = response.data.continuations;
+        const suggestionArray = [...suggestionsString]; // Using spread operator instead of the loop
+        return suggestionArray.slice(0, 6).reverse();
+      };
+    
+      // Get initial suggestions
+      let rankedSuggestion = [];
       if (nextLetterSuggestion) {
-        rankedSuggestion = nextLetterSuggestion
+        rankedSuggestion = nextLetterSuggestion;
       } else {
-        const currentSuggestion = (await getSug(textUpToCursor))
-        rankedSuggestion = rank(currentSuggestion, null, null)
+        const currentSuggestion = await getSug(textUpToCursor);
+        rankedSuggestion = rank(currentSuggestion, null, null);
       }
-      setNextLetterSuggestion(null)
-      // insert space
-
-      const letterSuggestionsArray = []
-      for (let i = 0; i < 7; i++) {
-        if (i === 3) {
-          letterSuggestionsArray[i] = []
-          continue;
-        };
-        const nextSug = await getSug(textUpToCursor + rankedSuggestion[i])
-        letterSuggestionsArray[i] = rank(nextSug, rankedSuggestion[i], i)
-      }
-      rankedSuggestion.splice(3,0,"space") // add space
+      setNextLetterSuggestion(null);
+    
+      // Make all next suggestion API calls in parallel using Promise.all
+      const nextSugPromises = rankedSuggestion.map(async (suggestion, index) => {
+        // Skip index 3 (will be used for space)
+        if (index === 3) return null;
+        return getSug(textUpToCursor + suggestion);
+      });
+    
+      const nextSugResults = await Promise.all(nextSugPromises);
       
-      setLetterSuggestions(rankedSuggestion)
-
-
-
+      // Process results
+      const letterSuggestionsArray = nextSugResults.map((result, i) => {
+        if (i === 3) return []; // Handle the space position
+        return rank(result, rankedSuggestion[i], i);
+      });
+    
+      // Add space to the ranked suggestions
+      rankedSuggestion.splice(3, 0, "space");
+      
+      setLetterSuggestions(rankedSuggestion);
       setNextLetters(letterSuggestionsArray);
-    }
+    };
     
     fillLetterSuggestions();
 

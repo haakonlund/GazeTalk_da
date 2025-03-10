@@ -114,12 +114,6 @@ export const rank = (arr, suggestionLetter, currentSelection) => {
     let rArr = Array(buttonNum)
     for (let i = 0; i < buttonNum; i++) {
         let thisRank = getLetterRank(arr[i])
-        // imagine if this letter is selected, and how it would effect the ranking without actually modifiying it
-        // if (arr[i] === suggestionLetter) {
-        //     console.log("before! : ", thisRank, " letter : ", arr[i]);
-        //     thisRank[i] = thisRank[i] + 1; 
-        //     console.log("after! : ", thisRank, " letter : ", arr[i]);
-        // }
         selectionArr[i] = getPreferedSpaces(thisRank)
     }
     // if there exists a suggestionletter, add one to it
@@ -131,10 +125,6 @@ export const rank = (arr, suggestionLetter, currentSelection) => {
             selectionArr[letterIndex][currentSelection] = selectionArr[letterIndex][currentSelection] + 1
         }
     }
-    // console.log("after! : ", selectionArr, " letter : ", suggestionLetter);
-    
-    
-
 
     for (let i = 0; i < buttonNum; i++) {
         rArr[i] = new R(0,selectionArr[i],arr[i],null)
