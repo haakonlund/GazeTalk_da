@@ -295,7 +295,7 @@ describe('deleteSentence', () => {
     expect(newCursorPosition).toBe("Hello world.".length);
   });
 
-  test('deletes the sentence when the cursor is in the middle of the last sentence', () => {
+  test('deletes the sentence when the cursor is in the middle a sentence', () => {
     const text = "Hello world. I have a dog.";
     const cursorPosition = 18;
     const { newText, newCursorPosition } = deleteSentence(text, cursorPosition);

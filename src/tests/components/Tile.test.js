@@ -3,10 +3,9 @@ import { render, fireEvent, screen, act } from "@testing-library/react";
 import '@testing-library/jest-dom';
 import Tile from '../../components/Tile';
 
-
 let tileLabel = "tileLabel";
 let curAction = { type: "enter_letter", value: "A" };
-// action: { type: "switch_layout", layout: "main_menu" }
+// action: { type: "switch_view", view: "main_menu" }
 
 jest.mock("react-i18next", () => ({
     useTranslation: () => ({ t: (key) => key })

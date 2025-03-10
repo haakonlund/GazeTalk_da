@@ -29,12 +29,12 @@ describe('KeyboardGrid component', () => {
   });
 
   test('Check KeyboardGrid renders suggestions in suggestion button using writing config', () => {
-    const layout = config.layouts.writing;
+    const view = config.views.writing;
     const suggestions = ["lot", "good", "problem", "great", "very", "nice", "look", "few"];
     const letterSuggestions = ["e","t","a","space","o","i","r"];
     render(
       <KeyboardGrid
-        layout={layout}
+        view={view}
         textValue=""
         setTextValue={dummySetTextValue}
         onTileActivate={dummyOnActivate}
@@ -54,12 +54,12 @@ describe('KeyboardGrid component', () => {
   });
 
   test('Check KeyboardGrid renders with suggestions in suggestion button using writing config', () => {
-    const layout = config.layouts.writing;
+    const view = config.views.writing;
     const suggestions = ["lot", "good", "problem", "great", "very", "nice", "look", "few"];
     const letterSuggestions = ["e","t","a","space","o","i","r"];
     render(
       <KeyboardGrid
-        layout={layout}
+        view={view}
         textValue="hello i have a "
         setTextValue={dummySetTextValue}
         onTileActivate={dummyOnActivate}
@@ -89,13 +89,13 @@ describe('KeyboardGrid component', () => {
   });
 
   test('Check KeyboardGrid renders with suggestions using writing config', () => {
-    // When layout.name is "suggestions", an extra mapping is done over the suggestions array.
-    const layout = config.layouts.suggestions;
+    // When view.name is "suggestions", an extra mapping is done over the suggestions array.
+    const view = config.views.suggestions;
     const suggestions = ["lot", "good", "problem", "great", "very", "nice", "look", "few"];
     const letterSuggestions = ["e","t","a","space","o","i","r"];
     render(
       <KeyboardGrid
-        layout={layout}
+        view={view}
         textValue="hello i have a "
         setTextValue={dummySetTextValue}
         onTileActivate={dummyOnActivate}

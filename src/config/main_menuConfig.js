@@ -9,12 +9,12 @@ export const main_menuConfig = {
         {
           type: "switch",
           label: "write",
-          action: { type: "switch_layout", layout: "writing" }
+          action: { type: "switch_view", view: "writing" }
         },
         {
           type: "switch",
           label: "settings",
-          action: { type: "switch_layout", layout: "edit_settings" }
+          action: { type: "switch_view", view: "edit_settings" }
         },
         // Row 2 (4 tiles)
         {
@@ -25,7 +25,7 @@ export const main_menuConfig = {
         {
           type: "switch",
           label: "Pause",
-          action :{type :"switch_layout", layout : "pause" }
+          action :{type :"switch_view", view : "pause" }
         },
         {
           type: "empty",

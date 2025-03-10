@@ -19,9 +19,10 @@ import { special_chars1Config } from "./special_chars1Config";
 import { special_chars2Config } from "./special_chars2Config";
 import { special_chars3Config } from "./special_chars3Config";
 import { adjust_font_sizeConfig } from "./adjust_font_sizeConfig"
-import {pauseConfig } from "./pauseConfig"
+import { pauseConfig } from "./pauseConfig"
+import { layoutsConfig } from "./layoutsConfig"
 export const config = {
-  layouts: {
+  views: {
       "numbers2": numbers2Config,
       "edit_language": edit_languageConfig,
       "writing": writingConfig,
@@ -42,6 +43,7 @@ export const config = {
       "special_chars2": special_chars2Config,
       "special_chars3": special_chars3Config,
       "adjust_font_size" : adjust_font_sizeConfig,
-      "pause" : pauseConfig
+      "pause" : pauseConfig,
+      "layouts": layoutsConfig
     }
 };

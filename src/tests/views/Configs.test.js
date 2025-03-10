@@ -55,32 +55,32 @@ describe('Checking configurations', () => {
     });
 
     const staticConfigs = [ // Some excluded as they contain special characters.
-       // config.layouts["numbers2"],
-        config.layouts["edit_language"],
-        config.layouts["writing"],
-        config.layouts["suggestions"],
-        config.layouts["main_menu"],
-        config.layouts["writing_submenu"],
-        config.layouts["navigation_menu"],
-        config.layouts["edit_menu"],
-        config.layouts["edit_dwelltime"],
-        config.layouts["edit_settings"],
-        config.layouts["more_function_menu"],
-        config.layouts["ABCDEFGH_menu"],
-        config.layouts["IJKLMNOP_menu"],
-        config.layouts["QRSTUVWX_menu"],
-        config.layouts["YZÆØÅ,?.._menu"],
-        config.layouts["numbers"],
-        //config.layouts["special_chars1"],
-        //config.layouts["special_chars2"],
-        //config.layouts["special_chars3"],
-        config.layouts["adjust_font_size"],
-        config.layouts["pause"]
+       // config.views["numbers2"],
+        config.views["edit_language"],
+        config.views["writing"],
+        config.views["suggestions"],
+        config.views["main_menu"],
+        config.views["writing_submenu"],
+        config.views["navigation_menu"],
+        config.views["edit_menu"],
+        config.views["edit_dwelltime"],
+        config.views["edit_settings"],
+        config.views["more_function_menu"],
+        config.views["ABCDEFGH_menu"],
+        config.views["IJKLMNOP_menu"],
+        config.views["QRSTUVWX_menu"],
+        config.views["YZÆØÅ,?.._menu"],
+        config.views["numbers"],
+        //config.views["special_chars1"],
+        //config.views["special_chars2"],
+        //config.views["special_chars3"],
+        config.views["adjust_font_size"],
+        config.views["pause"]
     ];
     for (let i = 0; i < staticConfigs.length; i++) {
         test(`Static configuration: ${staticConfigs[i].name} renders correctly`, async () => {
             await act(async () => {
-                render(<App initialLayout={staticConfigs[i].name} />);
+                render(<App initialView={staticConfigs[i].name} />);
               });
             const textArea = document.getElementById('text_region');
             expect(textArea).toBeInTheDocument();

@@ -8,27 +8,27 @@ export const edit_settingsConfig = {
         {
           type: "switch",
           label: "back",
-          action: { type: "switch_layout", layout: "main_menu" }
+          action: { type: "switch_view", view: "main_menu" }
         },
         {
           type: "switch",
           label: "button layout",
-          action: { type: "switch_layout", layout: "edit_buttonlayout" }
+          action: { type: "switch_view", view: "edit_buttonlayout" }
         },
         {
           type: "switch",
           label: "dwell time",
-          action: { type: "switch_layout", layout: "edit_dwelltime" }
+          action: { type: "switch_view", view: "edit_dwelltime" }
         },
         {
           type: "switch",
           label: "change language",
-          action: { type: "switch_layout", layout: "edit_language" }
+          action: { type: "switch_view", view: "edit_language" }
         },
         {
           type : "switch",
           label : "font size",
-          action : {type : "switch_layout", layout : "adjust_font_size"}
+          action : {type : "switch_view", view : "adjust_font_size"}
         }
       ]
   };

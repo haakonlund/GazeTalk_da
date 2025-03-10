@@ -14,7 +14,7 @@ export const writingConfig = {
         {
           type: "switch",
           label: "ABCD...",
-          action: { type: "switch_layout", layout: "writing_submenu" }
+          action: { type: "switch_view", view: "writing_submenu" }
         },
         {
           type: "letter",

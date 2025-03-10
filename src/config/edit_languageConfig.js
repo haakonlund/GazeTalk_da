@@ -8,7 +8,7 @@ export const edit_languageConfig = {
         {
           type: "switch",
           label: "back",
-          action: { type: "switch_layout", layout: "main_menu" }
+          action: { type: "switch_view", view: "main_menu" }
         },
         {
           type: "switch",

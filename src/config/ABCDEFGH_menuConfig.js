@@ -13,7 +13,7 @@ export const ABCDEFGH_menuConfig = {
         {
           type: "switch",
           label: "back",
-          action: { type: "switch_layout", layout: "writing" }
+          action: { type: "switch_view", view: "writing" }
         },
         {
           type: "letter",

@@ -13,7 +13,7 @@ export const adjust_font_sizeConfig = {
         {
           type: "switch",
           label: "back",
-          action: { type: "switch_layout", layout: "main_menu" }
+          action: { type: "switch_view", view: "main_menu" }
         },
         {
           type : "empty",

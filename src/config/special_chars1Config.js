@@ -13,7 +13,7 @@ export const special_chars1Config = {
         {
           type: "switch",
           label: "back",
-          action: { type: "switch_layout", layout: "YZÆØÅ,?.._menu" }
+          action: { type: "switch_view", view: "YZÆØÅ,?.._menu" }
         },
         {
           type: "letter",
