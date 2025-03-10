@@ -1,5 +1,5 @@
 export const special_chars2Config = {
-    name: "\'\"%@;!*",
+    name: "%@;!*",
     tiles: [
         {
           type: "textarea",
@@ -53,7 +53,7 @@ export const special_chars2Config = {
         {
           type: "switch",
           label: "More9870",
-          action: { type: "switch_layout", layout: "$£€#_\\_menu" }
+          action: { type: "switch_layout", layout: "$£€#__menu" }
         }
       ]
   };

@@ -3,7 +3,7 @@ export const getLastSentence = (text) => {
     let start = globalCursorPosition.value
     let punctuationCnt = 1
     while (start > 0 ) {
-      if (text[start-1] === ".") {
+      if (text[start-1] === "." || text[start-1] === "!" || text[start-1] === "?") {
         punctuationCnt--;
         if (punctuationCnt === 0) break;
       }
@@ -85,16 +85,16 @@ export const getWordBoundaries = (text, cursorPosition) => {
     let start = cursorPosition;
     let end = start;
     
-    if (start > 0 && (textValue[start - 1] === ".")) {
+    if (start > 0 && (textValue[start - 1] === "." || textValue[start - 1] === "!" || textValue[start - 1] === "?")) {
         start--; 
     }
-    while (start > 0 && !(textValue[start - 1] === ".")) {
+    while (start > 0 && !(textValue[start - 1] === "." || textValue[start - 1] === "!" || textValue[start - 1] === "?")) {
       start--;
     }
-    while (end < textValue.length && !(textValue[end] === ".")) {
+    while (end < textValue.length && !(textValue[end] === "." || textValue[end] === "!" || textValue[end] === "?")) {
       end++;
     }
-    if (end < textValue.length && textValue[end] === ".") {
+    if (end < textValue.length && textValue[end] === "." || textValue[end] === "!" || textValue[end] === "?") {
       end++;
     }
   

@@ -1,4 +1,5 @@
-export const adjust_font_size = {
+export const adjust_font_sizeConfig = {
+    name: "adjust_font_size",
     tiles: [
         {
           type: "textarea",

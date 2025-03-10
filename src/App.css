@@ -134,3 +134,26 @@ html, body {
   pointer-events: none;
   z-index: 3;
 }
+
+.pause-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 18%;
+  z-index: 1000; 
+}
+
+.pause-popup-content {
+  background: #00000068;
+  color: #bab8b8;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 30px;
+}

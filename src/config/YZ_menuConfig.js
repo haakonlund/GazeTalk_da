@@ -53,7 +53,7 @@ export const YZ_menuConfig = {
         {
           type: "switch",
           label: "More",
-          action: { type: "switch_layout", layout: "\'\"%@;!*" }
+          action: { type: "switch_layout", layout: "%@;!*" }
         },
       ]
   };

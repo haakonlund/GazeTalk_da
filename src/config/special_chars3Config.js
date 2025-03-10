@@ -1,5 +1,5 @@
 export const special_chars3Config = {
-    name: "$£€#_\\_menu",
+    name: "$£€#__menu",
     tiles: [
         {
           type: "textarea",
@@ -13,7 +13,7 @@ export const special_chars3Config = {
         {
           type: "switch",
           label: "back",
-          action: { type: "switch_layout", layout: "\'\"%@;!*" }
+          action: { type: "switch_layout", layout: "%@;!*" }
         },
         {
           type: "letter",
