@@ -217,7 +217,7 @@ function App({ initialView = "main_menu" }) {
 
 
   const handleAction = (action) => {
-    if (action.type === "enter_letter") {
+    if (action.type === CmdConst.ENTER_LETTER) {
       // insert the letter at the global cursor position
       const letter = isCapsOn ? action.value.toUpperCase() : action.value.toLowerCase();
       const newText = textValue.slice(0, globalCursorPosition.value) + letter + textValue.slice(globalCursorPosition.value);
@@ -228,24 +228,24 @@ function App({ initialView = "main_menu" }) {
       setCurrentViewName("writing");
 
       // if the last letter was punctuation speak it
-      if (action.value === ".") {
+      if (action.value === CmdConst.PERIOD) {
         const lastSentenceStart = getLastSentence(textValue)
         const lastSentence = textValue.slice(lastSentenceStart, globalCursorPosition.value)
         speakText(lastSentence)
       }
 
-    } else if (action.type === "newline") {
+    } else if (action.type === CmdConst.NEWLINE) {
       // insert a newline at the global cursor position 
       const newText = textValue.slice(0, globalCursorPosition.value) + "\n" + textValue.slice(globalCursorPosition.value, textValue.length);
       setTextValue(newText);
       // move the cursor to the next line after inserting a newline
       updateGlobalCursorPosition(globalCursorPosition.value + 1);
-    } else if (action.type === "switch_view") {
+    } else if (action.type === CmdConst.SWITCH_VIEW) {
       if (config.views[action.view]) {
         setCurrentViewName(action.view);
       }
 
-    } else if (action.type === "delete_letter") {
+    } else if (action.type === CmdConst.DELETE_LETTER) {
       // delete the letter at the global cursor position
       const newText = textValue.slice(0, globalCursorPosition.value - 1) + textValue.slice(globalCursorPosition.value);
       updateGlobalCursorPosition(input.selectionStart - 1);
@@ -253,27 +253,27 @@ function App({ initialView = "main_menu" }) {
 
       if (currentViewName !== "suggestions")
         setCurrentViewName("writing");
-    } else if (action.type === "delete_letter_edit") {
+    } else if (action.type === CmdConst.DELETE_LETTER_EDIT) {
       const newText = textValue.slice(0, globalCursorPosition.value - 1) + textValue.slice(globalCursorPosition.value);
       updateGlobalCursorPosition(input.selectionStart - 1);
       setTextValue(newText);
 
 
-    } else if (action.type === "toggle_case") {
+    } else if (action.type === CmdConst.TOGGLE_CASE) {
       setIsCapsOn(prev => !prev);
 
-    } else if (action.type === "cursor") {
+    } else if (action.type === CmdConst.CURSOR) {
       const cursorPosition = input.selectionStart;
 
-      if (action.direction === "left") {
+      if (action.direction === CmdConst.LEFT) {
         if (cursorPosition === 0) return;
         input.setSelectionRange(cursorPosition - 1, cursorPosition - 1);
 
-      } else if (action.direction === "right") {
+      } else if (action.direction === CmdConst.RIGHT) {
         if (cursorPosition === textValue.length) return;
         input.setSelectionRange(cursorPosition + 1, cursorPosition + 1);
 
-      } else if (action.direction === "up") {
+      } else if (action.direction === CmdConst.UP) {
         // get current linelength where there is mutlipe lines
         const currentLines = textValue.split("\n");
         // Get the current line the cursor is on
@@ -292,7 +292,7 @@ function App({ initialView = "main_menu" }) {
 
         }
 
-      } else if (action.direction === "down") {
+      } else if (action.direction ===CmdConst.DOWN) {
         input.focus();
         const currentLines = textValue.split("\n");
         let line = getCurrentLine(currentLines, cursorPosition);
@@ -314,51 +314,51 @@ function App({ initialView = "main_menu" }) {
 
 
 
-    } else if (action.type === "delete_word") {
+    } else if (action.type === CmdConst.DELETE_WORD) {
       const { newText, newCursorPosition } = deleteWordAtCursor(textValue, input.selectionStart);
       setTextValue(newText);
       updateGlobalCursorPosition(newCursorPosition);
 
-    } else if (action.type === "delete_sentence") {
+    } else if (action.type === CmdConst.DELETE_SENTENCE) {
       const { newText, newCursorPosition } = deleteSentence(textValue, input.selectionStart);
       setTextValue(newText);
       updateGlobalCursorPosition(newCursorPosition);
-    } else if (action.type === "delete_section") {
+    } else if (action.type === CmdConst.DELETE_SECTION) {
       const { newText, newCursorPosition } = deleteSection(textValue, input.selectionStart);
       setTextValue(newText);
       updateGlobalCursorPosition(newCursorPosition);
-    } else if (action.type === "undo") {
+    } else if (action.type === CmdConst.UNDO) {
       // todo
-    } else if (action.type === "start_of_text") {
+    } else if (action.type === CmdConst.START_OF_TEXT) {
       updateGlobalCursorPosition(0)
 
-    } else if (action.type === "previous_section") {
+    } else if (action.type === CmdConst.PREVIOUS_SECTION) {
       let start = getPreviousSection(textValue);
       updateGlobalCursorPosition(start)
-    } else if (action.type === "previous_sentence") {
+    } else if (action.type === CmdConst.PREVIOUS_SENTENCE) {
       let start = getPreviousSentence(textValue);
       updateGlobalCursorPosition(start)
-    } else if (action.type === "previous_word") {
+    } else if (action.type === CmdConst.PREVIOUS_WORD) {
       let start = getPreviousWord(textValue);
       updateGlobalCursorPosition(start)
-    } else if (action.type === "end_of_text") {
+    } else if (action.type === CmdConst.END_OF_TEXT) {
       updateGlobalCursorPosition(textValue.length)
 
-    } else if (action.type === "next_section") {
+    } else if (action.type === CmdConst.NEXT_SECTION) {
       let end = getNextSection(textValue);
       updateGlobalCursorPosition(end)
-    } else if (action.type === "next_sentence") {
+    } else if (action.type === CmdConst.NEXT_SENTENCE) {
       let end = getNextSentence(textValue);
       updateGlobalCursorPosition(end)
-    } else if (action.type === "next_word") {
+    } else if (action.type === CmdConst.NEXT_WORD) {
       let end = getNextWord(textValue);
       updateGlobalCursorPosition(end)
-    } else if (action.type === "show_suggestions") {
+    } else if (action.type === CmdConst.SHOW_SUGGESTIONS) {
       if (suggestions.length > 0 && suggestions.some(s => s !== undefined)) {
         setShowSuggestions(true);
         setCurrentViewName("suggestions");
       }
-    } else if (action.type === "insert_suggestion") {
+    } else if (action.type === CmdConst.INSERT_SUGGESTION) {
       const suggestion = action.value;
 
       const cursorPos = globalCursorPosition.value;
@@ -376,13 +376,13 @@ function App({ initialView = "main_menu" }) {
       const spaceLength = 1;
       updateGlobalCursorPosition(globalCursorPosition.value + casedSuggestion.length + spaceLength)
 
-    } else if (action.type === "choose_button_layout") {
+    } else if (action.type === CmdConst.CHOOSE_BUTTON_LAYOUT) {
       // settings.buttons_layout = action.value;
-    } else if (action.type === "change_language") {
+    } else if (action.type === CmdConst.CHANGE_LANGUAGE) {
       const newUserdata =  updateSetting(userData, UserDataConst.LANGUAGE, action.value)
       setUserData(newUserdata)
       changeLanguage(userData[UserDataConst.SETTINGS][UserDataConst.LANGUAGE]);
-    } else if (action.type === "change_dwell_time") {
+    } else if (action.type === CmdConst.CHANGE_DWELL_TIME) {
       
       dwellTime = parseFloat(action.value);
       const newUserdata = updateSetting(userData, UserDataConst.DWELLTIME, dwellTime)
@@ -391,33 +391,32 @@ function App({ initialView = "main_menu" }) {
         type: "switch_view", view: "main_menu"
       }
       handleAction(goBack);
-    } else if (action.type === "play_alarm") {
+    } else if (action.type === CmdConst.PLAY_ALARM) {
       setAlarmActive(true);
-    } else if (action.type === 'close_alarm') {
+    } else if (action.type === CmdConst.CLOSE_ALARM) {
       setAlarmActive(false);
-    } else if (action.type === "increase_button_font_size") {
+    } else if (action.type === CmdConst.INCREASE_BUTTON_FONT_SIZE) {
       const size = buttonFontSize < 96 ? buttonFontSize + 1 : buttonFontSize
       const newUserdata = updateSetting(userData, UserDataConst.BUTTON_FONT_SIZE, size) 
       setUserData(newUserdata)
       setButtonFontSize(size)
-    } else if (action.type === "decrease_button_font_size") {
+    } else if (action.type === CmdConst.DECREASE_BUTTON_FONT_SIZE) {
       const size = buttonFontSize > 0 ? buttonFontSize - 1 : buttonFontSize
       const newUserdata = updateSetting(userData, UserDataConst.BUTTON_FONT_SIZE, size)
       setUserData(newUserdata)
       setButtonFontSize(size)
-      console.log("decrease button font size ", buttonFontSize);
-    } else if (action.type === "increase_text_font_size") {
+    } else if (action.type === CmdConst.INCREASE_TEXT_FONT_SIZE) {
       const size = textFontSize < 96 ? textFontSize + 1 : textFontSize
       const newUserdata = updateSetting(userData, UserDataConst.TEXT_FONT_SIZE, size)
       setUserData(newUserdata)
       setTextFontSize(size)
-    } else if (action.type === "decrease_text_font_size") {
+    } else if (action.type === CmdConst.DECREASE_TEXT_FONT_SIZE) {
       const size = textFontSize > 0 ? textFontSize - 1 : textFontSize
       const newUserdata = updateSetting(userData, UserDataConst.TEXT_FONT_SIZE, size)
       setUserData(newUserdata)
       setTextFontSize(size)
 
-    } else if (action.type === "insert_letter_suggestion") {
+    } else if (action.type === CmdConst.INSERT_LETTER_SUGGESTION) {
        // insert the letter at the global cursor position
 
 
