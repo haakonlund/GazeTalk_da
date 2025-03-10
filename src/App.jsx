@@ -1,6 +1,8 @@
 import React, { useState, useRef } from "react";
+import { useLocalStorage } from "@uidotdev/usehooks";
+
 import axios from "axios";
-import settings from "./settings.json";
+// import {settings, setSettings} from "./util/userData.js"
 import { changeLanguage } from "i18next";
 import "./App.css";
 import { globalCursorPosition, cursorEventTarget, updateGlobalCursorPosition } from "./singleton/cursorSingleton";
@@ -28,8 +30,10 @@ import {
   getPreviousWord, 
   getPreviousSentence
 } from './util/cursorUtils'
-
-
+import { updateSetting, updateRanking } from "./util/settingUtil";
+import {rank, updateRank, stripSpace, getRank} from "./util/ranking"
+import * as UserDataConst from "./constants/userDataConstants"
+import * as CmdConst from "./constants/cmdConstants"
 let dwellTime = 2000;
 
 function App({ initialView = "main_menu" }) {
@@ -42,7 +46,7 @@ function App({ initialView = "main_menu" }) {
   const [letterSuggestions, setLetterSuggestions] = useState([])
   const [nextLetters, setNextLetters] = useState([[],[],[],[],[],[],[]])
   const defaultLetterSuggestions  = useState(["e","t","a","space","o","i"])
-  
+  const [nextLetterSuggestion,setNextLetterSuggestion]  = useState(null)
   
   const textAreaRef = useRef(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -52,8 +56,54 @@ function App({ initialView = "main_menu" }) {
   const [buttonFontSize, setButtonFontSize] = useState(30)
   const [textFontSize, setTextFontSize] = useState(20)
 
+  const [userData, setUserData] = useLocalStorage(
+    UserDataConst.USERDATA,  {
+        settings : {
+          language : UserDataConst.DEFAULT_LANGUAGE,
+          dwelltime: UserDataConst.DEFAULT_DWELLTIME,
+          button_font_size : UserDataConst.DEFAULT_BUTTON_FONT_SIZE,
+          text_font_size : UserDataConst.DEFAULT_TEXT_FONT_SIZE,
+        },
+        ranking : UserDataConst.DEFAULT_RANKING
+    },
+  )
 
 
+
+
+  const handleLetterSelected = (otherLetters, selectedLetter) => {
+    // debugger
+    let Letters = stripSpace(otherLetters)
+    updateRank(Letters, selectedLetter)
+    const newUserdata = updateRanking(userData, getRank())
+    setUserData(newUserdata)
+    // console.log("Other letters:", Letters, "Selected:", selectedLetter);
+    let index = 0;
+    for (let i = 0; i < Letters.length; i++) {
+      if ( Letters[i] === selectedLetter) {
+        index = i;
+      }
+    }
+    if (nextLetters[index].length !== 0) {
+      setNextLetterSuggestion(nextLetters[index])
+      
+    }
+  };
+  
+  // load settings initalially
+  React.useEffect(() => {
+    // console.log("first load", userData)
+    const settings = userData?.settings
+    if (settings) {
+      const language = settings[UserDataConst.LANGUAGE] || UserDataConst.DEFAULT_LANGUAGE;
+      changeLanguage(language)
+      dwellTime = settings[UserDataConst.DWELLTIME]
+
+      setButtonFontSize(settings[UserDataConst.BUTTON_FONT_SIZE])
+      setTextFontSize(settings[UserDataConst.TEXT_FONT_SIZE])
+    }
+    
+  }, [userData]);
 
   React.useEffect(() => {
     const setTileFontSize = () => {
@@ -99,10 +149,8 @@ function App({ initialView = "main_menu" }) {
         
       }
     }
-
+    
     const fillLetterSuggestions = async () => {
-      
-        // setLetterSuggestions(response.data.continuations.slice(0, 6) || []);
         const getSug = async (text) => {
           const response = await fetchLetterSuggestions(text)
           const suggestionsString = response.data.continuations
@@ -110,74 +158,41 @@ function App({ initialView = "main_menu" }) {
           for (let i = 0; i < suggestionsString.length; i++) {
             suggestionArray.push(suggestionsString[i])
           }
-
-          //  if (suggestionsString) {
-          const topSuggestion = suggestionArray.slice(0, 7)
-          // insert space
-          let newArr = []
-          for (let i = 0; i < topSuggestion.length; i++) {
-            if (i == 3) {
-    
-              newArr[i] = "space";
-              continue;
-            }
-            newArr[i] = topSuggestion[i]
-            // }
-          }
-          return newArr
+          const topSuggestion = suggestionArray.slice(0, 6)
+          topSuggestion.reverse()
+          return topSuggestion
       }
-      const stripSpace = (arr) => {
-        let newArr = []
-        let offset = 0
-        for (let i = 0; i < arr.length; i++) {
-          if (arr[i] === "space") {
-            offset = 1;
-            continue
-          }
-          newArr[i - offset] = arr[i];
-          
-        }
-        return newArr;
-      }
-        
-        // const response = await fetchLetterSuggestions(textUpToCursor)
-        // const suggestionsString = response.data.continuations
-        // let suggestionArray = []
-        // for (let i = 0; i < suggestionsString.length; i++) {
-        //   suggestionArray.push(suggestionsString[i])
-        // }
-        // console.log("suggestionArray : ",suggestionArray)
+      // if there is already a selection use that
+      let rankedSuggestion = []
+      if (nextLetterSuggestion) {
+        rankedSuggestion = nextLetterSuggestion
+      } else {
         const currentSuggestion = (await getSug(textUpToCursor))
-        setLetterSuggestions(currentSuggestion)
-        const letterSuggestionsArray = []
-        for (let i = 0; i < 7; i++) {
-          if (currentSuggestion[i] === "space") continue;
-          const nextSug = await getSug(textUpToCursor + currentSuggestion[i])
-          letterSuggestionsArray[i] = stripSpace(nextSug)
-        }
-        setNextLetters(letterSuggestionsArray);
+        rankedSuggestion = rank(currentSuggestion, null, null)
+      }
+      setNextLetterSuggestion(null)
+      // insert space
 
-
-        // if (suggestionsString) {
-        //   const topSuggestion = suggestionArray.slice(0, 7)
-        //   // insert space
-        //   let newArr = []
-        //   for (let i = 0; i < topSuggestion.length; i++) {
-        //     if (i == 3) {
-        //       newArr[i] = "space";
-        //       continue;
-        //     }
-        //     newArr[i] = topSuggestion[i]
-            
-        //   }
-        //   setLetterSuggestions(newArr);
-        // } else {
-        //   setLetterSuggestions(defaultLetterSuggestions)
-        // }
+      const letterSuggestionsArray = []
+      for (let i = 0; i < 7; i++) {
+        if (i === 3) {
+          letterSuggestionsArray[i] = []
+          continue;
+        };
+        const nextSug = await getSug(textUpToCursor + rankedSuggestion[i])
+        letterSuggestionsArray[i] = rank(nextSug, rankedSuggestion[i], i)
+      }
+      rankedSuggestion.splice(3,0,"space") // add space
       
+      setLetterSuggestions(rankedSuggestion)
+
+
+
+      setNextLetters(letterSuggestionsArray);
     }
     
     fillLetterSuggestions();
+
   }, [textValue]);
 
   React.useEffect(() => {
@@ -362,12 +377,16 @@ function App({ initialView = "main_menu" }) {
       updateGlobalCursorPosition(globalCursorPosition.value + casedSuggestion.length + spaceLength)
 
     } else if (action.type === "choose_button_layout") {
-      settings.buttons_layout = action.value;
+      // settings.buttons_layout = action.value;
     } else if (action.type === "change_language") {
-      // language = action.value;
-      changeLanguage(action.value);
+      const newUserdata =  updateSetting(userData, UserDataConst.LANGUAGE, action.value)
+      setUserData(newUserdata)
+      changeLanguage(userData[UserDataConst.SETTINGS][UserDataConst.LANGUAGE]);
     } else if (action.type === "change_dwell_time") {
+      
       dwellTime = parseFloat(action.value);
+      const newUserdata = updateSetting(userData, UserDataConst.DWELLTIME, dwellTime)
+      setUserData(newUserdata)
       let goBack = {
         type: "switch_view", view: "main_menu"
       }
@@ -377,13 +396,26 @@ function App({ initialView = "main_menu" }) {
     } else if (action.type === 'close_alarm') {
       setAlarmActive(false);
     } else if (action.type === "increase_button_font_size") {
-      setButtonFontSize(buttonFontSize < 96 ? buttonFontSize + 1 : buttonFontSize);
+      const size = buttonFontSize < 96 ? buttonFontSize + 1 : buttonFontSize
+      const newUserdata = updateSetting(userData, UserDataConst.BUTTON_FONT_SIZE, size) 
+      setUserData(newUserdata)
+      setButtonFontSize(size)
     } else if (action.type === "decrease_button_font_size") {
-      setButtonFontSize(buttonFontSize > 0 ? buttonFontSize - 1 : buttonFontSize);
+      const size = buttonFontSize > 0 ? buttonFontSize - 1 : buttonFontSize
+      const newUserdata = updateSetting(userData, UserDataConst.BUTTON_FONT_SIZE, size)
+      setUserData(newUserdata)
+      setButtonFontSize(size)
+      console.log("decrease button font size ", buttonFontSize);
     } else if (action.type === "increase_text_font_size") {
-      setTextFontSize(textFontSize < 96 ? textFontSize + 1 : textFontSize);
+      const size = textFontSize < 96 ? textFontSize + 1 : textFontSize
+      const newUserdata = updateSetting(userData, UserDataConst.TEXT_FONT_SIZE, size)
+      setUserData(newUserdata)
+      setTextFontSize(size)
     } else if (action.type === "decrease_text_font_size") {
-      setTextFontSize(textFontSize > 0 ? textFontSize - 1 : textFontSize);
+      const size = textFontSize > 0 ? textFontSize - 1 : textFontSize
+      const newUserdata = updateSetting(userData, UserDataConst.TEXT_FONT_SIZE, size)
+      setUserData(newUserdata)
+      setTextFontSize(size)
 
     } else if (action.type === "insert_letter_suggestion") {
        // insert the letter at the global cursor position
@@ -423,7 +455,9 @@ function App({ initialView = "main_menu" }) {
         suggestions={suggestions}
         letterSuggestions={letterSuggestions}
         nextLetters={nextLetters}
-        dwellTime={dwellTime} />
+        dwellTime={dwellTime} 
+        handleLetterSelected={handleLetterSelected}
+        />
       {alarmActive && <AlarmPopup onClose={() => setAlarmActive(false)} dwellTime={dwellTime} />}
         {
           // Uncomment to show debug button

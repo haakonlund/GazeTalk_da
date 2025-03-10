@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
-const Tile = ({ tile, onActivate, dwellTime }) => {
+const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected }) => {
   const { t } = useTranslation();
   const [hovering, setHovering] = useState(false);
   const [progress, setProgress] = useState(100);
@@ -26,6 +26,12 @@ const Tile = ({ tile, onActivate, dwellTime }) => {
         if (percentage <= 0) {
           clearInterval(timer);
           onActivate(tile.action);
+          const letter = tile.label;
+          if (otherLetters) {
+            if (onLetterSelected) {
+              onLetterSelected(otherLetters, letter);
+            }
+          }
           // setHovering(false);
           setProgress(100);
         } else {

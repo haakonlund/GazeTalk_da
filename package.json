@@ -19,17 +19,30 @@
       "!src/index.js"
     ],
     "moduleNameMapper": {
-      "\\.(css)$": "identity-obj-proxy"
-    }
-  },
+      "\\.(css)$": "identity-obj-proxy",
+      "^react-native$": "react-native-web"
+    },
+    "transformIgnorePatterns": [
+      "/node_modules/(?!(@uidotdev/usehooks|react-native|react-native-web))"
+    ],
+    "transform": {
+      "^.+\\.(js|jsx|ts|tsx)$": "babel-jest"
+    },
+    "setupFiles": [
+      "<rootDir>src/jest-setup.js"
+    ]
+},
+  "test": "react-scripts test --transformIgnorePatterns \"node_modules/(?!@uidotdev/usehooks)/\"",
   "dependencies": {
+    "@uidotdev/usehooks": "^2.4.1",
     "axios": "^1.7.9",
     "i18next": "^24.2.2",
     "i18next-browser-languagedetector": "^8.0.2",
     "i18next-http-backend": "^3.0.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-i18next": "^15.4.0"
+    "react-i18next": "^15.4.0",
+    "react-native-web": "^0.19.13"
   },
   "devDependencies": {
     "@babel/core": "^7.26.9",

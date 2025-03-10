@@ -7,17 +7,36 @@ import axios from 'axios';
 import { act } from '@testing-library/react';
 
 // Mock react-i18next to provide a simple translation function.
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key) => key,
-    i18n: { changeLanguage: () => Promise.resolve() },
-  }),
+// jest.mock('react-i18next', () => ({
+//   useTranslation: () => ({
+//     t: (key) => key,
+//     i18n: { changeLanguage: () => jest.fn() },
+//   }),
+// }));
+
+jest.mock('i18next', () => ({
+  changeLanguage: jest.fn(),
 }));
 
 jest.mock('axios');
+jest.mock("@uidotdev/usehooks", () => ({
+    useLocalStorage: (key, initialValue) => [
+      {
+        settings: {
+          language: "en",  // Force a different language
+          dwelltime: 1000,
+          button_font_size: 40,  // Custom button font size
+          text_font_size: 25,    // Custom text font size
+        },
+        ranking: {}, // Custom ranking
+      },
+      jest.fn(), // Mock setter function
+    ],
+  }));
+  
 
 describe('Checking configurations', () => {
-
+    const settings = 
     beforeEach(() => {
         // For tests that do not need suggestions (static), we return empty arrays.
         axios.post.mockImplementation((url) => {

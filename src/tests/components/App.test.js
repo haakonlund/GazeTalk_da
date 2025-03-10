@@ -8,14 +8,12 @@ import { act } from '@testing-library/react';
 // Optionally, if your App uses axios, you can mock it:
 jest.mock('axios');
 
-jest.mock('react-i18next', () => ({
-    useTranslation: () => ({
-      t: (key) => key,
-      i18n: {
-        changeLanguage: () => new Promise(() => {}),
-      },
-    }),
-  }));
+
+jest.mock('i18next', () => ({
+  changeLanguage: jest.fn(),
+}));
+  
+  
   
   describe('App component', () => {
     test('Check rendering of homepage "main_menuConfig" ', async () => {
