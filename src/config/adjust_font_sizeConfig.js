@@ -53,7 +53,6 @@ export const adjust_font_sizeConfig = {
         {
           type : "empty",
           label : "",
-            
         }
       ]
   };

@@ -14,42 +14,6 @@ export const pauseConfig = {
           type: "switch",
           label: "back",
           action: { type: "switch_view", view: "main_menu" }
-        },
-        {
-          type : "empty",
-          label : "",
-            
-        },
-        {
-            type : "empty",
-            label : "",
-        },
-        {
-            type : "empty",
-            label : "",
-        },
-        {
-          type : "empty",
-          label : "",
-            
-        },
-        {
-          type : "empty",
-          label : "",
-            
-        },
-        {
-            type : "empty",
-            label : "",
-        },
-        {
-            type : "empty",
-            label : "",
-        },
-        {
-          type : "empty",
-          label : "",
-            
         }
       ]
   };

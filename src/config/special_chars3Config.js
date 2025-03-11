@@ -48,10 +48,6 @@ export const special_chars3Config = {
           type: "letter",
           label: "_",
           action: { type: "enter_letter", value: "_" }
-        },
-        {
-          type:"empty",
-          label: ""
-        },
+        }
     ]
   };

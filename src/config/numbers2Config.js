@@ -39,18 +39,6 @@ export const numbers2Config = {
         type: "letter",
         label: "0",
         action: { type: "enter_letter", value: "0" }
-      },
-      {
-        type: "empty",
-        label: ""
-      },
-      {
-        type: "empty",
-        label: ""
-      },
-      {
-        type: "empty",
-        label: ""
       }
     ]
   };

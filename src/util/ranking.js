@@ -38,7 +38,7 @@ let ranking = {}
 //     "f" : [0,0,0,0,0,0],
 // }
 
-const buttonNum = 6
+const buttonNum = 14
 const MAXITER = 128
 
 class R {
@@ -236,6 +236,5 @@ export const updateRank = (arr, letter) => {
     newRank[selection] = newRank[selection] + 1; 
 
     ranking[letter] = newRank
-    console.log("current ranking : ", ranking)
 } 
 

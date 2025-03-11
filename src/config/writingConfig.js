@@ -17,7 +17,7 @@ export const writingConfig = {
           action: { type: "switch_view", view: "writing_submenu" }
         },
         {
-          type: "letter",
+          type: "letter", 
           label: "",
           surroundingLetters: [],
           action: { type: "show_suggestions", value: "" }

@@ -12,8 +12,8 @@ export const edit_settingsConfig = {
         },
         {
           type: "switch",
-          label: "button layout",
-          action: { type: "switch_view", view: "edit_buttonlayout" }
+          label: "layout",
+          action: { type: "switch_view", view: "layouts" }
         },
         {
           type: "switch",

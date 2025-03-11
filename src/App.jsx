@@ -7,9 +7,9 @@ import { changeLanguage } from "i18next";
 import "./App.css";
 import { globalCursorPosition, cursorEventTarget, updateGlobalCursorPosition } from "./singleton/cursorSingleton";
 
-import GenericView from "./views/GenericView";
+import LayoutPicker from "./layouts/LayoutPicker";
 import AlarmPopup from "./components/AlarmPopup";
-import PausePopup from "./components/PausePopup";
+//import PausePopup from "./components/PausePopup";
 import { config } from "./config/config";
 import {speakText} from './singleton/textToSpeachSingleton'
 import {
@@ -34,10 +34,11 @@ import { updateSetting, updateRanking } from "./util/settingUtil";
 import {rank, updateRank, stripSpace, getRank} from "./util/ranking"
 import * as UserDataConst from "./constants/userDataConstants"
 import * as CmdConst from "./constants/cmdConstants"
-let dwellTime = 2000;
+let dwellTime = 1500;
 
-function App({ initialView = "main_menu" }) {
+function App({ initialView = "main_menu", initialLayout = "2+2+4x2" }) {
   const [currentViewName, setCurrentViewName] = useState(initialView);
+  const [currentLayoutName, setCurrentLayoutName] = useState(initialLayout);
   const [textValue, setTextValue] = useState("");
   const [isCapsOn, setIsCapsOn] = useState(false);
   const [alarmActive, setAlarmActive] = useState(false);
@@ -127,7 +128,7 @@ function App({ initialView = "main_menu" }) {
           locale: "en_US",
           prompt: textUpToCursor,
         });
-        setSuggestions(response.data.continuations.slice(0, 8) || []);
+        setSuggestions(response.data.continuations.slice(0, 15) || []);
       } catch (error) {
         console.error("Error fetching suggestions:", error);
         setSuggestions([]);
@@ -155,7 +156,7 @@ function App({ initialView = "main_menu" }) {
         const response = await fetchLetterSuggestions(text);
         const suggestionsString = response.data.continuations;
         const suggestionArray = [...suggestionsString]; // Using spread operator instead of the loop
-        return suggestionArray.slice(0, 6).reverse();
+        return suggestionArray.slice(0, 14).reverse();
       };
     
       // Get initial suggestions
@@ -170,8 +171,6 @@ function App({ initialView = "main_menu" }) {
     
       // Make all next suggestion API calls in parallel using Promise.all
       const nextSugPromises = rankedSuggestion.map(async (suggestion, index) => {
-        // Skip index 3 (will be used for space)
-        if (index === 3) return null;
         return getSug(textUpToCursor + suggestion);
       });
     
@@ -179,12 +178,8 @@ function App({ initialView = "main_menu" }) {
       
       // Process results
       const letterSuggestionsArray = nextSugResults.map((result, i) => {
-        if (i === 3) return []; // Handle the space position
         return rank(result, rankedSuggestion[i], i);
       });
-    
-      // Add space to the ranked suggestions
-      rankedSuggestion.splice(3, 0, "space");
       
       setLetterSuggestions(rankedSuggestion);
       setNextLetters(letterSuggestionsArray);
@@ -434,16 +429,18 @@ function App({ initialView = "main_menu" }) {
          const lastSentence = textValue.slice(lastSentenceStart, globalCursorPosition.value)
          speakText(lastSentence)
        }
-    }
-    if (action.type === "toggle_pause") {
+    } else if (action.type === "toggle_pause") {
       setIsPaused((prev) => !prev);
+    } else if (action.type === "switch_layout") {
+      setCurrentLayoutName(action.value);
     }
     input.focus();    
   };
 
   return (
     <div className="App">
-      <GenericView
+      <LayoutPicker
+        layout={currentLayoutName}
         view={view}
         textValue={textValue}
         setTextValue={setTextValue}

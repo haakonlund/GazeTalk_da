@@ -56,7 +56,25 @@ describe('KeyboardGrid component', () => {
   test('Check KeyboardGrid renders with suggestions in suggestion button using writing config', () => {
     const view = config.views.writing;
     const suggestions = ["lot", "good", "problem", "great", "very", "nice", "look", "few"];
-    const letterSuggestions = ["e","t","a","space","o","i","r"];
+    const letterSuggestions = ["e","t","a","o","i","r"];
+    const nextLetters = [
+      ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o"],
+      ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o"],
+      ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o"],
+      ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o"],
+      ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o"],
+      ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o"],
+      ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o"],
+      ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o"],
+      ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o"],
+      ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o"],
+      ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o"],
+      ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o"],
+      ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o"],
+      ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o"],
+      ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o"],
+      ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o"]
+    ];
     render(
       <KeyboardGrid
         view={view}
@@ -65,6 +83,7 @@ describe('KeyboardGrid component', () => {
         onTileActivate={dummyOnActivate}
         suggestions={suggestions}
         letterSuggestions={letterSuggestions}
+        nextLetters={nextLetters}
         dwellTime={1000}
       />
     );
@@ -93,6 +112,7 @@ describe('KeyboardGrid component', () => {
     const view = config.views.suggestions;
     const suggestions = ["lot", "good", "problem", "great", "very", "nice", "look", "few"];
     const letterSuggestions = ["e","t","a","space","o","i","r"];
+    
     render(
       <KeyboardGrid
         view={view}

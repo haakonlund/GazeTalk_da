@@ -26,31 +26,6 @@ export const main_menuConfig = {
           type: "switch",
           label: "Pause",
           action :{type :"switch_view", view : "pause" }
-        },
-        {
-          type: "empty",
-          label: "",
-        },
-        {
-          type: "empty",
-          label: "",
-        },
-        // Row 3 (4 tiles)
-        {
-          type: "empty",
-          label: "",
-        },
-        {
-          type: "empty",
-          label: "",
-        },
-        {
-          type: "empty",
-          label: "",
-        },
-        {
-          type: "empty",
-          label: "",
-        },
+        }
       ]
   };

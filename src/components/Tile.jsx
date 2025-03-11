@@ -7,14 +7,16 @@ const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected }) =
   const [progress, setProgress] = useState(100);
 
   // Calculate positions for surrounding letters
-  const positions = [
-    { top: '10%',    left: '10%' },  // Top-left
-    { top: '10%',    left: '50%' },  // Top-center
-    { top: '10%',    right: '10%' }, // Top-right
-    { bottom: '10%', left: '10%' },  // Bottom-left
-    { bottom: '10%', left: '50%' },  // Bottom-center
-    { bottom: '10%', right: '10%' }  // Bottom-right
-  ];
+  const positions = {
+    "top-left": { top: '10%',    left: '10%' },  // Top-left
+    "top-center": { top: '10%',    left: '50%' },  // Top-center
+    "top-right":{ top: '10%',    right: '10%' }, // Top-right
+    "center-left": { top: '37%',    left: '10%'},   // Center-left
+    "center-right":{ top: '37%',    right: "10%"},  // Center-right
+    "bottom-left":{ bottom: '10%', left: '10%' },  
+    "bottom-center":{ bottom: '10%', left: '50%' },  // Bottom-center
+    "bottom-right":{ bottom: '10%', right: '10%' }  // Bottom-right
+  };
 
   useEffect(() => {
     let timer;
@@ -55,24 +57,35 @@ const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected }) =
       onMouseLeave={() => setHovering(false)}
       // onClick={() => onActivate(tile.action)}
     >
-      {/* Main letter */}
-      <div className="label">
-        {t(tile.label)}
-      </div>
+      {tile.icon ? (
+        // Show icon for layouts page
+        <div className="tile-icon">
+          <img 
+            src={tile.icon} 
+            alt={tile.label || "icon"}  />
+        </div>
+        
+      ) : (
+        /* Main letter */
+        <div className="label">
+          {t(tile.label)}
+        </div>
+      )}
+      
 
       {/* Surrounding letters */}
-      {hovering && tile.surroundingLetters && tile.surroundingLetters.map((letter, index) => (
+      {hovering && tile.neighbours && Object.entries(tile.neighbours).map(([direction, letter]) => (
         <span
-          key={index}
+          key={direction}
           className="surrounding-letter"
-          style={positions[index]}
+          style={positions[direction]}
         >
           {letter}
         </span>
       ))}
 
       {/* Progress bar */}
-      {hovering && (
+      {tile.type !== "empty" && hovering && (
         <div className="progress-bar">
           <div className="progress" style={{width: `${progress}%`}}></div>
         </div>
