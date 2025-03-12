@@ -312,3 +312,37 @@ describe('deleteSentence', () => {
     expect(newCursorPosition).toBe(expectedText.length);
   });
 });
+
+describe('deleteSection', () => {
+  test('returns the original text and cursor for an empty text', () => {
+    const text = "";
+    const cursorPosition = 0;
+    const { newText, newCursorPosition } = deleteSection(text, cursorPosition);
+    expect(newText).toBe("");
+    expect(newCursorPosition).toBe(0);
+  });
+
+  test('deletes the entire section for a single-section text', () => {
+    const text = "Hello world.";
+    const cursorPosition = text.length;
+    const { newText, newCursorPosition } = deleteSection(text, cursorPosition);
+    expect(newText).toBe("");
+    expect(newCursorPosition).toBe(0);
+  });
+
+  test('deletes the section when text has multiple sections separated by double newlines', () => {
+    const text = "Hello world.\nHow are you?\nI am fine.";
+    const cursorPosition = 20;
+    const { newText, newCursorPosition } = deleteSection(text, cursorPosition);
+    expect(newText).toBe("Hello world.\nI am fine.");
+    expect(newCursorPosition).toBe("Hello world.\n".length);
+  });
+
+  test('deletes the section when the cursor is at the beginning of the section', () => {
+    const text = "Hello world.\nHow are you?\nI am fine.";
+    const cursorPosition = 13;
+    const { newText, newCursorPosition } = deleteSection(text, cursorPosition);
+    expect(newText).toBe("Hello world.\nI am fine.");
+    expect(newCursorPosition).toBe("Hello world.\n".length);
+  });
+});

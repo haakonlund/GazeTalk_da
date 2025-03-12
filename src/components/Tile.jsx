@@ -8,14 +8,14 @@ const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected }) =
 
   // Calculate positions for surrounding letters
   const positions = {
-    "top-left": { top: '10%',    left: '10%' },  // Top-left
-    "top-center": { top: '10%',    left: '50%' },  // Top-center
-    "top-right":{ top: '10%',    right: '10%' }, // Top-right
-    "center-left": { top: '37%',    left: '10%'},   // Center-left
-    "center-right":{ top: '37%',    right: "10%"},  // Center-right
-    "bottom-left":{ bottom: '10%', left: '10%' },  
-    "bottom-center":{ bottom: '10%', left: '50%' },  // Bottom-center
-    "bottom-right":{ bottom: '10%', right: '10%' }  // Bottom-right
+    "top-left": { top: '0%',    left: '10%' },  // Top-left
+    "top-center": { top: '0%',    left: '50%' },  // Top-center
+    "top-right":{ top: '0%',    right: '10%' }, // Top-right
+    "center-left": { top: '35%',    left: '10%'},   // Center-left
+    "center-right":{ top: '35%',    right: "10%"},  // Center-right
+    "bottom-left":{ bottom: '0%', left: '10%' },  
+    "bottom-center":{ bottom: '0%', left: '50%' },  // Bottom-center
+    "bottom-right":{ bottom: '0%', right: '10%' }  // Bottom-right
   };
 
   useEffect(() => {
