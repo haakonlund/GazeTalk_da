@@ -31,9 +31,10 @@ import {
   getPreviousSentence
 } from './util/cursorUtils'
 import { updateSetting, updateRanking } from "./util/settingUtil";
-import {rank, updateRank, stripSpace, getRank} from "./util/ranking"
+import * as RankingSystem from "./util/ranking"
 import * as UserDataConst from "./constants/userDataConstants"
 import * as CmdConst from "./constants/cmdConstants"
+import { layoutToButtonNum } from "./constants/layoutConstants";
 let dwellTime = 1500;
 
 function App({ initialView = "main_menu", initialLayout = "2+2+4x2" }) {
@@ -56,6 +57,7 @@ function App({ initialView = "main_menu", initialLayout = "2+2+4x2" }) {
 
   const [buttonFontSize, setButtonFontSize] = useState(30)
   const [textFontSize, setTextFontSize] = useState(20)
+  const [buttonNum, setButtonNum] = useState(6)
 
   const [userData, setUserData] = useLocalStorage(
     UserDataConst.USERDATA,  {
@@ -69,14 +71,22 @@ function App({ initialView = "main_menu", initialLayout = "2+2+4x2" }) {
     },
   )
 
-
+  const changeButtonNum = (newValue) => {
+    
+    if (newValue < 1) {
+      console.warn("Button number can't be less than 1");
+      return;
+    }
+    
+    RankingSystem.setButtonNum(newValue);
+    setButtonNum(newValue)
+  };
 
 
   const handleLetterSelected = (otherLetters, selectedLetter) => {
-    // debugger
-    let Letters = stripSpace(otherLetters)
-    updateRank(Letters, selectedLetter)
-    const newUserdata = updateRanking(userData, getRank())
+    let Letters = RankingSystem.stripSpace(otherLetters)
+    RankingSystem.updateRank(Letters, selectedLetter)
+    const newUserdata = updateRanking(userData, RankingSystem.getRank())
     setUserData(newUserdata)
     // console.log("Other letters:", Letters, "Selected:", selectedLetter);
     let index = 0;
@@ -156,7 +166,7 @@ function App({ initialView = "main_menu", initialLayout = "2+2+4x2" }) {
         const response = await fetchLetterSuggestions(text);
         const suggestionsString = response.data.continuations;
         const suggestionArray = [...suggestionsString]; // Using spread operator instead of the loop
-        return suggestionArray.slice(0, 14).reverse();
+        return suggestionArray.slice(0, RankingSystem.getButtonNum()).reverse();
       };
     
       // Get initial suggestions
@@ -165,7 +175,7 @@ function App({ initialView = "main_menu", initialLayout = "2+2+4x2" }) {
         rankedSuggestion = nextLetterSuggestion;
       } else {
         const currentSuggestion = await getSug(textUpToCursor);
-        rankedSuggestion = rank(currentSuggestion, null, null);
+        rankedSuggestion = RankingSystem.rank(currentSuggestion, null, null);
       }
       setNextLetterSuggestion(null);
     
@@ -178,7 +188,7 @@ function App({ initialView = "main_menu", initialLayout = "2+2+4x2" }) {
       
       // Process results
       const letterSuggestionsArray = nextSugResults.map((result, i) => {
-        return rank(result, rankedSuggestion[i], i);
+        return RankingSystem.rank(result, rankedSuggestion[i], i);
       });
       
       setLetterSuggestions(rankedSuggestion);
@@ -187,7 +197,7 @@ function App({ initialView = "main_menu", initialLayout = "2+2+4x2" }) {
     
     fillLetterSuggestions();
 
-  }, [textValue]);
+  }, [textValue, buttonNum]);
 
   React.useEffect(() => {
     const handleKeyDown = (event) => {
@@ -432,6 +442,9 @@ function App({ initialView = "main_menu", initialLayout = "2+2+4x2" }) {
     } else if (action.type === "toggle_pause") {
       setIsPaused((prev) => !prev);
     } else if (action.type === "switch_layout") {
+      changeButtonNum(
+        layoutToButtonNum[action.value] || 6
+      )
       setCurrentLayoutName(action.value);
     }
     input.focus();    

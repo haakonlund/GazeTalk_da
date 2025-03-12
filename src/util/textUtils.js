@@ -129,6 +129,19 @@ export const getWordBoundaries = (text, cursorPosition) => {
       newCursorPosition
     };
   };
+  export const stripSpace = (arr) => {
+    let newArr = []
+    let offset = 0
+    for (let i = 0; i < arr.length; i++) {
+    if (arr[i] === "space") {
+        offset = 1;
+        continue
+    }
+    newArr[i - offset] = arr[i];
+    
+    }
+    return newArr;
+}
 // export const insertSuggestion = (action, textValue) => {
 //     const suggestion = action.value;
 

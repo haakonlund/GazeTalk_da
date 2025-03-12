@@ -2,7 +2,17 @@ import { useState } from "react";
 
 
 // let [ranking, setRanking] = useState([])
-let ranking = {}
+let ranking = {};
+export const setRanking = (xRanking) => {
+    ranking = xRanking;
+}
+let buttonNum = 6;
+export const setButtonNum = (xNum)  => {
+    buttonNum = xNum;
+}
+export const getButtonNum = () => {
+    return buttonNum
+}
 // test ranking
 // let ranking = {
 //     "a" : [0,10,0,1,0,0],
@@ -38,17 +48,8 @@ let ranking = {}
 //     "f" : [0,0,0,0,0,0],
 // }
 
-const buttonNum = 14
 const MAXITER = 128
 
-class R {
-    constructor(currentMax, selectionArr, letter, space) {
-        this.currentMax = currentMax
-        this.selectionArr =selectionArr
-        this.letter = letter
-        this.space = space
-    }
-}
 /*
  arr is the array of ints
 */
@@ -57,7 +58,7 @@ class R {
 example output
 [3,0,1,5,4,2]
 */
-const getPreferedSpaces = (arr) => {
+export const getPreferedSpaces = (arr) => {
     let ordering = []
     let visited = Array(buttonNum).fill(false)
    
@@ -111,7 +112,6 @@ currentSelection is which button is pressed
 export const rank = (arr, suggestionLetter, currentSelection) => {
     let newArr = Array(buttonNum).fill("")
     let selectionArr = Array(buttonNum).fill(0)
-    let rArr = Array(buttonNum)
     for (let i = 0; i < buttonNum; i++) {
         let thisRank = getLetterRank(arr[i])
         selectionArr[i] = getPreferedSpaces(thisRank)
@@ -126,9 +126,6 @@ export const rank = (arr, suggestionLetter, currentSelection) => {
         }
     }
 
-    for (let i = 0; i < buttonNum; i++) {
-        rArr[i] = new R(0,selectionArr[i],arr[i],null)
-    }
     let filledSpaces = 0
 
     let occupied = Array(buttonNum).fill(false)
