@@ -5,7 +5,9 @@ export const getLastSentence = (text) => {
     while (start > 0 ) {
       if (text[start-1] === "." || text[start-1] === "!" || text[start-1] === "?") {
         punctuationCnt--;
-        if (punctuationCnt === 0) break;
+        if (punctuationCnt === 0) {
+          break;
+        } 
       }
         start--;
     }
