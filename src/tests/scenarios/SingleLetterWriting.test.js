@@ -1,84 +1,47 @@
 import React, {useState} from 'react';
-import { render, fireEvent, screen, act  } from '@testing-library/react';
-import KeyboardGrid from '../../components/KeyboardGrid';
-import { config } from '../../config/config';
+import { render, screen, fireEvent, act, waitFor } from "@testing-library/react";
+import axios from "axios";
 import '@testing-library/jest-dom';
+import App from '../../App';
 
-// Holds the text value in a state and passes it to the KeyboardGrid.
-const KeyboardGridWrapper = ({ initialValue, ...props }) => {
-    const [textValue, setTextValue] = useState(initialValue || '');
-    // Simple onTileActivate handler that appends the letter.
-    const onTileActivate = (action) => {
-      if (action && action.value) {
-        setTextValue((prev) => prev + action.value);
-      }
-    };
-    return (
-      <KeyboardGrid
-        {...props}
-        textValue={textValue}
-        setTextValue={setTextValue}
-        onTileActivate={onTileActivate}
-      />
-    );
-  };
 
-// Get TextareaTile and Tile components.
-jest.mock('../../components/TextAreaTile', () => (props) => (
-  <div data-testid="textarea-tile">{props.value}</div>
-));
+jest.mock("axios");
 
-jest.mock("react-i18next", () => ({
-    useTranslation: () => ({ t: (key) => key })
+jest.mock('i18next', () => ({
+  changeLanguage: jest.fn(),
 }));
 
+jest.mock('../../components/TextAreaTile', () => (props) => (
+  <textarea 
+    id="text_region" 
+    data-testid="textarea-tile" 
+    readOnly 
+    value={props.value} 
+    style={props.style}
+  />
+));
 
-describe('KeyboardGrid component', () => {
-  const dummyOnActivate = jest.fn();
-  const dummySetTextValue = jest.fn();
-
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
-  test('Check Writing \"eat\"', () => {
-    const view = config.views.writing;
-    const suggestions = [];
-    const dwellTime = 1000;
-    const letterSuggestions = ["e","t","a","space","o","i","r"];
-    const nextLetters = [
-      ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o"],
-      ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o"],
-      ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o"],
-      ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o"],
-      ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o"],
-      ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o"],
-      ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o"],
-      ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o"],
-      ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o"],
-      ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o"],
-      ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o"],
-      ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o"],
-      ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o"],
-      ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o"],
-      ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o"],
-      ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o"]
-    ];
-    render(
-      <KeyboardGridWrapper
-      view={view}
-        textValue=""
-        setTextValue={dummySetTextValue}
-        onTileActivate={dummyOnActivate}
-        suggestions={suggestions}
-        letterSuggestions={letterSuggestions}
-        
-        nextLetters={nextLetters}
-        dwellTime={dwellTime}
-      />
-    );
+describe('Single Letter Writing', () => {
+  const dwellTime = 2000;
+  test('Check Writing \"eat\"', async () => {
+    axios.post.mockImplementation(async (url, data) => {
+      if (url.includes("lettercontinuations")) {
+        return {
+          data: {
+            continuations: "etaoinshrlcd"
+          }
+        };
+      }
+      return { data: { continuations: [] } };
+    });
+    
+    render(<App initialView="writing" initialLayout="2+2+4x2" />);
+    await waitFor(() => {
+        const tileElements = document.querySelectorAll(".tile");
+        expect(tileElements.length).toBe(10); 
+    });
     // Check Empty content in TextAreaTile
-    expect(screen.getByTestId('textarea-tile')).toHaveTextContent(''); //Resembles empty string for some reason
+    expect(screen.getByTestId('textarea-tile')).toHaveTextContent('')
 
     // Click on e
     const tile1 = screen.getByText('e');

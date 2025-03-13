@@ -128,7 +128,7 @@ function App({ initialView = "main_menu", initialLayout = "2+2+4x2" }) {
           locale: "en_US",
           prompt: textUpToCursor,
         });
-        setSuggestions(response.data.continuations.slice(0, 15) || []);
+        setSuggestions(response.data.continuations.slice(0, 16) || []);
       } catch (error) {
         console.error("Error fetching suggestions:", error);
         setSuggestions([]);

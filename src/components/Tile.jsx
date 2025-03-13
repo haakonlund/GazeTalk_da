@@ -52,6 +52,8 @@ const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected }) =
   return (
     <div 
       className="tile"
+      role="button"
+      aria-label={tile.label || "tile"}
       style={tile.customStyle || {}}
       onMouseEnter={() => setHovering(true)}
       onMouseLeave={() => setHovering(false)}
@@ -62,7 +64,7 @@ const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected }) =
         <div className="tile-icon">
           <img 
             src={tile.icon} 
-            alt={tile.label || "icon"}  />
+            alt={tile.label}  />
         </div>
         
       ) : (
