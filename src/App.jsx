@@ -12,24 +12,6 @@ import AlarmPopup from "./components/AlarmPopup";
 //import PausePopup from "./components/PausePopup";
 import { config } from "./config/config";
 import { speakText } from './singleton/textToSpeachSingleton'
-import {
-  deleteWordAtCursor,
-  deleteSentence,
-  deleteSection,
-  getCurrentLine,
-  getCharDistance,
-  calcCursorDistance,
-  getLastSentence,
-  matchCase,
-} from './util/textUtils';
-import {
-  getPreviousSection,
-  getNextWord, 
-  getNextSentence, 
-  getNextSection, 
-  getPreviousWord, 
-  getPreviousSentence
-} from './util/cursorUtils'
 import { updateSetting, updateRanking } from "./util/settingUtil";
 import * as RankingSystem from "./util/ranking"
 import { handleAction } from "./util/handleAction";
@@ -259,6 +241,7 @@ function App({ initialView = "main_menu", initialLayout = "2+2+4x2", initialText
       showSuggestions,
       changeButtonNum,
       buttonNum,
+
     });
   };
 

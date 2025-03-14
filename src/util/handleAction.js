@@ -3,13 +3,30 @@ import { speakText } from '../singleton/textToSpeachSingleton';
 import * as CmdConst from "../constants/cmdConstants";
 import * as UserDataConst from "../constants/userDataConstants";
 import {
-  getLastSentence,
-  matchCase,
+    deleteWordAtCursor,
+    deleteSentence,
+    deleteSection,
+    getCurrentLine,
+    getCharDistance,
+    calcCursorDistance,
+    getLastSentence,
+    matchCase,
 } from './textUtils';
 import {
   updateRanking,
   updateSetting,
 } from "./settingUtil";
+import {
+    getPreviousSection,
+    getNextWord, 
+    getNextSentence, 
+    getNextSection, 
+    getPreviousWord, 
+    getPreviousSentence,
+} from './cursorUtils';
+
+
+
 import { layoutToButtonNum } from "../constants/layoutConstants";
 
 
@@ -104,6 +121,24 @@ export const handleAction = (
         updateGlobalCursorPosition(input.selectionStart - 1);
         setTextValue(newText);
         break;
+    }
+    case CmdConst.DELETE_WORD: {
+        const { newText, newCursorPosition } = deleteWordAtCursor(textValue, input.selectionStart);
+        setTextValue(newText);
+        updateGlobalCursorPosition(newCursorPosition);
+        break;
+    }
+    case CmdConst.DELETE_SENTENCE: {
+      const { newText, newCursorPosition } = deleteSentence(textValue, input.selectionStart);
+      setTextValue(newText);
+      updateGlobalCursorPosition(newCursorPosition);
+      break;
+    }
+    case CmdConst.DELETE_SECTION: {
+      const { newText, newCursorPosition } = deleteSection(textValue, input.selectionStart);
+      setTextValue(newText);
+      updateGlobalCursorPosition(newCursorPosition);
+      break;
     }
     case CmdConst.TOGGLE_CASE: {
       setIsCapsOn(prev => !prev);
