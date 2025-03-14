@@ -2,6 +2,8 @@ import React from "react";
 import TextAreaTile from "./TextAreaTile";
 import Tile from "./Tile";
 import { getNeighbours } from "../util/tileUtils";
+import * as CmdConst from "../constants/cmdConstants";
+
 const KeyboardGrid = ({ 
         view, 
         textValue,
@@ -111,7 +113,7 @@ const KeyboardGrid = ({
                       { 
                         label: "space", 
                         is_dynamic: true,
-                        action: { type: "letter", value: " " }
+                        action: { type: CmdConst.ENTER_LETTER, value: " " }
                       }
                     } 
                     onActivate={onTileActivate} 

@@ -54,6 +54,7 @@ export const handleAction = (
     buttonNum,
   }
 ) => {
+
   switch (action.type) {
     case CmdConst.ENTER_LETTER: {
       // insert the letter at the global cursor position
@@ -109,7 +110,7 @@ export const handleAction = (
       break;
     }
     case CmdConst.CURSOR: {
-        handleCurser(action.direction);
+        handleCurser(action.direction, input, textValue);
         break;
     }
     case CmdConst.DELTE_WORD: {
@@ -289,16 +290,16 @@ export const handleAction = (
 };
 
 
-const handleCurser = (direction) => {
+const handleCurser = (direction, input, textValue) => {
     const cursorPosition = input.selectionStart;
-    if (action.direction === CmdConst.LEFT) {
+    if (direction === CmdConst.LEFT) {
         if (cursorPosition === 0) return;
         input.setSelectionRange(cursorPosition - 1, cursorPosition - 1);
 
-    } else if (action.direction === CmdConst.RIGHT) {
+    } else if (direction === CmdConst.RIGHT) {
         if (cursorPosition === textValue.length) return;
         input.setSelectionRange(cursorPosition + 1, cursorPosition + 1);
-    } else if (action.direction === CmdConst.UP) {
+    } else if (direction === CmdConst.UP) {
         // get current linelength where there is mutlipe lines
         const currentLines = textValue.split("\n");
         // Get the current line the cursor is on
@@ -315,7 +316,7 @@ const handleCurser = (direction) => {
         } else {
             input.setSelectionRange(previousDistance + calcCursorDistance(), previousDistance + calcCursorDistance());
         }
-    } else if (action.direction ===CmdConst.DOWN) {
+    } else if (direction ===CmdConst.DOWN) {
         input.focus();
         const currentLines = textValue.split("\n");
         let line = getCurrentLine(currentLines, cursorPosition);
