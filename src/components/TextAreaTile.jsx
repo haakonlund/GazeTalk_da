@@ -33,21 +33,17 @@ const TextAreaTile = ({ value, onChange, colspan = 2, customStyle }) => {
   // Function to update the display with custom caret
   const updateDisplay = () => {
     if (!inputRef.current || !displayRef.current) return;
-    
+  
     const text = inputRef.current.value;
     const cursorPos = inputRef.current.selectionStart;
-    
+  
     // Split text into before and after cursor
     const beforeCursor = text.substring(0, cursorPos);
     const afterCursor = text.substring(cursorPos);
-    
+  
     // Create content with caret
-    let content = '';
-    
-    // Before cursor text
-    content += beforeCursor;
-    
-    // Add caret
+    let content = beforeCursor;
+  
     if (caretStyle === 'caret-block' && afterCursor.length > 0) {
       content += `<span class="caret ${caretStyle}">${afterCursor.charAt(0)}</span>`;
       content += afterCursor.substring(1);
@@ -55,8 +51,22 @@ const TextAreaTile = ({ value, onChange, colspan = 2, customStyle }) => {
       content += `<span class="caret ${caretStyle}">${afterCursor.length > 0 ? '' : ' '}</span>`;
       content += afterCursor;
     }
-    
+  
+    // Update display
     displayRef.current.innerHTML = content;
+  
+    // **Scroll to cursor**
+    const caretElement = displayRef.current.querySelector(".caret");
+    if (caretElement) {
+      const caretRect = caretElement.getBoundingClientRect();
+      const containerRect = displayRef.current.getBoundingClientRect();
+  
+      if (caretRect.bottom > containerRect.bottom) {
+        displayRef.current.scrollTop += caretRect.bottom - containerRect.bottom;
+      } else if (caretRect.top < containerRect.top) {
+        displayRef.current.scrollTop -= containerRect.top - caretRect.top;
+      }
+    }
   };
   
   // Event handlers for textarea
@@ -79,7 +89,7 @@ const TextAreaTile = ({ value, onChange, colspan = 2, customStyle }) => {
   
   return (
     <div className="tile textarea-tile" style={{ gridColumn: `span ${colspan}` }}>
-      <div className="textarea-container" style={customStyle}>
+      <div className="textarea-container" >
         <textarea
           readOnly
           ref={inputRef}
