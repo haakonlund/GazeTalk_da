@@ -2,15 +2,15 @@ import React from "react";
 import KeyboardGrid from "../components/KeyboardGrid";
 
 const Layout2_2_4x2 = (props) => {
-  const textAreaColSpan = 2;
-  const rows = 3;
-  const cols = 4;
   return (
-      <KeyboardGrid {...props} 
-        textAreaColSpan={textAreaColSpan} 
-        rows={rows} 
-        cols={cols}  />
+      <KeyboardGrid {...props}  />
   );
+};
+
+Layout2_2_4x2.properties = {
+  textAreaColSpan: 2,
+  rows: 3,
+  cols: 4,
 };
 
 export default Layout2_2_4x2;

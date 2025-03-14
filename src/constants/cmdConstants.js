@@ -23,7 +23,6 @@ export const NEXT_SENTENCE = "next_sentence";
 export const NEXT_WORD = "next_word";
 export const SHOW_SUGGESTIONS = "show_suggestions";
 export const INSERT_SUGGESTION = "insert_suggestion";
-export const CHOOSE_BUTTON_LAYOUT = "choose_button_layout";
 export const CHANGE_LANGUAGE = "change_language";
 export const CHANGE_DWELL_TIME = "change_dwell_time";
 export const PLAY_ALARM = "play_alarm";
@@ -33,7 +32,8 @@ export const DECREASE_BUTTON_FONT_SIZE = "decrease_button_font_size";
 export const INCREASE_TEXT_FONT_SIZE = "increase_text_font_size";
 export const DECREASE_TEXT_FONT_SIZE = "decrease_text_font_size";
 export const INSERT_LETTER_SUGGESTION = "insert_letter_suggestion";
-
+export const TOGGLE_PAUSE = "toggle_pause";
+export const SWITCH_LAYOUT = "switch_layout";
 export const WRITING = "writing";
 export const SUGGESTIONS = "suggestions";
 export const PERIOD = ".";
