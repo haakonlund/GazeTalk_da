@@ -35,8 +35,8 @@
     width: 100%;
     height: 100%;
     padding: 1ch;
-    background: #000;
-    color: white;
+    background: #ffffff;
+    color: rgb(0, 0, 0);
     font-family: monospace;
     font-size: 1rem;
     white-space: pre-wrap;
@@ -54,8 +54,9 @@
   }
   
   .caret-bar {
-    border-left: 1px solid white;
-    margin-left: -1px;
+    border-left: 1.5px solid rgb(0, 0, 0);
+    margin-left: 1px;
+    top:3px;
   }
   
   @keyframes blink {
