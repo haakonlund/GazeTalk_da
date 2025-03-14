@@ -322,6 +322,7 @@ export const handleAction = (
     default:
       console.warn("Unhandled action:", action);
   }
+  input.focus();
 };
 
 
