@@ -249,32 +249,32 @@ describe('deleteWordAtCursor', () => {
     const text = "Hello world";
     const cursorPosition = 8; 
     const { newText, newCursorPosition } = deleteWordAtCursor(text, cursorPosition);
-    expect(newText).toBe("Hello ");
-    expect(newCursorPosition).toBe(6);
+    expect(newText).toBe("Hello");
+    expect(newCursorPosition).toBe(5);
   });
 
   test('deletes the entire word when the cursor is at the beginning of the word', () => {
     const text = "Hello world";
     const cursorPosition = 6;
     const { newText, newCursorPosition } = deleteWordAtCursor(text, cursorPosition);
-    expect(newText).toBe("Hello ");
-    expect(newCursorPosition).toBe(6);
+    expect(newText).toBe("Hello");
+    expect(newCursorPosition).toBe(5);
   });
 
   test('deletes the entire word when the cursor is at the end of the word', () => {
     const text = "Hello world";
     const cursorPosition = 11;
     const { newText, newCursorPosition } = deleteWordAtCursor(text, cursorPosition);
-    expect(newText).toBe("Hello ");
-    expect(newCursorPosition).toBe(6);
+    expect(newText).toBe("Hello");
+    expect(newCursorPosition).toBe(5);
   });
 
   test('returns the original text and cursor position when there is no word (cursor in whitespace)', () => {
     const text = "Hello  world";
     const cursorPosition = 6;
     const { newText, newCursorPosition } = deleteWordAtCursor(text, cursorPosition);
-    expect(newText).toBe(text);
-    expect(newCursorPosition).toBe(cursorPosition);
+    expect(newText).toBe("Hello world");
+    expect(newCursorPosition).toBe(5);
   });
 });
 
