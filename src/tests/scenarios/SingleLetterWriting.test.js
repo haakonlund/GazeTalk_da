@@ -3,7 +3,7 @@ import { render, screen, fireEvent, act, waitFor } from "@testing-library/react"
 import axios from "axios";
 import '@testing-library/jest-dom';
 import App from '../../App';
-
+import { UserBehaviourTestProvidor } from '../../components/UserBehaviourTest';
 
 jest.mock("axios");
 
@@ -35,7 +35,11 @@ describe('Single Letter Writing', () => {
       return { data: { continuations: [] } };
     });
     
-    render(<App initialView="writing" initialLayout="2+2+4x2" />);
+    render(
+      <UserBehaviourTestProvidor>
+        <App initialView="writing" initialLayout="2+2+4x2" />
+      </UserBehaviourTestProvidor> 
+    );
     await waitFor(() => {
         const tileElements = document.querySelectorAll(".tile");
         expect(tileElements.length).toBe(10); 

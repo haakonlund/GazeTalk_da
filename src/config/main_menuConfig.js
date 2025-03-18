@@ -26,6 +26,11 @@ export const main_menuConfig = {
           type: "switch",
           label: "Pause",
           action :{type :"switch_view", view : "pause" }
+        },
+        {
+          type: "switch",
+          label: "Start Test",
+          action :{type :"switch_view", view : "test" }
         }
       ]
   };

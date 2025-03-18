@@ -37,3 +37,4 @@ export const SWITCH_LAYOUT = "switch_layout";
 export const WRITING = "writing";
 export const SUGGESTIONS = "suggestions";
 export const PERIOD = ".";
+

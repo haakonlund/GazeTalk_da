@@ -3,7 +3,7 @@ import { render, screen, fireEvent, act, waitFor } from "@testing-library/react"
 import axios from "axios";
 import "@testing-library/jest-dom";
 import App from '../../App';
-
+import { UserBehaviourTestProvidor } from '../../components/UserBehaviourTest';
 // Mock react-i18next to return a simple translation function.
 jest.mock('i18next', () => ({
     changeLanguage: jest.fn(),
@@ -26,7 +26,11 @@ describe("Layout2_3_5x2", () => {
         }
         return { data: { continuations: [] } };
       });
-    render(<App initialView="layouts" initialLayout="2+2+4x2" />);
+    render(
+      <UserBehaviourTestProvidor>
+        <App initialView="layouts" initialLayout="2+2+4x2" />
+      </UserBehaviourTestProvidor>
+    );
     
     let metadataBefore = screen.getByTestId("layout-metadata");
     expect(metadataBefore).toHaveAttribute("data-textareacolspan", "2");
@@ -64,7 +68,11 @@ describe("Layout2_3_5x2", () => {
         return { data: { continuations: [] } };
       });
     
-    render(<App initialView="writing" initialLayout="2+3+5x2" />);
+    render(
+    <UserBehaviourTestProvidor>
+     <App initialView="writing" initialLayout="2+3+5x2" />
+    </UserBehaviourTestProvidor>
+  );
     await waitFor(() => {
         const tileElements = document.querySelectorAll(".tile");
         expect(tileElements.length).toBe(14); 
@@ -83,7 +91,11 @@ describe("Layout2_3_5x2", () => {
       return { data: { continuations: [] } };
     });
   
-  render(<App initialView="suggestions" initialLayout="2+3+5x2" />);
+  render(
+    <UserBehaviourTestProvidor>
+      <App initialView="suggestions" initialLayout="2+3+5x2" />
+    </UserBehaviourTestProvidor>
+  );
 
   await waitFor(() => {
       const tileElements = document.querySelectorAll(".tile");

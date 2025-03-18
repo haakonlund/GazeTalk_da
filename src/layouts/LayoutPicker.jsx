@@ -16,7 +16,7 @@ const layouts = {
   "3+3x3": Layout3_3x3
 };
 
-const LayoutPicker = ({ layout, view, textValue, setTextValue, handleAction, suggestions, letterSuggestions, dwellTime,buttonFontSize,textFontSize, nextLetters, getNext, handleLetterSelected }) => {
+const LayoutPicker = ({ layout, view, textValue, setTextValue, handleAction, suggestions, letterSuggestions, dwellTime,buttonFontSize,textFontSize, nextLetters, getNext, handleLetterSelected, logEvent, counterStarted}) => {
   const LayoutComponent = layouts[layout];
   const { textAreaColSpan, rows, cols } = LayoutComponent.properties
   
@@ -38,6 +38,8 @@ const LayoutPicker = ({ layout, view, textValue, setTextValue, handleAction, sug
         nextLetters={nextLetters}
         dwellTime={dwellTime}
         handleLetterSelected={handleLetterSelected}
+        logEvent={logEvent}
+        counterStarted={counterStarted}
       />
       <div
         data-testid="layout-metadata"

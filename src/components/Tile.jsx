@@ -1,11 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef  } from "react";
 import { useTranslation } from "react-i18next";
+import {GAZE_MILLISECONDS, TILE_GAZED_NOT_SELECTED} from "../constants/testConstants";
 
-const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected }) => {
+const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected, logEvent, counterStarted }) => {
   const { t } = useTranslation();
   const [hovering, setHovering] = useState(false);
   const [progress, setProgress] = useState(100);
-
+  const activationTimerRef = useRef(null);
+  const progressTimerRef = useRef(null);
+  const gazeThreshold = GAZE_MILLISECONDS; 
+  const startedHover = useRef(false);
+  const finishedHover = useRef(false);
+  const gazedMoreThanThreshold = useRef(false);
   // Calculate positions for surrounding letters
   const positions = {
     "top-left": { top: '0%',    left: '10%' },  // Top-left
@@ -21,11 +27,18 @@ const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected }) =
   useEffect(() => {
     let timer;
     if (hovering) {
+      startedHover.current = true;
+      finishedHover.current = false;
+      gazedMoreThanThreshold.current = false;
       const startTime = Date.now();
       timer = setInterval(() => {
         const elapsed = Date.now() - startTime;
         const percentage = 100 - (elapsed / dwellTime) * 100;
+        if (elapsed > gazeThreshold) {
+          gazedMoreThanThreshold.current = true;
+        }
         if (percentage <= 0) {
+          finishedHover.current = true;
           clearInterval(timer);
           onActivate(tile.action);
           const letter = tile.label;
@@ -41,13 +54,20 @@ const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected }) =
         }
       }, 50);
     } else {
+      if (startedHover.current && !finishedHover.current && gazedMoreThanThreshold.current && counterStarted) {
+        logEvent({ type: TILE_GAZED_NOT_SELECTED, label: tile.label });
+      }
+      if (timer) {clearInterval(timer);}
       setProgress(100);
+      startedHover.current = false;
+      finishedHover.current = false;
+      gazedMoreThanThreshold.current = false;
     }
 
     return () => {
       if (timer) clearInterval(timer);
     };
-  }, [hovering, onActivate, tile]);
+  }, [hovering, onActivate, counterStarted, tile, logEvent]);
 
   return (
     <div 

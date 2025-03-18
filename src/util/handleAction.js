@@ -69,17 +69,31 @@ export const handleAction = (
     showSuggestions, 
     changeButtonNum,
     buttonNum,
+    isTesting,
+    startUserTest,
+    logEvent,
   }
 ) => {
+    //console.log(action);
 
   switch (action.type) {
     case CmdConst.ENTER_LETTER: {
       // insert the letter at the global cursor position
       const letter = isCapsOn ? action.value.toUpperCase() : action.value.toLowerCase();
-      const newText = textValue.slice(0, globalCursorPosition.value) + letter + textValue.slice(globalCursorPosition.value);
+      let newText;
+      let newCursorPos;
+      if (action.value === CmdConst.PERIOD && globalCursorPosition.value > 0 && textValue[globalCursorPosition.value - 1] === " ") {
+        newText = textValue.slice(0, globalCursorPosition.value - 1) +
+                    letter + textValue.slice(globalCursorPosition.value);
+        newCursorPos = globalCursorPosition.value;
+      } else {
+        newText = textValue.slice(0, globalCursorPosition.value) +
+                    letter + textValue.slice(globalCursorPosition.value);
+        newCursorPos = input.selectionStart + 1;
+      }
+      logEvent({ type: CmdConst.ENTER_LETTER, value: newText});
       setTextValue(newText);
-      
-      updateGlobalCursorPosition(input.selectionStart + 1);
+      updateGlobalCursorPosition(newCursorPos);
       // always go back to writing view after entering a letter
       setCurrentViewName("writing");
 
@@ -95,12 +109,17 @@ export const handleAction = (
         // insert a newline at the global cursor position 
         const newText = textValue.slice(0, globalCursorPosition.value) + "\n" + textValue.slice(globalCursorPosition.value, textValue.length);
         setTextValue(newText);
+        logEvent({ type: CmdConst.NEWLINE, value: newText});
         // move the cursor to the next line after inserting a newline
         updateGlobalCursorPosition(globalCursorPosition.value + 1);
         break;
     }
     case CmdConst.SWITCH_VIEW: {
-        if (config.views[action.view]) {
+        logEvent({ type: CmdConst.SWITCH_VIEW, value: action.view});
+        if (action.view === "test") {
+            startUserTest();
+            setCurrentViewName(CmdConst.WRITING);
+        } else if (config.views[action.view]) {
             setCurrentViewName(action.view);
         }
         break;
@@ -110,9 +129,9 @@ export const handleAction = (
         const newText = textValue.slice(0, globalCursorPosition.value - 1) + textValue.slice(globalCursorPosition.value);
         updateGlobalCursorPosition(input.selectionStart - 1);
         setTextValue(newText);
-
+        logEvent({ type: CmdConst.DELETE_LETTER, value: newText});
         if (currentViewName !== "suggestions") {
-            setCurrentViewName("writing");
+            setCurrentViewName(CmdConst.WRITING);
         }
         break;
     }
@@ -120,89 +139,85 @@ export const handleAction = (
         const newText = textValue.slice(0, globalCursorPosition.value - 1) + textValue.slice(globalCursorPosition.value);
         updateGlobalCursorPosition(input.selectionStart - 1);
         setTextValue(newText);
+        logEvent({ type: CmdConst.DELETE_LETTER_EDIT, value: newText});
         break;
     }
     case CmdConst.DELETE_WORD: {
         const { newText, newCursorPosition } = deleteWordAtCursor(textValue, input.selectionStart);
         setTextValue(newText);
+        logEvent({ type: CmdConst.DELETE_WORD, value: newText});
         updateGlobalCursorPosition(newCursorPosition);
         break;
     }
     case CmdConst.DELETE_SENTENCE: {
       const { newText, newCursorPosition } = deleteSentence(textValue, input.selectionStart);
       setTextValue(newText);
+      logEvent({ type: CmdConst.DELETE_SENTENCE, value: newText});
       updateGlobalCursorPosition(newCursorPosition);
       break;
     }
     case CmdConst.DELETE_SECTION: {
       const { newText, newCursorPosition } = deleteSection(textValue, input.selectionStart);
       setTextValue(newText);
+      logEvent({ type: CmdConst.DELETE_SECTION, value: newText});
       updateGlobalCursorPosition(newCursorPosition);
       break;
     }
     case CmdConst.TOGGLE_CASE: {
       setIsCapsOn(prev => !prev);
+      logEvent({ type: CmdConst.TOGGLE_CASE, value: isCapsOn });
       break;
     }
     case CmdConst.CURSOR: {
+        logEvent({ type: CmdConst.CURSOR, value: action.direction });
         handleCurser(action.direction, input, textValue);
         break;
-    }
-    case CmdConst.DELTE_WORD: {
-        const { newText, newCursorPosition } = deleteWordAtCursor(textValue, input.selectionStart);
-        setTextValue(newText);
-        updateGlobalCursorPosition(newCursorPosition);
-        break;
-    }
-    case CmdConst.DELETE_SENTENCE: {
-      const { newText, newCursorPosition } = deleteSentence(textValue, input.selectionStart);
-      setTextValue(newText);
-      updateGlobalCursorPosition(newCursorPosition);
-      break;
-    }
-    case CmdConst.DELETE_SECTION: {
-      const { newText, newCursorPosition } = deleteSection(textValue, input.selectionStart);
-      setTextValue(newText);
-      updateGlobalCursorPosition(newCursorPosition);
-      break;
     }
     case CmdConst.UNDO: {
         // todo
         break;
     }
     case CmdConst.START_OF_TEXT: {
+        logEvent({ type: CmdConst.START_OF_TEXT, value: 0 });
         updateGlobalCursorPosition(0);
         break;
     }
     case CmdConst.PREVIOUS_SECTION: {
+        logEvent({ type: CmdConst.PREVIOUS_SECTION, value: textValue });
         let start = getPreviousSection(textValue);
         updateGlobalCursorPosition(start);
         break;
     }
     case CmdConst.PREVIOUS_SENTENCE: {
+        logEvent({ type: CmdConst.PREVIOUS_SENTENCE, value: textValue });
         let start = getPreviousSentence(textValue);
         updateGlobalCursorPosition(start);
         break;
     }
     case CmdConst.PREVIOUS_WORD: {
+        logEvent({ type: CmdConst.PREVIOUS_WORD, value: textValue });
         let start = getPreviousWord(textValue);
         updateGlobalCursorPosition(start);
         break;
     }
     case CmdConst.END_OF_TEXT: {
+        logEvent({ type: CmdConst.END_OF_TEXT, value: textValue.length });
         updateGlobalCursorPosition(textValue.length);
         break;
     }
     case CmdConst.NEXT_SECTION: {
+        logEvent({ type: CmdConst.NEXT_SECTION, value: textValue });
         let end = getNextSection(textValue);
         updateGlobalCursorPosition(end);
         break;
     }
     case CmdConst.NEXT_SENTENCE: {
+        logEvent({ type: CmdConst.NEXT_SENTENCE, value: textValue });
         let end = getNextSentence(textValue);
         updateGlobalCursorPosition(end);
     }
     case CmdConst.NEXT_WORD: {
+        logEvent({ type: CmdConst.NEXT_WORD, value: textValue });
         let end = getNextWord(textValue);
         updateGlobalCursorPosition(end);
         break;
@@ -210,6 +225,7 @@ export const handleAction = (
     case CmdConst.SHOW_SUGGESTIONS: {
         if (suggestions.length > 0 && suggestions.some(s => s !== undefined)) {
             setShowSuggestions(true);
+            logEvent({ type: CmdConst.SHOW_SUGGESTIONS, value: suggestions });
             setCurrentViewName("suggestions");
         }
         break;
@@ -228,8 +244,9 @@ export const handleAction = (
         const casedSuggestion = matchCase(suggestion, lastWord);
         const newText = replaced + casedSuggestion + " " + rest;
         setTextValue(newText);
+        logEvent({ type: CmdConst.INSERT_SUGGESTION, value: casedSuggestion });
         const spaceLength = 1;
-        updateGlobalCursorPosition(globalCursorPosition.value + casedSuggestion.length + spaceLength);
+        updateGlobalCursorPosition(replaced.length + casedSuggestion.length + spaceLength);
         break;
     }
     case CmdConst.CHANGE_LANGUAGE: {
@@ -288,7 +305,7 @@ export const handleAction = (
         isCapsOn ? action.value.toUpperCase() : action.value.toLowerCase();
         const newText = textValue.slice(0, globalCursorPosition.value) + letter + textValue.slice(globalCursorPosition.value);
         setTextValue(newText);
-
+        logEvent({ type: CmdConst.INSERT_LETTER_SUGGESTION, value: letter });
         updateGlobalCursorPosition(input.selectionStart + 1);
         // always go back to writing view after entering a letter
         setCurrentViewName("writing");
