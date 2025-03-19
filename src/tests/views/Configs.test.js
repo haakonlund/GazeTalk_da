@@ -5,6 +5,7 @@ import { config } from '../../config/config';
 import '@testing-library/jest-dom';
 import axios from 'axios';
 import { act } from '@testing-library/react';
+import { UserBehaviourTestProvidor } from '../../components/UserBehaviourTest';
 
 // Mock react-i18next to provide a simple translation function.
 // jest.mock('react-i18next', () => ({
@@ -80,7 +81,11 @@ describe('Checking configurations', () => {
     for (let i = 0; i < staticConfigs.length; i++) {
         test(`Static configuration: ${staticConfigs[i].name} renders correctly`, async () => {
             await act(async () => {
-                render(<App initialView={staticConfigs[i].name} />);
+                render(
+                  <UserBehaviourTestProvidor>
+                    <App initialView={staticConfigs[i].name} />
+                  </UserBehaviourTestProvidor>
+                );
               });
             const textArea = document.getElementById('text_region');
             expect(textArea).toBeInTheDocument();

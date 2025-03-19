@@ -10,18 +10,18 @@ const TrackerLayout = (props) => {
     
     const handleAction = props.onTileActivate; // Destructure handleAction from props
     const points = [
-        { top: "5%", left: "5%" },     // Top-left
-        { top: "25%", left: "25%" },   // Top-left (inner)
-        { top: "5%", left: "50%" },    // Top-center
-        { top: "25%", left: "75%" },   // Top-right (inner)
-        { top: "5%", left: "95%" },    // Top-right
-        { top: "50%", left: "95%" },   // Middle-right
-        { top: "95%", left: "95%" },   // Bottom-right
-        { top: "75%", left: "75%" },   // Bottom-right (inner)
-        { top: "95%", left: "50%" },   // Bottom-center
-        { top: "75%", left: "25%" },   // Bottom-left (inner)
-        { top: "95%", left: "5%" },    // Bottom-left
-        { top: "50%", left: "5%" },    // Middle-left
+        { top: "10%", left: "10%" },     // Top-left
+        { top: "30%", left: "30%" },   // Top-left (inner)
+        { top: "10%", left: "50%" },    // Top-center
+        { top: "30%", left: "65%" },   // Top-right (inner)
+        { top: "10%", left: "85%" },    // Top-right
+        { top: "50%", left: "85%" },   // Middle-right
+        { top: "85%", left: "85%" },   // Bottom-right
+        { top: "65%", left: "65%" },   // Bottom-right (inner)
+        { top: "85%", left: "50%" },   // Bottom-center
+        { top: "65%", left: "30%" },   // Bottom-left (inner)
+        { top: "85%", left: "10%" },    // Bottom-left
+        { top: "50%", left: "10%" },    // Middle-left
         { top: "50%", left: "50%" },   // Center
     ];
 

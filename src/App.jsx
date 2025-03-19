@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { useLocalStorage } from "@uidotdev/usehooks";
-
+import { flushSync } from 'react-dom';
 import axios from "axios";
 // import {settings, setSettings} from "./util/userData.js"
 import { changeLanguage } from "i18next";
@@ -19,12 +19,16 @@ import {rank, updateRank, stripSpace, getRank} from "./util/ranking"
 import * as UserDataConst from "./constants/userDataConstants"
 import * as CmdConst from "./constants/cmdConstants"
 import { layoutToButtonNum } from "./constants/layoutConstants";
+import { useTesting } from "./components/UserBehaviourTest";
+
 let dwellTime = 1500;
+
+
 
 function App({ initialView = "main_menu", initialLayout = "2+2+4x2", initialText="" }) {
   const [currentViewName, setCurrentViewName] = useState(initialView);
   const [currentLayoutName, setCurrentLayoutName] = useState(initialLayout);
-  const [textValue, setTextValue] = useState(initialText);
+  const [textValue, updateTextValue] = useState(initialText);
   const [isCapsOn, setIsCapsOn] = useState(false);
   const [alarmActive, setAlarmActive] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
@@ -42,6 +46,11 @@ function App({ initialView = "main_menu", initialLayout = "2+2+4x2", initialText
   const [buttonFontSize, setButtonFontSize] = useState(30)
   const [textFontSize, setTextFontSize] = useState(20)
   const [buttonNum, setButtonNum] = useState(6)
+  
+  // Testing 
+  const { isTesting, currentTestIndex,  targetSentence, counterStarted, initTest, startTest, endTest, completeTests, logEvent, setLogs, logs } = useTesting();
+  
+
 
   const [userData, setUserData] = useLocalStorage(
     UserDataConst.USERDATA,  {
@@ -65,7 +74,9 @@ function App({ initialView = "main_menu", initialLayout = "2+2+4x2", initialText
     RankingSystem.setButtonNum(newValue);
     setButtonNum(newValue)
   };
-
+  const startUserTest = () => {
+    initTest(0);
+  };
 
   const handleLetterSelected = (otherLetters, selectedLetter) => {
     let Letters = RankingSystem.stripSpace(otherLetters)
@@ -84,7 +95,34 @@ function App({ initialView = "main_menu", initialLayout = "2+2+4x2", initialText
       
     }
   };
+  const setTextValue = (text) => {
+    if (isTesting && !counterStarted) {
+      startTest();
+      //gets last word of 'text'
+      updateTextValue(text.split(" ")[text.split(" ").length - 1]);
+    } else if (isTesting && text === targetSentence 
+      || isTesting 
+         && (targetSentence.split("")[targetSentence.length - 1] === " ")
+         && text === targetSentence.slice(0, targetSentence.length - 1)
+      || isTesting && text.split("")[text.length - 1] === ".") {
+        logEvent({ type: "sentenceComplete", submittedText: text });
+        endTest();
+        initTest(currentTestIndex + 1);
+        updateTextValue(targetSentence);
+    }
+    else {
+      updateTextValue(text);
+    }
+  };
   
+  React.useEffect(() => {
+    if (isTesting && targetSentence) {
+      updateTextValue(targetSentence);
+      updateGlobalCursorPosition((targetSentence).length);
+    }
+  }, [targetSentence]);
+
+
   // load settings initalially
   React.useEffect(() => {
     // console.log("first load", userData)
@@ -99,7 +137,7 @@ function App({ initialView = "main_menu", initialLayout = "2+2+4x2", initialText
     }
     
   }, [userData]);
-
+  
   React.useEffect(() => {
     const setTileFontSize = () => {
       const tileHeight = window.innerHeight / 3;
@@ -241,7 +279,9 @@ function App({ initialView = "main_menu", initialLayout = "2+2+4x2", initialText
       showSuggestions,
       changeButtonNum,
       buttonNum,
-
+      isTesting,
+      startUserTest,
+      logEvent,
     });
   };
 
@@ -260,6 +300,8 @@ function App({ initialView = "main_menu", initialLayout = "2+2+4x2", initialText
         nextLetters={nextLetters}
         dwellTime={dwellTime} 
         handleLetterSelected={handleLetterSelected}
+        logEvent={logEvent}
+        counterStarted={counterStarted}
         />
       {alarmActive && <AlarmPopup onClose={() => setAlarmActive(false)} dwellTime={dwellTime} />}
         {

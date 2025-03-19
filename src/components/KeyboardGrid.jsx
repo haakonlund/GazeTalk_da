@@ -19,7 +19,9 @@ const KeyboardGrid = ({
         textAreaColSpan = 2, 
         rows = 3, 
         cols = 4,
-        handleLetterSelected }) => {
+        handleLetterSelected,
+        logEvent,
+        counterStarted }) => {
           const tiles = view.tiles.filter(tile => tile.type !== "textarea");
           const remainingTiles = cols * rows - textAreaColSpan - tiles.length;
           return (
@@ -39,6 +41,8 @@ const KeyboardGrid = ({
                 customStyle={{
                   fontSize : `${textFontSize}px`
                 }}
+                logEvent={logEvent}
+                counterStarted={counterStarted}
               />
       
             {tiles.map((tile, i) => {
@@ -61,6 +65,8 @@ const KeyboardGrid = ({
                       }} 
                       onActivate={onTileActivate}
                       dwellTime={dwellTime*1.5}
+                      logEvent={logEvent}
+                      counterStarted={counterStarted}
                     />
                   );
                 }
@@ -81,7 +87,10 @@ const KeyboardGrid = ({
                                                 "#fff"
                 }}}
                   onActivate={onTileActivate} 
-                  dwellTime={dwellTime} />;
+                  dwellTime={dwellTime} 
+                  logEvent={logEvent}
+                  counterStarted={counterStarted}
+                  />;
             })}
 
             {view.name === "suggestions" && suggestions.map((suggestion, i) => {
@@ -99,6 +108,8 @@ const KeyboardGrid = ({
                       } 
                     onActivate={onTileActivate} 
                     dwellTime={dwellTime} 
+                    logEvent={logEvent}
+                    counterStarted={counterStarted}
                   />
                 );
               }
@@ -118,6 +129,8 @@ const KeyboardGrid = ({
                     } 
                     onActivate={onTileActivate} 
                     dwellTime={dwellTime} 
+                    logEvent={logEvent}
+                    counterStarted={counterStarted}
                   />
                 );
               }
@@ -138,6 +151,8 @@ const KeyboardGrid = ({
                     dwellTime={dwellTime} 
                     otherLetters={letterSuggestions}
                     onLetterSelected={handleLetterSelected}
+                    logEvent={logEvent}
+                    counterStarted={counterStarted}
                   />  
                 );
               }

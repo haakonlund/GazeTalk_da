@@ -1,11 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import { globalCursorPosition, cursorEventTarget, updateGlobalCursorPosition } from "../singleton/cursorSingleton";
 import "./TextAreaTile.css";  // Import the external CSS file
+import {GAZE_MILLISECONDS, TEXT_AREA_GAZED} from "../constants/testConstants";
 
-const TextAreaTile = ({ value, onChange, colspan = 2, customStyle }) => {
+const TextAreaTile = ({ value, onChange, colspan = 2, customStyle, logEvent, counterStarted }) => {
   const inputRef = useRef(null);
   const displayRef = useRef(null);
   const [caretStyle, setCaretStyle] = useState("caret-bar"); // Default caret style
+  const gazeTimerRef = useRef(null);
 
   useEffect(() => {
     const handleCursorUpdate = (event) => {
@@ -86,9 +88,29 @@ const TextAreaTile = ({ value, onChange, colspan = 2, customStyle }) => {
       }
     }, 10);
   };
+
+  const handleMouseEnter = () => {
+    if (!counterStarted) return;
+    gazeTimerRef.current = setTimeout(() => {
+      logEvent({ type: TEXT_AREA_GAZED, value: inputRef.current.value});
+      gazeTimerRef.current = null;
+    }, GAZE_MILLISECONDS);
+  };
+
+  const handleMouseLeave = () => {
+    if (gazeTimerRef.current) {
+      clearTimeout(gazeTimerRef.current);
+      gazeTimerRef.current = null;
+    }
+  };
   
   return (
-    <div className="tile textarea-tile" style={{ gridColumn: `span ${colspan}` }}>
+    <div 
+      className="tile textarea-tile" 
+      style={{ gridColumn: `span ${colspan}` }}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      >
       <div className="textarea-container" >
         <textarea
           readOnly
