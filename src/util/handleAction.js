@@ -71,7 +71,6 @@ export const handleAction = (
     buttonNum,
   }
 ) => {
-
   switch (action.type) {
     case CmdConst.ENTER_LETTER: {
       // insert the letter at the global cursor position
@@ -148,7 +147,7 @@ export const handleAction = (
         handleCurser(action.direction, input, textValue);
         break;
     }
-    case CmdConst.DELTE_WORD: {
+    case CmdConst.DELETE_WORD: {
         const { newText, newCursorPosition } = deleteWordAtCursor(textValue, input.selectionStart);
         setTextValue(newText);
         updateGlobalCursorPosition(newCursorPosition);
