@@ -73,6 +73,7 @@ export const handleAction = (
     startUserTest,
     logEvent,
     abandonTest,
+    dwellTime,
   }
 ) => {
   switch (action.type) {
@@ -278,11 +279,11 @@ export const handleAction = (
         break;
     }
     case CmdConst.CHANGE_DWELL_TIME: {
-        dwellTime = parseFloat(action.value);
-        const newUserdata = updateSetting(userData, UserDataConst.DWELLTIME, dwellTime)
-        setUserData(newUserdata)
-        let goBack = { type: "switch_view", view: "main_menu" }
-        handleAction(goBack);
+        const newDwellTime = parseFloat(action.value);
+        const newUserdata = updateSetting(userData, UserDataConst.DWELLTIME, newDwellTime);
+        setUserData(newUserdata);
+        dwellTime = newUserdata.settings[UserDataConst.DWELLTIME];
+        setCurrentViewName("main_menu");
         break;
     }
     case CmdConst.PLAY_ALARM: {
