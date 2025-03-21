@@ -21,6 +21,7 @@ import { special_chars3Config } from "./special_chars3Config";
 import { adjust_font_sizeConfig } from "./adjust_font_sizeConfig"
 import { pauseConfig } from "./pauseConfig"
 import { layoutsConfig } from "./layoutsConfig"
+import { trackerTestConfig } from "./trackerTestConfig"
 export const config = {
   views: {
       "numbers2": numbers2Config,
@@ -44,6 +45,7 @@ export const config = {
       "special_chars3": special_chars3Config,
       "adjust_font_size" : adjust_font_sizeConfig,
       "pause" : pauseConfig,
-      "layouts": layoutsConfig
+      "layouts": layoutsConfig,
+      "tracker_test" : trackerTestConfig,
     }
 };

@@ -75,8 +75,6 @@ export const handleAction = (
     abandonTest,
   }
 ) => {
-    //console.log(action);
-
   switch (action.type) {
     case CmdConst.ENTER_LETTER: {
       // insert the letter at the global cursor position
@@ -178,6 +176,24 @@ export const handleAction = (
         logEvent({ type: CmdConst.CURSOR, value: action.direction });
         handleCurser(action.direction, input, textValue);
         break;
+    }
+    case CmdConst.DELETE_WORD: {
+        const { newText, newCursorPosition } = deleteWordAtCursor(textValue, input.selectionStart);
+        setTextValue(newText);
+        updateGlobalCursorPosition(newCursorPosition);
+        break;
+    }
+    case CmdConst.DELETE_SENTENCE: {
+      const { newText, newCursorPosition } = deleteSentence(textValue, input.selectionStart);
+      setTextValue(newText);
+      updateGlobalCursorPosition(newCursorPosition);
+      break;
+    }
+    case CmdConst.DELETE_SECTION: {
+      const { newText, newCursorPosition } = deleteSection(textValue, input.selectionStart);
+      setTextValue(newText);
+      updateGlobalCursorPosition(newCursorPosition);
+      break;
     }
     case CmdConst.UNDO: {
         // todo

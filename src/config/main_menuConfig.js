@@ -24,6 +24,11 @@ export const main_menuConfig = {
         },
         {
           type: "switch",
+          label: "Test Tracker",
+          action :{type :"switch_layout", value : "tracker" }
+        },
+        {
+          type: "switch",
           label: "Pause",
           action :{type :"switch_view", view : "pause" }
         },
