@@ -46,7 +46,7 @@ export const UserBehaviourTestProvidor = ({ children }) => {
       const metrics = calculateMetrics(updatedLogs);
       const metricsEvent = metrics ? { type: "metrics", ...metrics } : null;
       const finalLogs = metricsEvent ? [...updatedLogs, metricsEvent] : updatedLogs;
-      completeTestLogs.current.push(updatedLogs);
+      completeTestLogs.current.push(finalLogs);
       logsRef.current = [];
       setLogs([]);
       setCounterStarted(false);
