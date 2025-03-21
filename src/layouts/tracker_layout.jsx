@@ -33,9 +33,6 @@ const TrackerLayout = (props) => {
     const timeoutRefs = useRef([]);
     const containerRef = useRef(null);
 
-
-    const X = "x"
-    const Y = "y"
     const element = document.querySelector(".shrinking-circle");
 
     const [trackingData, setTrackingData] = useState({
@@ -189,47 +186,6 @@ const TrackerLayout = (props) => {
         trackingData.end_of_test = Date.now()
         saveTrackingData()
     
-        // let sumSquaredDifferences = 0;
-        // let sumSquaredRMS = 0;
-        // let totalFixations = tracking_points[X].length;
-    
-        // let sumX = 0, sumY = 0;
-        // let sumXsq = 0, sumYsq = 0;
-    
-        // // Compute mean fixation point
-        // for (let i = 0; i < totalFixations; i++) {
-        //     sumX += tracking_points[X][i];
-        //     sumY += tracking_points[Y][i];
-        // }
-    
-        // let meanX = sumX / totalFixations;
-        // let meanY = sumY / totalFixations;
-    
-        // // Compute accuracy and precision values
-        // for (let i = 0; i < totalFixations; i++) {
-        //     let dx = tracking_points[X][i] - meanX;
-        //     let dy = tracking_points[Y][i] - meanY;
-            
-        //     sumSquaredDifferences += dx ** 2 + dy ** 2; // Euclidean distance squared
-        //     sumXsq += dx ** 2;
-        //     sumYsq += dy ** 2;
-        // }
-    
-        // let euclideanDist = Math.sqrt(sumSquaredDifferences / totalFixations);
-        // let precisionSDX = Math.sqrt(sumXsq / totalFixations);
-        // let precisionSDY = Math.sqrt(sumYsq / totalFixations);
-        // let precisionRMSX = Math.sqrt(sumXsq / totalFixations);
-        // let precisionRMSY = Math.sqrt(sumYsq / totalFixations);
-    
-        // setTrackingData(prevData => ({
-        //     ...prevData,
-        //     accuracy: euclideanDist,
-        //     precision: (precisionSDX + precisionSDY) / 2,
-        // }));
-    
-        // console.log("Accuracy (Euclidean Distance): ", euclideanDist);
-        // console.log("Precision SD: X=", precisionSDX, "Y=", precisionSDY);
-        // console.log("Precision RMS: X=", precisionRMSX, "Y=", precisionRMSY);
     };
     function saveTrackingData() {
         // Save as JSON

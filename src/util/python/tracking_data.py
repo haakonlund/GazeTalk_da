@@ -313,6 +313,29 @@ def analyze_eye_tracking(json_file=None, data=None):
         "BottomLeft.avi": [480.0, 810.0],
         "BottomRight.avi": [1440.0, 810.0]
     }
+    percentage_positions = [
+    {"top": "10%", "left": "10%"},    # Top-left
+    {"top": "30%", "left": "30%"},    # Top-left (inner)
+    {"top": "10%", "left": "50%"},    # Top-center
+    {"top": "30%", "left": "65%"},    # Top-right (inner)
+    {"top": "10%", "left": "85%"},    # Top-right
+    {"top": "50%", "left": "85%"},    # Middle-right
+    {"top": "85%", "left": "85%"},    # Bottom-right
+    {"top": "65%", "left": "65%"},    # Bottom-right (inner)
+    {"top": "85%", "left": "50%"},    # Bottom-center
+    {"top": "65%", "left": "30%"},    # Bottom-left (inner)
+    {"top": "85%", "left": "10%"},    # Bottom-left
+    {"top": "50%", "left": "10%"},    # Middle-left
+    {"top": "50%", "left": "50%"},    # Center
+    ]
+
+    # Calculate pixel positions
+    pixel_positions = []
+    for position in percentage_positions:
+        top = int(position["top"].strip("%")) / 100 * data["screen_height"]
+        left = int(position["left"].strip("%")) / 100 * data["screen_width"]
+        pixel_positions.append({"top": top, "left": left})
+            
     
     # Calculate accuracy and precision
     results = calculate_accuracy_precision(data, stimulus_locations)
