@@ -1,5 +1,9 @@
 export const testSentences = [
     "i have a dog. ",
+    "i saw a bear in the forest. ",
+    "dresses look better in red. ",
+    "i like to go swimming. ",
+    "why am i here. "
 ]
 
 export const minimumNumberOfKeystrokes = {

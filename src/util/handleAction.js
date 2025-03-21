@@ -72,6 +72,7 @@ export const handleAction = (
     isTesting,
     startUserTest,
     logEvent,
+    abandonTest,
   }
 ) => {
     //console.log(action);
@@ -115,12 +116,17 @@ export const handleAction = (
         break;
     }
     case CmdConst.SWITCH_VIEW: {
-        logEvent({ type: CmdConst.SWITCH_VIEW, value: action.view});
-        if (action.view === "test") {
-            startUserTest();
-            setCurrentViewName(CmdConst.WRITING);
-        } else if (config.views[action.view]) {
+        if(isTesting && action.view === "main_menu") {
+            abandonTest();
             setCurrentViewName(action.view);
+        } else {
+            logEvent({ type: CmdConst.SWITCH_VIEW, value: action.view});
+            if (action.view === "test") {
+                startUserTest();
+                setCurrentViewName(CmdConst.WRITING);
+            } else if (config.views[action.view]) {
+                setCurrentViewName(action.view);
+            }
         }
         break;
     }

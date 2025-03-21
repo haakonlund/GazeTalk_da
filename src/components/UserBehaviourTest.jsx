@@ -43,8 +43,9 @@ export const UserBehaviourTestProvidor = ({ children }) => {
       const newAddition = { type: "finished_test", testIndex: currentTestIndex, targetSentence, duration };
       const updatedLogs = [...logsRef.current, newAddition];
       console.log(`Test ${currentTestIndex} completed. Collected logs:`, updatedLogs);
-      calculateMetrics(updatedLogs);
-      
+      const metrics = calculateMetrics(updatedLogs);
+      const metricsEvent = metrics ? { type: "metrics", ...metrics } : null;
+      const finalLogs = metricsEvent ? [...updatedLogs, metricsEvent] : updatedLogs;
       completeTestLogs.current.push(updatedLogs);
       logsRef.current = [];
       setLogs([]);
@@ -61,7 +62,15 @@ export const UserBehaviourTestProvidor = ({ children }) => {
     setCurrentTestIndex(-1);
     setTargetSentence("");
   };
-
+  const cancelTest = () => {
+    setIsTesting(false);
+    setCurrentTestIndex(-1);
+    setTargetSentence("");
+    setCounterStarted(false);
+    completeTestLogs.current = [];
+    logsRef.current = [];
+    console.log("Test reset");
+  };
 
   // Generic event logging function
   const logEvent = (event) => {
@@ -149,6 +158,7 @@ export const UserBehaviourTestProvidor = ({ children }) => {
     console.log("RBA: ", RBA);
     console.log("RTE: ", RTE);
     console.log("ANSR: ", ANSR);
+    return { WPM, KSPC, MSDErrorRate, OR, RBA, RTE, ANSR };
   };
 
   function levenshtein (a, b) {
@@ -193,6 +203,7 @@ export const UserBehaviourTestProvidor = ({ children }) => {
         logEvent,
         setLogs,
         logs,
+        cancelTest,
       }}
     >
       {children}

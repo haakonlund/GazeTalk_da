@@ -48,7 +48,7 @@ function App({ initialView = "main_menu", initialLayout = "2+2+4x2", initialText
   const [buttonNum, setButtonNum] = useState(6)
   
   // Testing 
-  const { isTesting, currentTestIndex,  targetSentence, counterStarted, initTest, startTest, endTest, completeTests, logEvent, setLogs, logs } = useTesting();
+  const { isTesting, currentTestIndex,  targetSentence, counterStarted, initTest, startTest, endTest, completeTests, logEvent, setLogs, logs, cancelTest } = useTesting();
   
 
 
@@ -114,6 +114,10 @@ function App({ initialView = "main_menu", initialLayout = "2+2+4x2", initialText
       updateTextValue(text);
     }
   };
+  const abandonTest = () => {
+    cancelTest();
+  }
+
   
   React.useEffect(() => {
     if (isTesting && targetSentence) {
@@ -282,6 +286,7 @@ function App({ initialView = "main_menu", initialLayout = "2+2+4x2", initialText
       isTesting,
       startUserTest,
       logEvent,
+      abandonTest,
     });
   };
 
