@@ -35,9 +35,7 @@ export const UserBehaviourTestProvidor = ({ children }) => {
       setIsTesting(true);
       setLogs([]); // clear previous logs
     }
-    console.log(randomTests.current);
-    console.log("Test sentence id: ", id);
-    console.log("Test sentence: ", randomTests.current[id]);
+    console.log("Starting test with sentence ", randomTests.current[id]);
     setCurrentTestIndex(id);
     setTargetSentence(randomTests.current[id]);
     setCounterStarted(false);
