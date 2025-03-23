@@ -1,8 +1,18 @@
 import React, { createContext, useContext, useState, useRef } from 'react';
-import { testSentences, minimumNumberOfKeystrokes } from '../constants/testConstants';
+import { testSentences } from '../constants/testConstants/testSentences';
+import { minimumNumberOfKeystrokes } from '../constants/testConstants/minimumNumberOfKeystrokes';
 import * as CmdConst from "../constants/cmdConstants";
-import * as TestConst from "../constants/testConstants";
+import * as GazeConstants from "../constants/testConstants/gazeConstants";
 const UserBehaviourTest = createContext();
+
+const shuffleTestSentences = (array) => {
+  let arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+};
 
 export const UserBehaviourTestProvidor = ({ children }) => {
   const [isTesting, setIsTesting] = useState(false);
@@ -13,19 +23,23 @@ export const UserBehaviourTestProvidor = ({ children }) => {
   const [currentTestIndex, setCurrentTestIndex] = useState(-1); 
   const [targetSentence, setTargetSentence] = useState("");
   const [counterStarted, setCounterStarted] = useState(false);
+  const randomTests = useRef([]);
 
   const initTest = (id) => {
     if (id > testSentences.length - 1) {
       completeTests();
       return;
     }
-    console.log("Test sentence: ", testSentences[id]);
     if (id === 0 ) {
+      randomTests.current = shuffleTestSentences([...testSentences]).slice(0, 10); // pick 10 random sentences
       setIsTesting(true);
       setLogs([]); // clear previous logs
     }
+    console.log(randomTests.current);
+    console.log("Test sentence id: ", id);
+    console.log("Test sentence: ", randomTests.current[id]);
     setCurrentTestIndex(id);
-    setTargetSentence(testSentences[id]);
+    setTargetSentence(randomTests.current[id]);
     setCounterStarted(false);
   }
 
@@ -141,23 +155,15 @@ export const UserBehaviourTestProvidor = ({ children }) => {
     const RBA = numberOfDeletions / charactersTyped;
     //RTE
     const numberOfGazesToTextField = logs.filter(e =>
-      e.type === TestConst.TEXT_AREA_GAZED
+      e.type === GazeConstants.TEXT_AREA_GAZED
     ).length;
     const RTE = numberOfGazesToTextField / charactersTyped;
 
     //ANSR
     const numberOfAttendedButNotSelected = logs.filter(e =>
-      e.type === TestConst.TILE_GAZED_NOT_SELECTED 
+      e.type === GazeConstants.TILE_GAZED_NOT_SELECTED 
     ).length;
     const ANSR = numberOfAttendedButNotSelected / charactersTyped;
-
-    console.log("WPM: ", WPM);
-    console.log("KSPC: ", KSPC);
-    console.log("MSDErrorRate: ", MSDErrorRate);
-    console.log("OR: ", OR);
-    console.log("RBA: ", RBA);
-    console.log("RTE: ", RTE);
-    console.log("ANSR: ", ANSR);
     return { WPM, KSPC, MSDErrorRate, OR, RBA, RTE, ANSR };
   };
 
