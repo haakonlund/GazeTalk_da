@@ -284,10 +284,12 @@ function App({ initialView = "main_menu", initialLayout = "2+2+4x2", initialText
       changeButtonNum,
       buttonNum,
       isTesting,
+      counterStarted,
       startUserTest,
       logEvent,
       abandonTest,
       dwellTime,
+      
     });
   };
 
