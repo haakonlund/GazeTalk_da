@@ -287,6 +287,7 @@ function App({ initialView = "main_menu", initialLayout = "2+2+4x2", initialText
       startUserTest,
       logEvent,
       abandonTest,
+      dwellTime,
     });
   };
 

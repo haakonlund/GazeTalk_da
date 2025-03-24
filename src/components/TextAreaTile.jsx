@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { globalCursorPosition, cursorEventTarget, updateGlobalCursorPosition } from "../singleton/cursorSingleton";
 import "./TextAreaTile.css";  // Import the external CSS file
-import {GAZE_MILLISECONDS, TEXT_AREA_GAZED} from "../constants/testConstants";
+import * as GazeConstants from "../constants/testConstants/gazeConstants";
 
 const TextAreaTile = ({ value, onChange, colspan = 2, customStyle, logEvent, counterStarted }) => {
   const inputRef = useRef(null);
@@ -92,9 +92,9 @@ const TextAreaTile = ({ value, onChange, colspan = 2, customStyle, logEvent, cou
   const handleMouseEnter = () => {
     if (!counterStarted) return;
     gazeTimerRef.current = setTimeout(() => {
-      logEvent({ type: TEXT_AREA_GAZED, value: inputRef.current.value});
+      logEvent({ type: GazeConstants.TEXT_AREA_GAZED, value: inputRef.current.value});
       gazeTimerRef.current = null;
-    }, GAZE_MILLISECONDS);
+    }, GazeConstants.GAZE_MILLISECONDS);
   };
 
   const handleMouseLeave = () => {
