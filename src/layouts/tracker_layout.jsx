@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import "./TrackerLayout.css";
 import KeyboardGrid from "../components/KeyboardGrid";
 import * as DA from "../util/dataAnalysis.js"
+import { useLocalStorage } from "@uidotdev/usehooks";
 
 
 const TrackerLayout = (props) => {
@@ -35,23 +36,25 @@ const TrackerLayout = (props) => {
 
     const element = document.querySelector(".shrinking-circle");
 
-    const [trackingData, setTrackingData] = useState({
-        start_of_test : Date.now(),
-        end_of_test : 0,
-        tracking_points: {
-            x: [],
-            y: [],
-            is_shrinking: [],
-            fixation_x: [],
-            fixation_y: [],
-            timestamp: [],
-            fixation_index: [],
-        },
-        screen_width : window.innerWidth,
-        screen_height : window.innerHeight,
-        points, points,
-        accuracy: 0,
-        precision: 0,
+    const eyeTrackingData = "eyeTrackingData"
+    const [trackingData, setTrackingData] = useLocalStorage(
+        eyeTrackingData, {
+            start_of_test : Date.now(),
+            end_of_test : 0,
+            tracking_points: {
+                x: [],
+                y: [],
+                is_shrinking: [],
+                fixation_x: [],
+                fixation_y: [],
+                timestamp: [],
+                fixation_index: [],
+            },
+            screen_width : window.innerWidth,
+            screen_height : window.innerHeight,
+            points, points,
+            accuracy: 0,
+            precision: 0,
     });
 
     // Clear all timeouts
@@ -278,7 +281,6 @@ const TrackerLayout = (props) => {
                  />
                  <canvas id="plotting_canvas" width="500" height="500"></canvas>
              </div>
-             <p>Mouse Position: X={mousePosition.x}, Y={mousePosition.y}</p>
          </div>
     );
 };
