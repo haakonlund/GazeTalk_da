@@ -38,19 +38,6 @@ export const edit_menuConfig = {
           action: { type: "delete_letter_edit" }
         },
         {
-          type : "empty",
-          label : ""
-        },
-        {
-          type : "empty",
-          label : ""
-        },
-        {
-          type : "undo",
-          label : "Undo",
-          action : {type : "undo"}
-        },
-        {
           type : "Switch",
           label : "File",
           action : { type: "switch_view", view: "file_menu"}
