@@ -109,7 +109,14 @@ const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected, log
       {/* Progress bar */}
       {tile.type !== "empty" && hovering && (
         <div className="progress-bar">
-          <div className="progress" style={{width: `${progress}%`}}></div>
+          <div 
+            className="progress" 
+            style={{
+              transform: `scale(${progress / 100})`,
+              transformOrigin: "center",
+              transition: "transform 50ms linear"
+            }}
+          ></div>
         </div>
       )}
     </div>
