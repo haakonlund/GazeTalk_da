@@ -4,6 +4,8 @@ import { minimumNumberOfKeystrokes } from '../constants/testConstants/minimumNum
 import * as CmdConst from "../constants/cmdConstants";
 import * as GazeConstants from "../constants/testConstants/gazeConstants";
 const UserBehaviourTest = createContext();
+const numberOfTests = 1
+
 
 const shuffleTestSentences = (array) => {
   let arr = [...array];
@@ -26,12 +28,12 @@ export const UserBehaviourTestProvidor = ({ children }) => {
   const randomTests = useRef([]);
 
   const initTest = (id) => {
-    if (id > testSentences.length - 1) {
+    if (id > numberOfTests - 1) {
       completeTests();
       return;
     }
     if (id === 0 ) {
-      randomTests.current = shuffleTestSentences([...testSentences]).slice(0, 10); // pick 10 random sentences
+      randomTests.current = shuffleTestSentences([...testSentences]).slice(0, numberOfTests); // pick 10 random sentences
       setIsTesting(true);
       setLogs([]); // clear previous logs
     }

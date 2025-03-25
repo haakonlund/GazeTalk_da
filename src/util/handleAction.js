@@ -70,6 +70,7 @@ export const handleAction = (
     changeButtonNum,
     buttonNum,
     isTesting,
+    counterStarted,
     startUserTest,
     logEvent,
     abandonTest,
@@ -83,6 +84,9 @@ export const handleAction = (
       let newText;
       let newCursorPos;
       if (action.value === CmdConst.PERIOD && globalCursorPosition.value > 0 && textValue[globalCursorPosition.value - 1] === " ") {
+        if (isTesting && !counterStarted) {
+            return;
+        }
         newText = textValue.slice(0, globalCursorPosition.value - 1) +
                     letter + textValue.slice(globalCursorPosition.value);
         newCursorPos = globalCursorPosition.value;
