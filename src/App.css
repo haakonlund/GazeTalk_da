@@ -118,7 +118,7 @@ html, body {
 .alarm-popup-content {
   background: #000;
   color: #fff; 
-  padding: 2rem;
+  padding: 30px 80px;
   border-radius: 4px;
   text-align: center;
 }

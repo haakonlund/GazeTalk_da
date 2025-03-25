@@ -17,9 +17,16 @@ const AlarmPopup = ({ onClose, dwellTime}) => {
           <h2>Alarm playing</h2>
           <p>Do you want to stop it?</p>
           <Tile
-            tile={{ label: 'Yes', action: { type: 'close_alarm' } }}
+            tile={
+              { 
+                label: 'Yes', 
+                action: { type: 'close_alarm' }, 
+                customStyle: { fontSize: '4rem', padding: '50px 100px' } 
+              }
+            }
             onActivate={() => onClose()}
             dwellTime={dwellTime}
+            
           />
         </div>
       </div>
