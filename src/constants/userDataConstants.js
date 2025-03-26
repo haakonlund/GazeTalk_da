@@ -13,3 +13,7 @@ export const DEFAULT_BUTTON_FONT_SIZE = 30
 export const DEFAULT_TEXT_FONT_SIZE = 20
 export const DEFAULT_RANKING = {}
 
+export const MAX_DWELLTIME = 10000
+export const MIN_DWELLTIME = 700
+
+export const DWELLTIME_INCREMENT = 250

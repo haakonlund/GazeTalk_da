@@ -37,4 +37,5 @@ export const SWITCH_LAYOUT = "switch_layout";
 export const WRITING = "writing";
 export const SUGGESTIONS = "suggestions";
 export const PERIOD = ".";
-
+export const INCREASE_DWELLTIME = "increase_dwelltime";
+export const DECREASE_DWELLTIME = "decrease_dwelltime";

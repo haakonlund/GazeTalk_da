@@ -290,6 +290,38 @@ export const handleAction = (
         setCurrentViewName("main_menu");
         break;
     }
+    case CmdConst.INCREASE_DWELLTIME : {
+        const oldDwellTime = userData.settings.dwelltime
+
+        if (oldDwellTime + UserDataConst.DWELLTIME_INCREMENT < UserDataConst.MAX_DWELLTIME) {
+            
+            const newDwellTime = oldDwellTime + UserDataConst.DWELLTIME_INCREMENT
+            const newUserdata = updateSetting(userData, UserDataConst.DWELLTIME, newDwellTime);
+            setUserData(newUserdata);
+            dwellTime = newUserdata.settings.dwelltime;
+
+        } else {
+            console.warn("Dwelltime max reached");
+        }
+        console.log("current dwelltime : ", dwellTime)
+        break;
+    }
+    case CmdConst.DECREASE_DWELLTIME : {
+        const oldDwellTime = userData.settings.dwelltime
+
+        if (oldDwellTime - UserDataConst.DWELLTIME_INCREMENT > UserDataConst.MIN_DWELLTIME) {
+            
+            const newDwellTime = oldDwellTime - UserDataConst.DWELLTIME_INCREMENT
+            const newUserdata = updateSetting(userData, UserDataConst.DWELLTIME, newDwellTime);
+            setUserData(newUserdata);
+            dwellTime = newUserdata.settings.dwelltime;
+
+        } else {
+            console.warn("Dwelltime max reached");
+        }
+        console.log("current dwelltime : ", dwellTime)
+        break;
+    }
     case CmdConst.PLAY_ALARM: {
         setAlarmActive(true);
         break;
