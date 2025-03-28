@@ -119,6 +119,9 @@ export const handleAction = (
         break;
     }
     case CmdConst.SWITCH_VIEW: {
+        if(action.view === "main_menu") {
+            setTeextValue("");
+        }
         if(isTesting && action.view === "main_menu") {
             abandonTest();
             setCurrentViewName(action.view);
@@ -299,11 +302,10 @@ export const handleAction = (
             const newUserdata = updateSetting(userData, UserDataConst.DWELLTIME, newDwellTime);
             setUserData(newUserdata);
             dwellTime = newUserdata.settings.dwelltime;
-
+            setTextValue("Current dwelltime: " + dwellTime / 1000 + "s");
         } else {
             console.warn("Dwelltime max reached");
         }
-        console.log("current dwelltime : ", dwellTime)
         break;
     }
     case CmdConst.DECREASE_DWELLTIME : {
@@ -315,7 +317,7 @@ export const handleAction = (
             const newUserdata = updateSetting(userData, UserDataConst.DWELLTIME, newDwellTime);
             setUserData(newUserdata);
             dwellTime = newUserdata.settings.dwelltime;
-
+            setTextValue("Current dwelltime: " + dwellTime / 1000 + "s");
         } else {
             console.warn("Dwelltime max reached");
         }
