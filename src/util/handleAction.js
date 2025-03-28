@@ -120,7 +120,7 @@ export const handleAction = (
     }
     case CmdConst.SWITCH_VIEW: {
         if(action.view === "main_menu") {
-            setTeextValue("");
+            setTextValue("");
         }
         if(isTesting && action.view === "main_menu") {
             abandonTest();
