@@ -7,6 +7,8 @@ let tileLabel = "tileLabel";
 let curAction = { type: "enter_letter", value: "A" };
 // action: { type: "switch_view", view: "main_menu" }
 
+HTMLMediaElement.prototype.play = () => Promise.resolve();
+
 jest.mock("react-i18next", () => ({
     useTranslation: () => ({ t: (key) => key })
   }));

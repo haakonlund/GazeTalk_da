@@ -5,6 +5,9 @@ import "@testing-library/jest-dom";
 import App from '../../App';
 import { UserBehaviourTestProvidor } from '../../components/UserBehaviourTest';
 // Mock react-i18next to return a simple translation function.
+
+HTMLMediaElement.prototype.play = () => Promise.resolve();
+
 jest.mock('i18next', () => ({
     changeLanguage: jest.fn(),
   }));
@@ -27,7 +30,7 @@ describe("Layout3_3x4", () => {
       });
     render(
     <UserBehaviourTestProvidor>
-      <App initialView="layouts" initialLayout="2+2+4x2" />
+      <App initialView="layouts" initialLayout="2+2+4x2" unitTesting={true}  />
     </UserBehaviourTestProvidor> 
     );
   
@@ -69,7 +72,7 @@ describe("Layout3_3x4", () => {
     
     render(
       <UserBehaviourTestProvidor>
-        <App initialView="writing" initialLayout="3+3x4" />
+        <App initialView="writing" initialLayout="3+3x4" unitTesting={true} />
       </UserBehaviourTestProvidor>
     );
     await waitFor(() => {
@@ -92,7 +95,7 @@ describe("Layout3_3x4", () => {
   
   render(
     <UserBehaviourTestProvidor>
-      <App initialView="writing" initialLayout="3+3x4" />
+      <App initialView="suggestions" initialLayout="3+3x4" unitTesting={true} />
     </UserBehaviourTestProvidor>
   );
 

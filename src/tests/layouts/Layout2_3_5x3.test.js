@@ -4,6 +4,9 @@ import axios from "axios";
 import "@testing-library/jest-dom";
 import App from '../../App';
 import { UserBehaviourTestProvidor } from '../../components/UserBehaviourTest';
+
+HTMLMediaElement.prototype.play = () => Promise.resolve();
+
 // Mock react-i18next to return a simple translation function.
 jest.mock('i18next', () => ({
     changeLanguage: jest.fn(),
@@ -68,7 +71,7 @@ describe("Layout2_3_5x3", () => {
     
     render(
       <UserBehaviourTestProvidor>
-        <App initialView="writing" initialLayout="2+3+5x3" />
+        <App initialView="writing" initialLayout="2+3+5x3" unitTesting={true} />
       </UserBehaviourTestProvidor>
     );
     await waitFor(() => {
@@ -92,7 +95,7 @@ describe("Layout2_3_5x3", () => {
   
   render(
     <UserBehaviourTestProvidor>
-      <App initialView="writing" initialLayout="2+3+5x3" />
+      <App initialView="suggestions" initialLayout="2+3+5x3" unitTesting={true} />
     </UserBehaviourTestProvidor>
   );
 
