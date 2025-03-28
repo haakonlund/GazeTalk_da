@@ -5,7 +5,7 @@ import * as CmdConst from "../constants/cmdConstants";
 import * as GazeConstants from "../constants/testConstants/gazeConstants";
 import levenshtein from 'js-levenshtein';
 const UserBehaviourTest = createContext();
-const numberOfTests = 10
+const numberOfTests = 1
 
 
 const shuffleTestSentences = (array) => {
@@ -28,7 +28,7 @@ export const UserBehaviourTestProvidor = ({ children }) => {
   const [counterStarted, setCounterStarted] = useState(false);
   const randomTests = useRef([]);
 
-  const initTest = (id) => {
+  const initTest = (id, userData) => {
     if (id > numberOfTests - 1) {
       completeTests();
       return;
@@ -37,6 +37,13 @@ export const UserBehaviourTestProvidor = ({ children }) => {
       randomTests.current = shuffleTestSentences([...testSentences]).slice(0, numberOfTests); // pick 10 random sentences
       setIsTesting(true);
       setLogs([]); // clear previous logs
+      const settingsEvent = {
+        type: "userSettings",
+        settings: userData.settings,
+        timestamp: new Date().toISOString(),
+      };
+      logsRef.current.push(settingsEvent);
+      //right here
     }
     console.log("Starting test with sentence ", randomTests.current[id]);
     setCurrentTestIndex(id);

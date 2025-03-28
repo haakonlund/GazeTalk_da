@@ -81,7 +81,7 @@ function App({ initialView = "main_menu", initialLayout = "2+2+4x2", initialText
     setButtonNum(newValue)
   };
   const startUserTest = () => {
-    initTest(0);
+    initTest(0, userData);
   };
 
   const handleLetterSelected = (otherLetters, selectedLetter) => {
@@ -113,7 +113,7 @@ function App({ initialView = "main_menu", initialLayout = "2+2+4x2", initialText
       || isTesting && text.split("")[text.length - 1] === ".") {
         logEvent({ type: "sentenceComplete", submittedText: text });
         endTest();
-        initTest(currentTestIndex + 1);
+        initTest(currentTestIndex + 1, userData);
         updateTextValue(targetSentence);
     }
     else {
