@@ -40,6 +40,10 @@ const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected, log
         if (percentage <= 0) {
           finishedHover.current = true;
           clearInterval(timer);
+          const audio = new Audio('/click_button.mp3');
+          audio.play().catch((error) => {
+            console.log('Audio playback failed:', error);
+          });
           onActivate(tile.action);
           const letter = tile.label;
           if (otherLetters) {

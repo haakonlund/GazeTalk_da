@@ -9,6 +9,7 @@ import { globalCursorPosition, cursorEventTarget, updateGlobalCursorPosition } f
 
 import LayoutPicker from "./layouts/LayoutPicker";
 import AlarmPopup from "./components/AlarmPopup";
+import UnlockAudioPopup from "./components/UnluckAudioPopup";
 //import PausePopup from "./components/PausePopup";
 import { config } from "./config/config";
 import { speakText } from './singleton/textToSpeachSingleton'
@@ -23,9 +24,7 @@ import { useTesting } from "./components/UserBehaviourTest";
 
 let dwellTime = 1500;
 
-
-
-function App({ initialView = "main_menu", initialLayout = "2+2+4x2", initialText="" }) {
+function App({ initialView = "main_menu", initialLayout = "2+2+4x2", initialText="", unitTesting=false }) {
   const [currentViewName, setCurrentViewName] = useState(initialView);
   const [currentLayoutName, setCurrentLayoutName] = useState(initialLayout);
   const [textValue, updateTextValue] = useState(initialText);
@@ -46,11 +45,18 @@ function App({ initialView = "main_menu", initialLayout = "2+2+4x2", initialText
   const [buttonFontSize, setButtonFontSize] = useState(30)
   const [textFontSize, setTextFontSize] = useState(20)
   const [buttonNum, setButtonNum] = useState(6)
-  
-  // Testing 
-  const { isTesting, currentTestIndex,  targetSentence, counterStarted, initTest, startTest, endTest, completeTests, logEvent, setLogs, logs, cancelTest } = useTesting();
-  
 
+  //const [audioUnlocked, setAudioUnlocked] = useState(false);
+  const [audioUnlocked, setAudioUnlocked] = useState(false);
+  // Testing 
+  const { isTesting, currentTestIndex, targetSentence, counterStarted, initTest, startTest, endTest, completeTests, logEvent, setLogs, logs, cancelTest } = useTesting();
+  
+  const unlockAudio = () => {
+    const audio = new Audio("/click_button.mp3");
+    audio.play().then(() => {
+      setAudioUnlocked(true);
+    });
+  };
 
   const [userData, setUserData] = useLocalStorage(
     UserDataConst.USERDATA,  {
@@ -118,6 +124,21 @@ function App({ initialView = "main_menu", initialLayout = "2+2+4x2", initialText
     cancelTest();
   }
 
+  //Needed to unlock audio on browsers
+  React.useEffect(() => {
+    const unlockAudio = () => {
+      const audio = new Audio();
+      audio.play().catch(() => {});
+      document.removeEventListener('hover', unlockAudio);
+    };
+  
+    document.addEventListener('hover', unlockAudio);
+  
+    return () => {
+      document.removeEventListener('hover', unlockAudio);
+    };
+  }, []);
+
   
   React.useEffect(() => {
     if (isTesting && targetSentence) {
@@ -171,6 +192,8 @@ function App({ initialView = "main_menu", initialLayout = "2+2+4x2", initialText
       }
     };
 
+    
+    
     fetchSuggestions();
 
     const fetchLetterSuggestions = async (text) => {
@@ -289,12 +312,12 @@ function App({ initialView = "main_menu", initialLayout = "2+2+4x2", initialText
       logEvent,
       abandonTest,
       dwellTime,
-      
     });
   };
 
   return (
     <div className="App">
+      {!unitTesting && !audioUnlocked && <UnlockAudioPopup onUnlock={unlockAudio} />}
       <LayoutPicker
         layout={currentLayoutName}
         view={view}

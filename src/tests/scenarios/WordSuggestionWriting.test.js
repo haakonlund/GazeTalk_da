@@ -5,6 +5,9 @@ import '@testing-library/jest-dom';
 import App from '../../App';
 import { updateGlobalCursorPosition, globalCursorPosition } from '../../singleton/cursorSingleton';
 import { UserBehaviourTestProvidor } from '../../components/UserBehaviourTest';
+
+HTMLMediaElement.prototype.play = () => Promise.resolve();
+
 jest.mock("axios");
 
 jest.mock('i18next', () => ({
@@ -44,7 +47,7 @@ describe('Word Suggestion Writing', () => {
   
     render(
       <UserBehaviourTestProvidor>
-        <App initialView="writing" initialLayout="2+2+4x2" initialText="i have no clue about " />
+        <App initialView="writing" initialLayout="2+2+4x2" initialText="i have no clue about " unitTesting={true} />
       </UserBehaviourTestProvidor> 
     );
 

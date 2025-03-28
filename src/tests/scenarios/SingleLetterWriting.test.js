@@ -5,6 +5,8 @@ import '@testing-library/jest-dom';
 import App from '../../App';
 import { UserBehaviourTestProvidor } from '../../components/UserBehaviourTest';
 
+HTMLMediaElement.prototype.play = () => Promise.resolve();
+
 jest.mock("axios");
 
 jest.mock('i18next', () => ({
@@ -37,7 +39,7 @@ describe('Single Letter Writing', () => {
     
     render(
       <UserBehaviourTestProvidor>
-        <App initialView="writing" initialLayout="2+2+4x2" />
+        <App initialView="writing" initialLayout="2+2+4x2" unitTesting={true} />
       </UserBehaviourTestProvidor> 
     );
     await waitFor(() => {
