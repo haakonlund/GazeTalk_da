@@ -5,7 +5,7 @@ import * as CmdConst from "../constants/cmdConstants";
 import * as GazeConstants from "../constants/testConstants/gazeConstants";
 import levenshtein from 'js-levenshtein';
 const UserBehaviourTest = createContext();
-const numberOfTests = 4
+const numberOfTests = 10
 
 
 const shuffleTestSentences = (array) => {
@@ -71,7 +71,11 @@ export const UserBehaviourTestProvidor = ({ children }) => {
   const completeTests = () => {
     setIsTesting(false);
     const dataToDownload = JSON.stringify(completeTestLogs, null, 2);
-    const filename = `test_run_${Date.now()}.json`;
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+
+    const filename = `test_run_${dd}/${mm}.json`;
     downloadTestData(dataToDownload, filename);
     completeTestLogs.current = [];
     setCurrentTestIndex(-1);
