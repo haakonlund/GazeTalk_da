@@ -3,8 +3,9 @@ import { testSentences } from '../constants/testConstants/testSentences';
 import { minimumNumberOfKeystrokes } from '../constants/testConstants/minimumNumberOfKeystrokes';
 import * as CmdConst from "../constants/cmdConstants";
 import * as GazeConstants from "../constants/testConstants/gazeConstants";
+import levenshtein from 'js-levenshtein';
 const UserBehaviourTest = createContext();
-const numberOfTests = 1
+const numberOfTests = 4
 
 
 const shuffleTestSentences = (array) => {
@@ -166,21 +167,20 @@ export const UserBehaviourTestProvidor = ({ children }) => {
     const ANSR = numberOfAttendedButNotSelected / charactersTyped;
     return { WPM, KSPC, MSDErrorRate, OR, RBA, RTE, ANSR };
   };
+  // function levenshtein (a, b) {
+  //   if (a.length === 0) return b.length;
+  //   if (b.length === 0) return a.length;
 
-  function levenshtein (a, b) {
-    if (a.length === 0) return b.length;
-    if (b.length === 0) return a.length;
+  //   if (a[0] === b[0]) {
+  //     return levenshtein(a.slice(1), b.slice(1));
+  //   }
 
-    if (a[0] === b[0]) {
-      return levenshtein(a.slice(1), b.slice(1));
-    }
+  //   const insertDist = levenshtein(a, b.slice(1));
+  //   const deleteDist = levenshtein(a.slice(1), b);
+  //   const replaceDist = levenshtein(a.slice(1), b.slice(1));
 
-    const insertDist = levenshtein(a, b.slice(1));
-    const deleteDist = levenshtein(a.slice(1), b);
-    const replaceDist = levenshtein(a.slice(1), b.slice(1));
-
-    return 1 + Math.min(insertDist, deleteDist, replaceDist);
-  } 
+  //   return 1 + Math.min(insertDist, deleteDist, replaceDist);
+  // } 
 
   const downloadTestData  = (data, filename) => {
     const blob = new Blob([data], { type: "application/json;charset=utf-8" });

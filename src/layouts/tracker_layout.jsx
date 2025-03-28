@@ -10,7 +10,7 @@ const TrackerLayout = (props) => {
     const transitionTime = 2000;
     
     const handleAction = props.onTileActivate; // Destructure handleAction from props
-    const points = [
+    const screenPoints = [
         { top: "10%", left: "10%" },     // Top-left
         { top: "30%", left: "30%" },   // Top-left (inner)
         { top: "10%", left: "50%" },    // Top-center
@@ -52,7 +52,7 @@ const TrackerLayout = (props) => {
             },
             screen_width : window.innerWidth,
             screen_height : window.innerHeight,
-            points, points,
+            points: screenPoints,
             accuracy: 0,
             precision: 0,
     });
@@ -83,7 +83,7 @@ const TrackerLayout = (props) => {
             setScale(1);
 
             // Move to next point
-            const newIndex = (currentIndexRef.current + 1) % points.length;
+            const newIndex = (currentIndexRef.current + 1) % screenPoints.length;
             setCurrentIndex(newIndex);
             currentIndexRef.current = newIndex;
 
@@ -265,8 +265,8 @@ const TrackerLayout = (props) => {
                  <div
                      className={`static-circle ${isComplete ? 'fade-out' : ''}` }
                      style={{
-                         top: points[currentIndex].top,
-                         left: points[currentIndex].left
+                         top: screenPoints[currentIndex].top,
+                         left: screenPoints[currentIndex].left
                      }}
                  />
 
@@ -274,8 +274,8 @@ const TrackerLayout = (props) => {
                  <div
                      className={`shrinking-circle ${isComplete ? 'fade-out' : ''}`}
                      style={{
-                         top: points[currentIndex].top,
-                         left: points[currentIndex].left,
+                         top: screenPoints[currentIndex].top,
+                         left: screenPoints[currentIndex].left,
                          transform: `translate(-50%, -50%) scale(${scale})`
                      }}
                  />
