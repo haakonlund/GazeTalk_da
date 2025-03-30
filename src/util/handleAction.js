@@ -119,12 +119,11 @@ export const handleAction = (
         break;
     }
     case CmdConst.SWITCH_VIEW: {
-        if(action.view === "main_menu") {
+        if(!isTesting && action.view === "main_menu") {
             setTextValue("");
         }
         if(isTesting && action.view === "main_menu") {
-            abandonTest();
-            setCurrentViewName(action.view);
+            return;
         } else {
             logEvent({ type: CmdConst.SWITCH_VIEW, value: action.view});
             if (action.view === "test") {

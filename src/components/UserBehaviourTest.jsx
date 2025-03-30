@@ -82,7 +82,6 @@ export const UserBehaviourTestProvidor = ({ children }) => {
     var dd = String(today.getDate()).padStart(2, '0');
     var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
     var time = String(today.getHours()).padStart(2, '0') + "-" + String(today.getMinutes()).padStart(2, '0') + "-" + String(today.getSeconds()).padStart(2, '0');
-    console.log("time: ", time);
     const filename = `test_run_${dd}-${mm}_${time}.json`;
     downloadTestData(dataToDownload, filename);
     completeTestLogs.current = [];
