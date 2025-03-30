@@ -30,12 +30,14 @@ describe("Tile component", () => {
         expect(screen.getByText(tileLabel)).toBeInTheDocument();
     });
 
+    /* Deleted since clicking is a desired behaviour as of now
     test("Clicking does not work on button", () => {
         render(<Tile tile={tile} onActivate={onActivateMock} dwellTime={1000} />);
         const tileDiv = screen.getByText(tileLabel).closest(".tile");
         fireEvent.click(tileDiv);
         expect(onActivateMock).not.toHaveBeenCalled();
       });
+    */
 
     test("Progress bar shows on hover", () => {
         render(<Tile tile={tile} onActivate={onActivateMock} dwellTime={1000} />);

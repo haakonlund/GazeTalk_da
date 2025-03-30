@@ -123,6 +123,7 @@ export const handleAction = (
             setTextValue("");
         }
         if(isTesting && action.view === "main_menu") {
+            setCurrentViewName(CmdConst.WRITING);
             return;
         } else {
             logEvent({ type: CmdConst.SWITCH_VIEW, value: action.view});

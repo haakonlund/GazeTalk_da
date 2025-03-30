@@ -24,6 +24,18 @@ const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected, log
     "bottom-right":{ bottom: '0%', right: '10%' }  // Bottom-right
   };
 
+  const playSound = () => {
+    const audio = new Audio('/click_button.mp3');
+    audio.play().catch((error) => {
+      console.log('Audio playback failed:', error);
+    });
+  };
+
+  const handleClick = () => {
+    playSound();
+    onActivate(tile.action);
+  };
+
   useEffect(() => {
     let timer;
     if (hovering) {
@@ -40,10 +52,7 @@ const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected, log
         if (percentage <= 0) {
           finishedHover.current = true;
           clearInterval(timer);
-          const audio = new Audio('/click_button.mp3');
-          audio.play().catch((error) => {
-            console.log('Audio playback failed:', error);
-          });
+          playSound();
           onActivate(tile.action);
           const letter = tile.label;
           if (otherLetters) {
@@ -81,7 +90,7 @@ const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected, log
       style={tile.customStyle || {}}
       onMouseEnter={() => setHovering(true)}
       onMouseLeave={() => setHovering(false)}
-      // onClick={() => onActivate(tile.action)}
+      onClick={handleClick}
     >
       {tile.icon ? (
         // Show icon for layouts page
