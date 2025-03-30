@@ -95,11 +95,11 @@ export const handleAction = (
                     letter + textValue.slice(globalCursorPosition.value);
         newCursorPos = input.selectionStart + 1;
       }
-      logEvent({ type: CmdConst.ENTER_LETTER, value: newText});
+      logEvent({ type: CmdConst.ENTER_LETTER, value: letter});
       setTextValue(newText);
       updateGlobalCursorPosition(newCursorPos);
       // always go back to writing view after entering a letter
-      setCurrentViewName("writing");
+      setCurrentViewName(CmdConst.WRITING);
 
       // if the last letter was punctuation speak it
       if (action.value === CmdConst.PERIOD) {
@@ -123,14 +123,19 @@ export const handleAction = (
             setTextValue("");
         }
         if(isTesting && action.view === "main_menu") {
+            if (counterStarted) {
+                logEvent({ type: CmdConst.SWITCH_VIEW, value: CmdConst.WRITING});
+            }
             setCurrentViewName(CmdConst.WRITING);
             return;
         } else {
-            logEvent({ type: CmdConst.SWITCH_VIEW, value: action.view});
             if (action.view === "test") {
                 startUserTest();
                 setCurrentViewName(CmdConst.WRITING);
             } else if (config.views[action.view]) {
+                if (counterStarted) {
+                    logEvent({ type: CmdConst.SWITCH_VIEW, value: action.view});
+                }
                 setCurrentViewName(action.view);
             }
         }
