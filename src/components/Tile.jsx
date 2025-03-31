@@ -33,6 +33,12 @@ const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected, log
 
   const handleClick = () => {
     playSound();
+    const letter = tile.label;
+    if (otherLetters) {
+      if (onLetterSelected) {
+        onLetterSelected(otherLetters, letter);
+      }
+    }
     onActivate(tile.action);
   };
 
@@ -88,8 +94,8 @@ const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected, log
       role="button"
       aria-label={tile.label || "tile"}
       style={tile.customStyle || {}}
-      onMouseEnter={() => setHovering(true)}
-      onMouseLeave={() => setHovering(false)}
+      onMouseEnter={true ? () => setHovering(true) : () => {}}
+      onMouseLeave={true ? () => setHovering(false) : () => {}}
       onClick={handleClick}
     >
       {tile.icon ? (

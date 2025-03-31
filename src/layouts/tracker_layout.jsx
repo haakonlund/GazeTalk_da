@@ -37,8 +37,8 @@ const TrackerLayout = (props) => {
     const element = document.querySelector(".shrinking-circle");
 
     const eyeTrackingData = "eyeTrackingData"
-    const [trackingData, setTrackingData] = useLocalStorage(
-        eyeTrackingData, {
+    const [trackingData, setTrackingData] = useState(
+        {
             start_of_test : Date.now(),
             end_of_test : 0,
             tracking_points: {
@@ -198,12 +198,17 @@ const TrackerLayout = (props) => {
         const jsonLink = document.createElement('a');
         jsonLink.href = jsonUrl;
 
+        
         var today = new Date();
         var dd = String(today.getDate()).padStart(2, '0');
         var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-
-        jsonLink.download = `trackingData_${dd}/${mm}.json`;
+        var time = String(today.getHours()).padStart(2, '0') + "-" + String(today.getMinutes()).padStart(2, '0') + "-" + String(today.getSeconds()).padStart(2, '0');
+        
+        const filename = `eyeTrackingData_${dd}-${mm}_${time}.json`;
+        jsonLink.download = filename;
         jsonLink.click();
+
+        
         
     
         // Save as CSV

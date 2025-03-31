@@ -45,7 +45,7 @@ function App({ initialView = "main_menu", initialLayout = "2+2+4x2", initialText
   const [buttonFontSize, setButtonFontSize] = useState(30)
   const [textFontSize, setTextFontSize] = useState(20)
   const [buttonNum, setButtonNum] = useState(6)
-
+  const showNextSuggestions = true // turn on to show next suggestions
   //const [audioUnlocked, setAudioUnlocked] = useState(false);
   const [audioUnlocked, setAudioUnlocked] = useState(false);
   // Testing 
@@ -76,7 +76,6 @@ function App({ initialView = "main_menu", initialLayout = "2+2+4x2", initialText
       console.warn("Button number can't be less than 1");
       return;
     }
-    
     RankingSystem.setButtonNum(newValue);
     setButtonNum(newValue)
   };
@@ -217,8 +216,9 @@ function App({ initialView = "main_menu", initialLayout = "2+2+4x2", initialText
       const getSug = async (text) => {
         const response = await fetchLetterSuggestions(text);
         const suggestionsString = response.data.continuations;
-        const suggestionArray = [...suggestionsString]; // Using spread operator instead of the loop
-        return suggestionArray.slice(0, RankingSystem.getButtonNum()).reverse();
+        const suggestionArray = [...suggestionsString]; 
+
+        return suggestionArray.slice(0, RankingSystem.getButtonNum());
       };
     
       // Get initial suggestions
@@ -239,12 +239,17 @@ function App({ initialView = "main_menu", initialLayout = "2+2+4x2", initialText
       const nextSugResults = await Promise.all(nextSugPromises);
       
       // Process results
-      const letterSuggestionsArray = nextSugResults.map((result, i) => {
-        return RankingSystem.rank(result, rankedSuggestion[i], i);
-      });
+      if (showNextSuggestions) {
+        const letterSuggestionsArray = nextSugResults.map((result, i) => {
+          return RankingSystem.rank(result, rankedSuggestion[i], i);
+        });
+        setNextLetters(letterSuggestionsArray);
       
+      } else {
+        setNextLetters(new Array(buttonNum).fill([]));
+
+      }
       setLetterSuggestions(rankedSuggestion);
-      setNextLetters(letterSuggestionsArray);
     };
     
     fillLetterSuggestions();
