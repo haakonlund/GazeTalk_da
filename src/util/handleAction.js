@@ -270,14 +270,26 @@ export const handleAction = (
         const cursorPos = globalCursorPosition.value;
         const textUpToCursor = textValue.slice(0, cursorPos);
         const rest = textValue.slice(cursorPos, textValue.length);
-        const lastSpaceIndex = textUpToCursor.lastIndexOf(" ");
+        // Beginning of current line
+        const lastNewlineIndex = textUpToCursor.lastIndexOf("\n");
+        const lineStart = lastNewlineIndex !== -1 ? lastNewlineIndex + 1 : 0;
+        const currentLineText = textUpToCursor.slice(lineStart);
+        // Last space within the current line.
+        const lastSpaceIndex = currentLineText.lastIndexOf(" ");
         const lastWord =
             lastSpaceIndex >= 0
-            ? textUpToCursor.slice(lastSpaceIndex + 1)
-            : textUpToCursor;
-        const replaced = textUpToCursor.slice(0, textUpToCursor.length - lastWord.length);
+            ? currentLineText.slice(lastSpaceIndex + 1)
+            : currentLineText;
+        const replacedCurrentLine = lastSpaceIndex >= 0
+            ? currentLineText.slice(0, lastSpaceIndex + 1)
+            : "";
+        const replaced = textUpToCursor.slice(0, lineStart) + replacedCurrentLine;
         const casedSuggestion = matchCase(suggestion, lastWord);
         const newText = replaced + casedSuggestion + " " + rest;
+        console.log(textUpToCursor);
+        console.log(replaced);
+        console.log(casedSuggestion);
+        console.log(rest);
         setTextValue(newText);
         logEvent({ type: CmdConst.INSERT_SUGGESTION, value: casedSuggestion });
         const spaceLength = 1;
