@@ -21,7 +21,7 @@ import * as UserDataConst from "./constants/userDataConstants"
 import * as CmdConst from "./constants/cmdConstants"
 import { layoutToButtonNum } from "./constants/layoutConstants";
 import { useTesting } from "./components/UserBehaviourTest";
-
+import { getLastSentence } from "./util/textUtils";
 let dwellTime = 1500;
 
 function App({ initialView = "main_menu", initialLayout = "2+2+4x2", initialText="", unitTesting=false }) {
@@ -105,16 +105,19 @@ function App({ initialView = "main_menu", initialLayout = "2+2+4x2", initialText
     if (isTesting && !counterStarted) {
       startTest();
       //gets last word of 'text'
-      updateTextValue(text.split(" ")[text.split(" ").length - 1]);
+      updateTextValue(text);
     } else if (isTesting && text === targetSentence 
       || isTesting 
          && (targetSentence.split("")[targetSentence.length - 1] === " ")
          && text === targetSentence.slice(0, targetSentence.length - 1)
       || isTesting && text.split("")[text.length - 1] === ".") {
-        logEvent({ type: "sentenceComplete", submittedText: text });
+        const lastSentenceIndex = getLastSentence(text);
+        const lastSentence = text.slice(lastSentenceIndex).trim();
+        logEvent({ type: "sentenceComplete", submittedText: lastSentence });
         endTest();
         initTest(currentTestIndex + 1, userData);
-        updateTextValue(targetSentence);
+        updateTextValue(targetSentence + "\n");
+        updateGlobalCursorPosition((targetSentence + "\n").length);
     }
     else {
       updateTextValue(text);
@@ -142,8 +145,8 @@ function App({ initialView = "main_menu", initialLayout = "2+2+4x2", initialText
   
   React.useEffect(() => {
     if (isTesting && targetSentence) {
-      updateTextValue(targetSentence);
-      updateGlobalCursorPosition((targetSentence).length);
+      updateTextValue(targetSentence + "\n");
+      updateGlobalCursorPosition((targetSentence + "\n").length);
     }
   }, [targetSentence]);
 
@@ -174,7 +177,7 @@ function App({ initialView = "main_menu", initialLayout = "2+2+4x2", initialText
     window.addEventListener("resize", setTileFontSize);
     return () => window.removeEventListener("resize", setTileFontSize);
   }, [buttonFontSize]);
-
+  
   React.useEffect(() => {
     const textUpToCursor = textValue.slice(0, globalCursorPosition.value)
 

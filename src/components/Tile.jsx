@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef  } from "react";
 import { useTranslation } from "react-i18next";
-import * as GazeConstants from "../constants/testConstants/gazeConstants";
+import * as TestConstants from "../constants/testConstants/testConstants";
 
 const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected, logEvent, counterStarted }) => {
   const { t } = useTranslation();
@@ -8,7 +8,7 @@ const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected, log
   const [progress, setProgress] = useState(100);
   const activationTimerRef = useRef(null);
   const progressTimerRef = useRef(null);
-  const gazeThreshold = GazeConstants.GAZE_MILLISECONDS; 
+  const gazeThreshold = TestConstants.GAZE_MILLISECONDS; 
   const startedHover = useRef(false);
   const finishedHover = useRef(false);
   const gazedMoreThanThreshold = useRef(false);
@@ -68,7 +68,7 @@ const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected, log
       }, 50);
     } else {
       if (startedHover.current && !finishedHover.current && gazedMoreThanThreshold.current && counterStarted) {
-        logEvent({ type: GazeConstants.TILE_GAZED_NOT_SELECTED, label: tile.label });
+        logEvent({ type: TestConstants.TILE_GAZED_NOT_SELECTED, label: tile.label });
       }
       if (timer) {clearInterval(timer);}
       setProgress(100);

@@ -1,5 +1,9 @@
 import { globalCursorPosition } from "../singleton/cursorSingleton";
 export const getLastSentence = (text) => {
+    const lastLineBreak = text.lastIndexOf("\n");
+    if (lastLineBreak !== -1) {
+      return lastLineBreak + 1;
+    }
     let start = globalCursorPosition.value
     let punctuationCnt = 1
     while (start > 0 ) {
