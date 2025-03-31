@@ -242,7 +242,7 @@ function App({ initialView = "main_menu", initialLayout = "2+2+4x2", initialText
       const letterSuggestionsArray = nextSugResults.map((result, i) => {
         return RankingSystem.rank(result, rankedSuggestion[i], i);
       });
-      
+      console.log(rankedSuggestion);
       setLetterSuggestions(rankedSuggestion);
       setNextLetters(letterSuggestionsArray);
     };

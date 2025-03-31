@@ -45,6 +45,18 @@ export const layoutsConfig = {
           label: "4+4x4",
           icon: "/layoutIcons/4+4x4.png",
           action: { type: "switch_layout", value: "4+4x4" }
+        },
+        {
+          type: "iconTile",
+          label: "2+4+6x4",
+          icon: "/layoutIcons/2+4+6x4.png",
+          action: { type: "switch_layout", value: "2+4+6x4" }
+        },
+        {
+          type: "iconTile",
+          label: "2+4+6x5",
+          icon: "/layoutIcons/2+4+6x5.png",
+          action: { type: "switch_layout", value: "2+4+6x5" }
         }
       ]
   };
