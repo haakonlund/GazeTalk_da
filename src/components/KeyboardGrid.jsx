@@ -135,8 +135,6 @@ const KeyboardGrid = ({
                 );
               }
               if (i < remainingTiles - 1) {
-                console.log("i ", i);
-                console.log("remainingTiles ", remainingTiles);
                 writingTiles.push(
                   <Tile 
                     key={i} 
