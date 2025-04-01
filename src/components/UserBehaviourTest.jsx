@@ -2,10 +2,10 @@ import React, { createContext, useContext, useState, useRef } from 'react';
 import { testSentences } from '../constants/testConstants/testSentences';
 import { minimumNumberOfKeystrokes } from '../constants/testConstants/minimumNumberOfKeystrokes';
 import * as CmdConst from "../constants/cmdConstants";
-import * as TestConstants from "../constants/testConstants/testConstants";
+import * as TestConst from "../constants/testConstants/testConstants";
 import levenshtein from 'js-levenshtein';
 const UserBehaviourTest = createContext();
-const numberOfTests = TestConstants.NUMBER_OF_TESTS
+const numberOfTests = TestConst.NUMBER_OF_TESTS
 
 
 const shuffleTestSentences = (array) => {
@@ -167,13 +167,13 @@ export const UserBehaviourTestProvidor = ({ children }) => {
     const RBA = numberOfDeletions / charactersTyped;
     //RTE
     const numberOfGazesToTextField = logs.filter(e =>
-      e.type === TestConstants.TEXT_AREA_GAZED
+      e.type === TestConst.TEXT_AREA_GAZED
     ).length;
     const RTE = numberOfGazesToTextField / charactersTyped;
 
     //ANSR
     const numberOfAttendedButNotSelected = logs.filter(e =>
-      e.type === TestConstants.TILE_GAZED_NOT_SELECTED 
+      e.type === TestConst.TILE_GAZED_NOT_SELECTED 
     ).length;
     const ANSR = numberOfAttendedButNotSelected / charactersTyped;
     return { WPM, KSPC, MSDErrorRate, OR, RBA, RTE, ANSR };

@@ -22,9 +22,10 @@ import * as CmdConst from "./constants/cmdConstants"
 import { layoutToButtonNum } from "./constants/layoutConstants";
 import { useTesting } from "./components/UserBehaviourTest";
 import { getLastSentence } from "./util/textUtils";
+import * as TestConst from "./constants/testConstants/testConstants";
 let dwellTime = 1500;
 
-function App({ initialView = "main_menu", initialLayout = "2+2+4x2", initialText="", unitTesting=false }) {
+function App({ initialView = CmdConst.MAIN_MENU, initialLayout = "2+2+4x2", initialText="", unitTesting=false }) {
   const [currentViewName, setCurrentViewName] = useState(initialView);
   const [currentLayoutName, setCurrentLayoutName] = useState(initialLayout);
   const [textValue, updateTextValue] = useState(initialText);
@@ -39,7 +40,7 @@ function App({ initialView = "main_menu", initialLayout = "2+2+4x2", initialText
   
   const textAreaRef = useRef(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const view = config.views[currentViewName] || config.views["main_menu"];
+  const view = config.views[currentViewName] || config.views[CmdConst.MAIN_MENU];
   const input = document.getElementById('text_region');
 
   const [buttonFontSize, setButtonFontSize] = useState(30)
@@ -97,7 +98,6 @@ function App({ initialView = "main_menu", initialLayout = "2+2+4x2", initialText
     }
     if (nextLetters[index].length !== 0) {
       setNextLetterSuggestion(nextLetters[index])
-      
     }
   };
   const setTextValue = (text) => {
@@ -114,9 +114,17 @@ function App({ initialView = "main_menu", initialLayout = "2+2+4x2", initialText
         const lastSentence = text.slice(lastSentenceIndex).trim();
         logEvent({ type: "sentenceComplete", submittedText: lastSentence });
         endTest();
-        initTest(currentTestIndex + 1, userData);
-        updateTextValue(targetSentence + "\n");
-        updateGlobalCursorPosition((targetSentence + "\n").length);
+        //Tests are done
+        if (currentTestIndex === TestConst.NUMBER_OF_TESTS - 1) {
+          initTest(currentTestIndex + 1, userData);
+          updateTextValue("");
+          updateGlobalCursorPosition(0);
+          setAudioUnlocked(false);
+        } else { //Next tests
+          initTest(currentTestIndex + 1, userData);
+          updateTextValue(targetSentence + "\n");
+          updateGlobalCursorPosition((targetSentence + "\n").length);
+        }
     }
     else {
       updateTextValue(text);
@@ -143,7 +151,9 @@ function App({ initialView = "main_menu", initialLayout = "2+2+4x2", initialText
 
   
   React.useEffect(() => {
-    if (isTesting && targetSentence) {
+    if (!isTesting && targetSentence === "") {
+      
+    } else if (isTesting && targetSentence) {
       updateTextValue(targetSentence + "\n");
       updateGlobalCursorPosition((targetSentence + "\n").length);
     }
@@ -320,6 +330,7 @@ function App({ initialView = "main_menu", initialLayout = "2+2+4x2", initialText
       logEvent,
       abandonTest,
       dwellTime,
+      currentTestIndex,
     });
   };
 

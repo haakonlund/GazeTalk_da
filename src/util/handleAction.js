@@ -2,6 +2,7 @@ import { updateGlobalCursorPosition } from "../singleton/cursorSingleton";
 import { speakText } from '../singleton/textToSpeachSingleton';
 import * as CmdConst from "../constants/cmdConstants";
 import * as UserDataConst from "../constants/userDataConstants";
+import * as TestConst from "../constants/testConstants/testConstants";
 import {
     deleteWordAtCursor,
     deleteSentence,
@@ -75,6 +76,7 @@ export const handleAction = (
     logEvent,
     abandonTest,
     dwellTime,
+    currentTestIndex,
   }
 ) => {
   switch (action.type) {
@@ -83,7 +85,8 @@ export const handleAction = (
       const letter = isCapsOn ? action.value.toUpperCase() : action.value.toLowerCase();
       let newText;
       let newCursorPos;
-      if (action.value === CmdConst.PERIOD && globalCursorPosition.value > 0 && textValue[globalCursorPosition.value - 1] === " ") {
+      if (action.value === CmdConst.PERIOD && globalCursorPosition.value > 0 && 
+            (textValue[globalCursorPosition.value - 1] === " " || textValue[globalCursorPosition.value - 1] === "\n")) {
         if (isTesting && !counterStarted) {
             return;
         }
@@ -98,8 +101,13 @@ export const handleAction = (
       logEvent({ type: CmdConst.ENTER_LETTER, value: letter});
       setTextValue(newText);
       updateGlobalCursorPosition(newCursorPos);
-      // always go back to writing view after entering a letter
-      setCurrentViewName(CmdConst.WRITING);
+      if (action.value === CmdConst.PERIOD && isTesting 
+            && currentTestIndex === TestConst.NUMBER_OF_TESTS - 1) {
+        setCurrentViewName(CmdConst.MAIN_MENU);
+      } else {
+        setCurrentViewName(CmdConst.WRITING);
+      }
+      console.log("WRITING LOL");
 
       // if the last letter was punctuation speak it
       if (action.value === CmdConst.PERIOD) {
@@ -119,24 +127,29 @@ export const handleAction = (
         break;
     }
     case CmdConst.SWITCH_VIEW: {
-        if(!isTesting && action.view === "main_menu") {
-            setTextValue("");
-        }
-        if(isTesting && action.view === "main_menu") {
-            if (counterStarted) {
-                logEvent({ type: CmdConst.SWITCH_VIEW, value: CmdConst.WRITING});
-            }
-            setCurrentViewName(CmdConst.WRITING);
-            return;
+        if (action.view === CmdConst.MAIN_MENU) {
+            if (isTesting && currentTestIndex < TestConst.NUMBER_OF_TESTS - 1) {
+                if (counterStarted) {
+                    logEvent({ type: CmdConst.SWITCH_VIEW, value: CmdConst.WRITING});
+                }
+                setCurrentViewName(CmdConst.WRITING);
+                return;
+              }
+              setTextValue("");
+              setCurrentViewName(CmdConst.MAIN_MENU);
         } else {
             if (action.view === "test") {
                 startUserTest();
                 setCurrentViewName(CmdConst.WRITING);
-            } else if (config.views[action.view]) {
-                if (counterStarted) {
-                    logEvent({ type: CmdConst.SWITCH_VIEW, value: action.view});
+            } else {
+                if (config.views[action.view]) {
+                    if (counterStarted) {
+                        logEvent({ type: CmdConst.SWITCH_VIEW, value: action.view});
+                    }
+                    setCurrentViewName(action.view);
+                } else {
+                    console.error(`VIEW "${action.view}" NOT ADDED TO CONFIG`);
                 }
-                setCurrentViewName(action.view);
             }
         }
         break;
@@ -307,7 +320,7 @@ export const handleAction = (
         const newUserdata = updateSetting(userData, UserDataConst.DWELLTIME, newDwellTime);
         setUserData(newUserdata);
         dwellTime = newUserdata.settings[UserDataConst.DWELLTIME];
-        setCurrentViewName("main_menu");
+        setCurrentViewName(CmdConst.MAIN_MENU);
         break;
     }
     case CmdConst.INCREASE_DWELLTIME : {
@@ -386,7 +399,7 @@ export const handleAction = (
         logEvent({ type: CmdConst.INSERT_LETTER_SUGGESTION, value: letter });
         updateGlobalCursorPosition(input.selectionStart + 1);
         // always go back to writing view after entering a letter
-        setCurrentViewName("writing");
+        setCurrentViewName(CmdConst.WRITING);
 
         // if the last letter was punctuation speak it
         if (action.value === ".") {
