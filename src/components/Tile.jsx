@@ -12,6 +12,7 @@ const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected, log
   const startedHover = useRef(false);
   const finishedHover = useRef(false);
   const gazedMoreThanThreshold = useRef(false);
+  const hasBeenClickedOnRef = useRef(false);
   // Calculate positions for surrounding letters
   const positions = {
     "top-left": { top: '0%',    left: '10%' },  // Top-left
@@ -32,6 +33,8 @@ const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected, log
   };
 
   const handleClick = () => {
+    if (hasBeenClickedOnRef.current) return;
+    hasBeenClickedOnRef.current = true;
     playSound();
     const letter = tile.label;
     if (otherLetters) {
