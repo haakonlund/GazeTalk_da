@@ -30,7 +30,7 @@ describe("Layout4_4x4", () => {
       });
     render(
       <UserBehaviourTestProvidor>
-        <App initialView="layouts" initialLayout="2+2+4x2" unitTesting={true} />
+        <App initialView="layouts" initialLayout="2+2+4x2"  />
       </UserBehaviourTestProvidor> 
     );
   
@@ -72,7 +72,7 @@ describe("Layout4_4x4", () => {
     
     render(
       <UserBehaviourTestProvidor>
-        <App initialView="writing" initialLayout="4+4x4" unitTesting={true} />
+        <App initialView="writing" initialLayout="4+4x4"  />
       </UserBehaviourTestProvidor> 
     );
     await waitFor(() => {
@@ -95,7 +95,7 @@ describe("Layout4_4x4", () => {
   
   render(
     <UserBehaviourTestProvidor>
-      <App initialView="suggestions" initialLayout="4+4x4" unitTesting={true} />
+      <App initialView="suggestions" initialLayout="4+4x4"  />
     </UserBehaviourTestProvidor> 
   );
 

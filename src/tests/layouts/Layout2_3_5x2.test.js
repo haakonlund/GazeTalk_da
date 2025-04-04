@@ -31,7 +31,7 @@ describe("Layout2_3_5x2", () => {
       });
     render(
       <UserBehaviourTestProvidor>
-        <App initialView="layouts" initialLayout="2+2+4x2" unitTesting={true}  />
+        <App initialView="layouts" initialLayout="2+2+4x2"   />
       </UserBehaviourTestProvidor>
     );
     
@@ -73,7 +73,7 @@ describe("Layout2_3_5x2", () => {
     
     render(
     <UserBehaviourTestProvidor>
-     <App initialView="writing" initialLayout="2+3+5x2" unitTesting={true} />
+     <App initialView="writing" initialLayout="2+3+5x2"  />
     </UserBehaviourTestProvidor>
   );
     await waitFor(() => {
@@ -96,7 +96,7 @@ describe("Layout2_3_5x2", () => {
   
   render(
     <UserBehaviourTestProvidor>
-      <App initialView="suggestions" initialLayout="2+3+5x2" unitTesting={true} />
+      <App initialView="suggestions" initialLayout="2+3+5x2"  />
     </UserBehaviourTestProvidor>
   );
 

@@ -25,7 +25,7 @@ import { getLastSentence } from "./util/textUtils";
 import * as TestConst from "./constants/testConstants/testConstants";
 let dwellTime = 1500;
 
-function App({ initialView = CmdConst.MAIN_MENU, initialLayout = "2+2+4x2", initialText="", unitTesting=false }) {
+function App({ initialView = CmdConst.MAIN_MENU, initialLayout = "2+2+4x2", initialText="", unitTesting=process.env.NODE_ENV === "test" }) {
   const [currentViewName, setCurrentViewName] = useState(initialView);
   const [currentLayoutName, setCurrentLayoutName] = useState(initialLayout);
   const [textValue, updateTextValue] = useState(initialText);
@@ -337,7 +337,7 @@ function App({ initialView = CmdConst.MAIN_MENU, initialLayout = "2+2+4x2", init
   return (
     <div className="App">
       {!unitTesting && !audioUnlocked && <UnlockAudioPopup onUnlock={unlockAudio} />}
-      <LayoutPicker
+      {(unitTesting || audioUnlocked) && !alarmActive && <LayoutPicker
         layout={currentLayoutName}
         view={view}
         textValue={textValue}
@@ -353,6 +353,7 @@ function App({ initialView = CmdConst.MAIN_MENU, initialLayout = "2+2+4x2", init
         logEvent={logEvent}
         counterStarted={counterStarted}
         />
+      }
       {alarmActive && <AlarmPopup onClose={() => setAlarmActive(false)} dwellTime={dwellTime} />}
         {
           // Uncomment to show debug button

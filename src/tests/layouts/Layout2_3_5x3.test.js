@@ -71,7 +71,7 @@ describe("Layout2_3_5x3", () => {
     
     render(
       <UserBehaviourTestProvidor>
-        <App initialView="writing" initialLayout="2+3+5x3" unitTesting={true} />
+        <App initialView="writing" initialLayout="2+3+5x3"  />
       </UserBehaviourTestProvidor>
     );
     await waitFor(() => {
@@ -95,7 +95,7 @@ describe("Layout2_3_5x3", () => {
   
   render(
     <UserBehaviourTestProvidor>
-      <App initialView="suggestions" initialLayout="2+3+5x3" unitTesting={true} />
+      <App initialView="suggestions" initialLayout="2+3+5x3"  />
     </UserBehaviourTestProvidor>
   );
 

@@ -39,7 +39,7 @@ describe('Single Letter Writing', () => {
     
     render(
       <UserBehaviourTestProvidor>
-        <App initialView="writing" initialLayout="2+2+4x2" unitTesting={true} />
+        <App initialView="writing" initialLayout="2+2+4x2"  />
       </UserBehaviourTestProvidor> 
     );
     await waitFor(() => {

@@ -2,6 +2,10 @@ import React, { useState, useEffect, useRef  } from "react";
 import { useTranslation } from "react-i18next";
 import * as TestConstants from "../constants/testConstants/testConstants";
 
+let lastActivatedTileId = null;
+let lastActivationTimestamp = 0;
+const CLICK_THROTTLE_DELAY = 500;
+
 const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected, logEvent, counterStarted }) => {
   const { t } = useTranslation();
   const [hovering, setHovering] = useState(false);
@@ -32,6 +36,14 @@ const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected, log
   };
 
   const handleClick = () => {
+    const tileId = tile.id || tile.label; 
+    const now = Date.now();
+    if (lastActivatedTileId === tileId && now - lastActivationTimestamp < CLICK_THROTTLE_DELAY) {
+      // Duplicate click - happens with ipad's built-in eyetracker.
+      return;
+    }
+    lastActivatedTileId = tileId;
+    lastActivationTimestamp = now;
     playSound();
     const letter = tile.label;
     if (otherLetters) {
