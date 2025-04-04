@@ -82,6 +82,25 @@ def get_json(filename):
             "message": f"Error retrieving JSON data: {str(e)}"
         }), 500
 
+@app.route('/log', methods=['POST'])
+def log():
+    try:
+        # Get the log data from the request body
+        log_data = request.json
+        if not log_data:
+            return jsonify({"message": "No log data provided"}), 400
+
+        # Print the log data to the server's console
+        print("Received log:", log_data)
+
+        # Optionally, you can do more here, such as saving the logs to a file
+        
+        return jsonify({"message": "Log received"}), 200
+
+    except Exception as e:
+        return jsonify({"message": f"Error logging data: {str(e)}"}), 500
+
+
 if __name__ == '__main__':
     print(f"Server started. JSON files will be saved to {os.path.abspath(STORAGE_DIR)}")
     app.run(debug=True, port=5000, host="0.0.0.0")
