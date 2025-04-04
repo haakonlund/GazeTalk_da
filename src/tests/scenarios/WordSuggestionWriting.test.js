@@ -47,7 +47,7 @@ describe('Word Suggestion Writing', () => {
   
     render(
       <UserBehaviourTestProvidor>
-        <App initialView="writing" initialLayout="2+2+4x2" initialText="i have no clue about " unitTesting={true} />
+        <App initialView="writing" initialLayout="2+2+4x2" initialText="i have no clue about "  />
       </UserBehaviourTestProvidor> 
     );
 

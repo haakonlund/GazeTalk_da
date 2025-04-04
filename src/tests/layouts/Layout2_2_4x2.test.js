@@ -95,7 +95,7 @@ describe("Layout2_2_4x2", () => {
   
   render(
     <UserBehaviourTestProvidor>
-      <App initialView="suggestions" initialLayout="2+2+4x2" unitTesting={true} />
+      <App initialView="suggestions" initialLayout="2+2+4x2"  />
     </UserBehaviourTestProvidor>
   );
 
