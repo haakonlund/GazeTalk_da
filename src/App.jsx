@@ -46,7 +46,7 @@ function App({ initialView = CmdConst.MAIN_MENU, initialLayout = "2+2+4x2", init
   const [buttonFontSize, setButtonFontSize] = useState(30)
   const [textFontSize, setTextFontSize] = useState(20)
   const [buttonNum, setButtonNum] = useState(6)
-  const showNextSuggestions = true // turn on to show next suggestions
+  const showNextSuggestions = unitTesting // turn on to show next suggestions
   //const [audioUnlocked, setAudioUnlocked] = useState(false);
   const [audioUnlocked, setAudioUnlocked] = useState(false);
   // Testing 

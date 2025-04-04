@@ -106,8 +106,8 @@ const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected, log
       role="button"
       aria-label={tile.label || "tile"}
       style={tile.customStyle || {}}
-      onMouseEnter={true ? () => setHovering(true) : () => {}}
-      onMouseLeave={true ? () => setHovering(false) : () => {}}
+      onMouseEnter={process.env.NODE_ENV === "test" ? () => setHovering(true) : () => {}}
+      onMouseLeave={process.env.NODE_ENV === "test" ? () => setHovering(false) : () => {}}
       onClick={handleClick}
     >
       {tile.icon ? (
