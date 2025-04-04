@@ -191,67 +191,50 @@ const TrackerLayout = (props) => {
     
     };
     function saveTrackingData() {
-        // Save as JSON
-        const jsonData = JSON.stringify(trackingData, null, 2);
-        const jsonBlob = new Blob([jsonData], { type: 'application/json' });
-        const jsonUrl = URL.createObjectURL(jsonBlob);
-        const jsonLink = document.createElement('a');
-        jsonLink.href = jsonUrl;
-
-        
+        // Format timestamp for the filename
         var today = new Date();
         var dd = String(today.getDate()).padStart(2, '0');
         var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
         var time = String(today.getHours()).padStart(2, '0') + "-" + String(today.getMinutes()).padStart(2, '0') + "-" + String(today.getSeconds()).padStart(2, '0');
         
         const filename = `eyeTrackingData_${dd}-${mm}_${time}.json`;
+        
+        // Prepare tracking data to send to server
+        const dataToSend = {
+            ...trackingData,
+            timestamp: new Date().toISOString(),
+            dataType: "eyeTrackingData"
+        };
+        
+        // Send data to server
+        const currentIP = window.location.hostname;
+        console.log("Current IP:", currentIP);
+        fetch(`http://${currentIP}:5000/save-json`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(dataToSend)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Successfully saved eye tracking data:', data);
+        })
+        .catch((error) => {
+            console.error('Error saving eye tracking data:', error);
+            
+         
+        });
+        // Fallback to local download if server save fails
+        console.log("Falling back to local download...");
+        const jsonData = JSON.stringify(trackingData, null, 2);
+        const jsonBlob = new Blob([jsonData], { type: 'application/json' });
+        const jsonUrl = URL.createObjectURL(jsonBlob);
+        const jsonLink = document.createElement('a');
+        jsonLink.href = jsonUrl;
         jsonLink.download = filename;
         jsonLink.click();
-
-        
-        
-    
-        // Save as CSV
-        const { tracking_points, screen_width, screen_height, points, accuracy, precision, start_of_test, end_of_test } = trackingData;
-        const csvRows = [];
-    
-        // Headers for CSV
-        const headers = [
-            'x', 'y', 'is_shrinking', 'fixation_x', 'fixation_y', 'timestamp', 'fixation_index',
-            'screen_width', 'screen_height', 'points', 'accuracy', 'precision'
-        ];
-        csvRows.push(headers.join(','));
-    
-        // Rows for CSV
-        const numPoints = tracking_points.x.length;
-        for (let i = 0; i < numPoints; i++) {
-            const row = [
-                tracking_points.x[i],
-                tracking_points.y[i],
-                tracking_points.is_shrinking[i],
-                tracking_points.fixation_x[i],
-                tracking_points.fixation_y[i],
-                tracking_points.timestamp[i],
-                tracking_points.fixation_index[i],
-                screen_width,
-                screen_height,
-                points.map(p => `(${p.top},${p.left})`).join(';'), // Join points array into a single string
-                accuracy,
-                precision,
-                start_of_test,
-                end_of_test,
-                
-
-            ].map(value => (value !== undefined ? value : ''));
-            csvRows.push(row.join(','));
-        }
-        // const csvData = csvRows.join('\n');
-        // const csvBlob = new Blob([csvData], { type: 'text/csv' });
-        // const csvUrl = URL.createObjectURL(csvBlob);
-        // const csvLink = document.createElement('a');
-        // csvLink.href = csvUrl;
-        // csvLink.download = 'trackingData.csv';
-        // csvLink.click();
+        URL.revokeObjectURL(jsonUrl);
     }
     const switchToMainMenu = () => {
         // Call handleAction here

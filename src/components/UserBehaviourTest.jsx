@@ -77,16 +77,56 @@ export const UserBehaviourTestProvidor = ({ children }) => {
 
   const completeTests = () => {
     setIsTesting(false);
-    const dataToDownload = JSON.stringify(completeTestLogs, null, 2);
-    var today = new Date();
-    var dd = String(today.getDate()).padStart(2, '0');
-    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-    var time = String(today.getHours()).padStart(2, '0') + "-" + String(today.getMinutes()).padStart(2, '0') + "-" + String(today.getSeconds()).padStart(2, '0');
-    const filename = `test_run_${dd}-${mm}_${time}.json`;
-    downloadTestData(dataToDownload, filename);
-    completeTestLogs.current = [];
-    setCurrentTestIndex(-1);
-    setTargetSentence("");
+    const testData = {
+      testResults: completeTestLogs.current,
+      timestamp: new Date().toISOString(),
+      // You can add any additional metadata here
+    };
+    
+    // Log that we're sending data
+    console.log("Sending test data to server:", testData);
+    
+    // Send data to server
+    const currentIP = window.location.hostname;
+    console.log("Current IP:", currentIP);
+    fetch(`http://${currentIP}:5000/save-json`, {
+      method: 'POST',
+      headers: {
+      'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(testData)
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log('Success:', data);
+      // You could show a success message to the user here
+      alert(`Test data successfully saved to server as: ${data.filename}`);
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+      // Handle failure - could fall back to local download
+      const dataToDownload = JSON.stringify(completeTestLogs.current, null, 2);
+      var today = new Date();
+      var dd = String(today.getDate()).padStart(2, '0');
+      var mm = String(today.getMonth() + 1).padStart(2, '0');
+      var time = String(today.getHours()).padStart(2, '0') + "-" + String(today.getMinutes()).padStart(2, '0') + "-" + String(today.getSeconds()).padStart(2, '0');
+      const filename = `test_run_${dd}-${mm}_${time}.json`;
+      downloadTestData(dataToDownload, filename);
+      alert("Failed to save data to server. Downloaded locally instead." + currentIP);
+    })
+    .finally(() => {
+      // Reset state regardless of success/failure
+      const dataToDownload = JSON.stringify(completeTestLogs.current, null, 2);
+      var today = new Date();
+      var dd = String(today.getDate()).padStart(2, '0');
+      var mm = String(today.getMonth() + 1).padStart(2, '0');
+      var time = String(today.getHours()).padStart(2, '0') + "-" + String(today.getMinutes()).padStart(2, '0') + "-" + String(today.getSeconds()).padStart(2, '0');
+      const filename = `test_run_${dd}-${mm}_${time}.json`;
+      downloadTestData(dataToDownload, filename);
+      completeTestLogs.current = [];
+      setCurrentTestIndex(-1);
+      setTargetSentence("");
+    });
   };
   const cancelTest = () => {
     setIsTesting(false);
