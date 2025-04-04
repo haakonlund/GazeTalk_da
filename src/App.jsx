@@ -84,6 +84,44 @@ function App({ initialView = CmdConst.MAIN_MENU, initialLayout = "2+2+4x2", init
     initTest(0, userData);
   };
 
+  function getDeviceType() {
+    // Modern API (where available)
+    if (navigator.userAgentData) {
+      const brands = navigator.userAgentData.brands.map(b => b.brand.toLowerCase()).join(',');
+      if (brands.includes('apple')) {
+        if (window.screen.width <= 834 && 'ontouchstart' in window) {
+          return 'ipad'; // heuristic for iPad with Mac user agent
+        }
+      }
+    }
+  
+    // Fallback using userAgent
+    const ua = navigator.userAgent.toLowerCase();
+    if (ua.includes('iphone')) return 'iphone';
+    if (ua.includes('ipad') || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) {
+      return 'ipad';
+    }
+  
+    return 'other';
+  }
+  React.useEffect(() => {
+    const deviceID = getDeviceType()
+    if (unitTesting){
+      return
+    }
+    if (deviceID === "ipad") {
+      changeButtonNum(14)
+      setCurrentLayoutName("2+3+5x3")
+    } else if (deviceID === "iphone") {
+      changeButtonNum(13)
+      setCurrentLayoutName("4+4x4")
+    } else {
+      changeButtonNum(6)
+      setCurrentLayoutName(initialLayout);
+    }
+    
+  }, []);
+
   const handleLetterSelected = (otherLetters, selectedLetter) => {
     let Letters = RankingSystem.stripSpace(otherLetters)
     RankingSystem.updateRank(Letters, selectedLetter)
