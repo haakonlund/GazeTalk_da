@@ -297,15 +297,15 @@ function App({ initialView = CmdConst.MAIN_MENU, initialLayout = "2+2+4x2", init
       }
       setNextLetterSuggestion(null);
     
-      // Make all next suggestion API calls in parallel using Promise.all
-      const nextSugPromises = rankedSuggestion.map(async (suggestion, index) => {
-        return getSug(textUpToCursor + suggestion);
-      });
-    
-      const nextSugResults = await Promise.all(nextSugPromises);
       
       // Process results
       if (showNextSuggestions) {
+        // Make all next suggestion API calls in parallel using Promise.all
+        const nextSugPromises = rankedSuggestion.map(async (suggestion, index) => {
+          return getSug(textUpToCursor + suggestion);
+        });
+
+        const nextSugResults = await Promise.all(nextSugPromises);
         const letterSuggestionsArray = nextSugResults.map((result, i) => {
           return RankingSystem.rank(result, rankedSuggestion[i], i);
         });
