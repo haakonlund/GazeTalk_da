@@ -143,7 +143,7 @@ const KeyboardGrid = ({
                         label: suggestion, 
                         is_dynamic: true,
                         action: { type: "insert_letter_suggestion", value: suggestion },
-                        neighbours: getNeighbours(i, cols, rows, nextLetters[i], textAreaColSpan + tiles.length, suggestion),
+                        neighbours: [], //getNeighbours(i, cols, rows, nextLetters[i], textAreaColSpan + tiles.length, suggestion),
                         surroundingLetters : nextLetters[i]
                       }
                     } 
