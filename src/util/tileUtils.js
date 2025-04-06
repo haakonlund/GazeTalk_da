@@ -1,4 +1,24 @@
 export const getNeighbours = (tileIndex, cols, rows, nextLetters, offset, suggestion) => {
+    if (nextLetters.length == 0) {
+        // console.log("nextLetters is empty")
+        return [];
+    }
+    if (nextLetters == null) {
+        // console.log("nextLetters is null")
+        return [];
+    }
+    if (tileIndex >= nextLetters.length) {
+        return [];
+    }
+    if (tileIndex < 0) {
+        return [];
+    }
+    if (cols <= 0) {
+        return [];
+    }
+    if (rows <= 0) {
+        return [];
+    }
     let neighbours = {}
     const spacePosition = (rows - 1) * cols;
     let tilePositionInGrid = tileIndex + offset;
