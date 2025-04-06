@@ -4,7 +4,7 @@ import * as TestConstants from "../constants/testConstants/testConstants";
 
 let lastActivatedTileId = null;
 let lastActivationTimestamp = 0;
-const CLICK_THROTTLE_DELAY = 500;
+const CLICK_THROTTLE_DELAY = 250;
 
 const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected, logEvent, counterStarted }) => {
   const { t } = useTranslation();
@@ -36,9 +36,13 @@ const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected, log
   };
 
   const handleClick = () => {
-    const tileId = tile.id || tile.label; 
+    const tileId = tile.id || tile.label;
     const now = Date.now();
+    
     if (lastActivatedTileId === tileId && now - lastActivationTimestamp < CLICK_THROTTLE_DELAY) {
+      console.log(
+        `Ignoring duplicate click on tile ${tileId}. Time since last click: ${now - lastActivationTimestamp} ms.`
+      );
       // Duplicate click - happens with ipad's built-in eyetracker.
       return;
     }

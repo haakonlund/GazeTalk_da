@@ -105,12 +105,12 @@ function App({ initialView = CmdConst.MAIN_MENU, initialLayout = "2+2+4x2", init
     return 'other';
   }
 
-  function setupRemoteLogging() {
+function setupRemoteLogging() {
     const originalLog = console.log;
     console.log = function (...args) {
       originalLog(...args);
-      // Adjust YOUR_PC_IP_ADDRESS to your server's IP address
-      fetch('http://192.168.1.50:5173/log', {
+      const currentIP = window.location.hostname;
+      fetch(`http://${currentIP}:5000/log`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ logs: args })
