@@ -1,20 +1,57 @@
 .App {
   font-family: Arial, sans-serif;
-  width: 800px;
-  margin: 0 auto;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(24, 24, 24);
+}
+
+/* Force Landscape Mode */
+@media screen and (orientation: portrait) {
+  body {
+    /* transform: rotate(90deg); */
+    transform-origin: left;
+    /* width: 100vh;
+    height: 100vw; */
+    overflow: hidden;
+    position: fixed;
+    
+  }
+}
+
+
+html, body {
+  touch-action: manipulation; /* Disables double-tap zoom */
+  -webkit-user-select: none; /* Prevents text selection */
+  -ms-user-select: none;
+  user-select: none;
+  overflow: hidden; /* Prevents scrolling and accidental zooming */
+}
+
+.generic-view {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .keyboard-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   grid-template-rows: repeat(3, 1fr);
-  gap: 5px;
+  gap: 0px;
   width: 100%;
-  height: 400px;
+  height: 100%;
 }
 
 .tile {
   border: 1px solid #ccc;
+  white-space: pre-line;
   position: relative;
   display: flex;
   align-items: center;
@@ -22,14 +59,16 @@
   cursor: pointer;
   overflow: hidden;
   padding: 5px;
-  font-size: 1.5rem;
+  font-size: var(--tile-font-size, 2rem);
   box-sizing: border-box;
+  color: #fff;
 }
 
 .tile.textarea-tile {
   grid-column: span 2;
   display: flex;
   padding: 0;
+  overflow: hidden;
 }
 
 .tile.textarea-tile textarea {
@@ -51,13 +90,121 @@
   position: absolute;
   bottom: 0;
   left: 0;
-  height: 5px;
+  height: 100%;
   width: 100%;
-  background: #eee;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 0;
 }
 
 .progress {
-  background: #00f;
+  background: rgb(35, 35, 92);
   height: 100%;
   transition: width 0.05s linear;
+}
+
+.alarm-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6); 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999; 
+}
+
+.alarm-popup-content {
+  background: #000;
+  color: #fff; 
+  padding: 30px 80px;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.alarm-popup-content h2 {
+  margin-top: 0;
+}
+
+/* New styles for surrounding letters */
+.surrounding-letter {
+  position: absolute;
+  color: #ffeb3b;
+  font-size: 2rem;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.pause-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 18%;
+  z-index: 1000; 
+}
+
+.pause-popup-content {
+  background: #00000068;
+  color: #bab8b8;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 30px;
+}
+
+.tile-icon {
+  position: relative;
+  z-index: 2;         
+  width: 100%;
+  height: 100%;
+}
+
+.tile-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; 
+  display: block;
+}
+
+.audio-unlock-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.audio-unlock-popup-content {
+  background: #000;
+  color: #fff;
+  padding: 30px 60px;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.audio-unlock-popup-content h2 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+
+.audio-unlock-popup-content p {
+  margin-bottom: 1rem;
+}
+
+.audio-unlock-popup-content button {
+  font-size: 2.2rem;
+  padding: 50px 50px;
+  cursor: pointer;
 }
