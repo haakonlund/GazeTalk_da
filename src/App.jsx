@@ -23,6 +23,7 @@ import { layoutToButtonNum } from "./constants/layoutConstants";
 import { useTesting } from "./components/UserBehaviourTest";
 import { getLastSentence } from "./util/textUtils";
 import * as TestConst from "./constants/testConstants/testConstants";
+import { getDeviceType } from "./util/deviceUtils";
 let dwellTime = 1500;
 
 function App({ initialView = CmdConst.MAIN_MENU, initialLayout = "2+2+4x2", initialText="", unitTesting=process.env.NODE_ENV === "test" }) {
@@ -84,26 +85,7 @@ function App({ initialView = CmdConst.MAIN_MENU, initialLayout = "2+2+4x2", init
     initTest(0, userData);
   };
 
-  function getDeviceType() {
-    // Modern API (where available)
-    if (navigator.userAgentData) {
-      const brands = navigator.userAgentData.brands.map(b => b.brand.toLowerCase()).join(',');
-      if (brands.includes('apple')) {
-        if (window.screen.width <= 834 && 'ontouchstart' in window) {
-          return 'ipad'; // heuristic for iPad with Mac user agent
-        }
-      }
-    }
-  
-    // Fallback using userAgent
-    const ua = navigator.userAgent.toLowerCase();
-    if (ua.includes('iphone')) return 'iphone';
-    if (ua.includes('ipad') || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) {
-      return 'ipad';
-    }
-  
-    return 'other';
-  }
+ 
 
 function setupRemoteLogging() {
     const originalLog = console.log;

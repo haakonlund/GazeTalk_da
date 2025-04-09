@@ -103,4 +103,4 @@ def log():
 
 if __name__ == '__main__':
     print(f"Server started. JSON files will be saved to {os.path.abspath(STORAGE_DIR)}")
-    app.run(debug=True, port=5000, host="0.0.0.0")
+    app.run(debug=True, port=5000, host="0.0.0.0") # change the ip to the same as the wifi network interface if there is problems

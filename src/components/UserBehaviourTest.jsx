@@ -4,6 +4,7 @@ import { minimumNumberOfKeystrokes } from '../constants/testConstants/minimumNum
 import * as CmdConst from "../constants/cmdConstants";
 import * as TestConst from "../constants/testConstants/testConstants";
 import levenshtein from 'js-levenshtein';
+import { getDeviceType } from '../util/deviceUtils';
 const UserBehaviourTest = createContext();
 const numberOfTests = TestConst.NUMBER_OF_TESTS
 
@@ -80,6 +81,7 @@ export const UserBehaviourTestProvidor = ({ children }) => {
     const testData = {
       testResults: completeTestLogs.current,
       timestamp: new Date().toISOString(),
+      device : getDeviceType(),
       // You can add any additional metadata here
     };
     
