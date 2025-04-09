@@ -43,6 +43,7 @@ const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected, log
       console.log(
         `Ignoring duplicate click on tile ${tileId}. Time since last click: ${now - lastActivationTimestamp} ms.`
       );
+      logEvent({ type: "tile_double_clicked", label: tile.label });
       // Duplicate click - happens with ipad's built-in eyetracker.
       return;
     }
