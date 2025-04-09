@@ -16,6 +16,7 @@ const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected, log
   const startedHover = useRef(false);
   const finishedHover = useRef(false);
   const gazedMoreThanThreshold = useRef(false);
+  const gazeTimerRef = useRef(null);
   // Calculate positions for surrounding letters
   const positions = {
     "top-left": { top: '0%',    left: '10%' },  // Top-left
@@ -58,6 +59,21 @@ const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected, log
     }
     onActivate(tile.action);
   };
+  
+  const handleMouseEnter = () => {
+      if (!counterStarted) return;
+      gazeTimerRef.current = setTimeout(() => {
+        logEvent({ type: TestConstants.TILE_GAZED_NOT_SELECTED, label: tile.label });
+        gazeTimerRef.current = null;
+      }, TestConstants.GAZE_MILLISECONDS);
+    };
+  
+    const handleMouseLeave = () => {
+      if (gazeTimerRef.current) {
+        clearTimeout(gazeTimerRef.current);
+        gazeTimerRef.current = null;
+      }
+    };
 
   useEffect(() => {
     let timer;
@@ -111,8 +127,8 @@ const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected, log
       role="button"
       aria-label={tile.label || "tile"}
       style={tile.customStyle || {}}
-      onMouseEnter={process.env.NODE_ENV === "test" ? () => setHovering(true) : () => {}}
-      onMouseLeave={process.env.NODE_ENV === "test" ? () => setHovering(false) : () => {}}
+      onMouseEnter={process.env.NODE_ENV === "test" ? () => setHovering(true) : () => {handleMouseEnter();}}
+      onMouseLeave={process.env.NODE_ENV === "test" ? () => setHovering(false) : () => {handleMouseLeave();}}
       onClick={handleClick}
     >
       {tile.icon ? (
