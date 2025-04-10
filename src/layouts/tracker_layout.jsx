@@ -3,7 +3,7 @@ import "./TrackerLayout.css";
 import KeyboardGrid from "../components/KeyboardGrid";
 import * as DA from "../util/dataAnalysis.js"
 import { useLocalStorage } from "@uidotdev/usehooks";
-
+import { getDeviceType } from "../util/deviceUtils.js";
 
 const TrackerLayout = (props) => {
     const logInterval = 1;
@@ -41,6 +41,7 @@ const TrackerLayout = (props) => {
         {
             start_of_test : Date.now(),
             end_of_test : 0,
+            device: "",
             tracking_points: {
                 x: [],
                 y: [],
@@ -187,6 +188,7 @@ const TrackerLayout = (props) => {
                 return;
         }
         trackingData.end_of_test = Date.now()
+        trackingData.device = getDeviceType();
         saveTrackingData()
     
     };
@@ -217,11 +219,12 @@ const TrackerLayout = (props) => {
             body: JSON.stringify(dataToSend)
         })
         .then(response => response.json())
+        .then(alert("Eye tracking data saved successfully!"))
         .then(data => {
             console.log('Successfully saved eye tracking data:', data);
         })
         .catch((error) => {
-            console.error('Error saving eye tracking data:', error);
+            console.log('Error saving eye tracking data:' + error+" ip " + currentIP + " response: " + error.response + " data: " + JSON.stringify(dataToSend) + " filename: " + filename);
             
          
         });

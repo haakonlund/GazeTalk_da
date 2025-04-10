@@ -16,6 +16,8 @@ const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected, log
   const startedHover = useRef(false);
   const finishedHover = useRef(false);
   const gazedMoreThanThreshold = useRef(false);
+  const gazeTimerRef = useRef(null);
+  
   // Calculate positions for surrounding letters
   const positions = {
     "top-left": { top: '0%',    left: '10%' },  // Top-left
@@ -36,6 +38,12 @@ const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected, log
   };
 
   const handleClick = () => {
+    if (gazeTimerRef.current) {
+      clearTimeout(gazeTimerRef.current);
+      gazeTimerRef.current = null;
+    }
+    gazedMoreThanThreshold.current = false;
+
     const tileId = tile.id || tile.label;
     const now = Date.now();
     
@@ -43,6 +51,7 @@ const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected, log
       console.log(
         `Ignoring duplicate click on tile ${tileId}. Time since last click: ${now - lastActivationTimestamp} ms.`
       );
+      logEvent({ type: "tile_double_clicked", label: tile.label });
       // Duplicate click - happens with ipad's built-in eyetracker.
       return;
     }
@@ -57,6 +66,25 @@ const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected, log
     }
     onActivate(tile.action);
   };
+  
+  const handleMouseEnter = () => {
+      if (!counterStarted) return;
+      gazeTimerRef.current = setTimeout(() => {
+        gazedMoreThanThreshold.current = true;
+        gazeTimerRef.current = null;
+      }, TestConstants.GAZE_MILLISECONDS);
+    };
+  
+    const handleMouseLeave = () => {
+      if (gazeTimerRef.current) {
+        clearTimeout(gazeTimerRef.current);
+        gazeTimerRef.current = null;
+      }
+      if (gazedMoreThanThreshold.current) {
+        logEvent({ type: TestConstants.TILE_GAZED_NOT_SELECTED, label: tile.label });
+        gazedMoreThanThreshold.current = false;
+      }
+    };
 
   useEffect(() => {
     let timer;
@@ -110,8 +138,8 @@ const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected, log
       role="button"
       aria-label={tile.label || "tile"}
       style={tile.customStyle || {}}
-      onMouseEnter={process.env.NODE_ENV === "test" ? () => setHovering(true) : () => {}}
-      onMouseLeave={process.env.NODE_ENV === "test" ? () => setHovering(false) : () => {}}
+      onMouseEnter={process.env.NODE_ENV === "test" ? () => setHovering(true) : () => {handleMouseEnter();}}
+      onMouseLeave={process.env.NODE_ENV === "test" ? () => setHovering(false) : () => {handleMouseLeave();}}
       onClick={handleClick}
     >
       {tile.icon ? (

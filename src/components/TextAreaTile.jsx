@@ -8,6 +8,7 @@ const TextAreaTile = ({ value, onChange, colspan = 2, customStyle, logEvent, cou
   const displayRef = useRef(null);
   const [caretStyle, setCaretStyle] = useState("caret-bar"); // Default caret style
   const gazeTimerRef = useRef(null);
+  const gazedMoreThanThreshold = useRef(false);
 
   useEffect(() => {
     const handleCursorUpdate = (event) => {
@@ -74,6 +75,11 @@ const TextAreaTile = ({ value, onChange, colspan = 2, customStyle, logEvent, cou
   // Event handlers for textarea
   const handleInput = () => updateDisplay();
   const handleClick = () => {
+    if (gazeTimerRef.current) {
+      clearTimeout(gazeTimerRef.current);
+      gazeTimerRef.current = null;
+    }
+    gazedMoreThanThreshold.current = false;
     if (inputRef.current) {
       updateGlobalCursorPosition(inputRef.current.selectionStart);
       updateDisplay();
@@ -92,7 +98,7 @@ const TextAreaTile = ({ value, onChange, colspan = 2, customStyle, logEvent, cou
   const handleMouseEnter = () => {
     if (!counterStarted) return;
     gazeTimerRef.current = setTimeout(() => {
-      logEvent({ type: TestConstants.TEXT_AREA_GAZED, value: inputRef.current.value});
+      gazedMoreThanThreshold.current = true;
       gazeTimerRef.current = null;
     }, TestConstants.GAZE_MILLISECONDS);
   };
@@ -101,6 +107,10 @@ const TextAreaTile = ({ value, onChange, colspan = 2, customStyle, logEvent, cou
     if (gazeTimerRef.current) {
       clearTimeout(gazeTimerRef.current);
       gazeTimerRef.current = null;
+    }
+    if (gazedMoreThanThreshold.current) {
+      logEvent({ type: TestConstants.TEXT_AREA_GAZED, value: inputRef.current.value });
+      gazedMoreThanThreshold.current = false;
     }
   };
   

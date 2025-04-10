@@ -1,9 +1,10 @@
-import React, { createContext, useContext, useState, useRef } from 'react';
+import React, { createContext, useContext, useState, useRef, useEffect } from 'react';
 import { testSentences } from '../constants/testConstants/testSentences';
 import { minimumNumberOfKeystrokes } from '../constants/testConstants/minimumNumberOfKeystrokes';
 import * as CmdConst from "../constants/cmdConstants";
 import * as TestConst from "../constants/testConstants/testConstants";
 import levenshtein from 'js-levenshtein';
+import { getDeviceType } from '../util/deviceUtils';
 const UserBehaviourTest = createContext();
 const numberOfTests = TestConst.NUMBER_OF_TESTS
 
@@ -80,6 +81,8 @@ export const UserBehaviourTestProvidor = ({ children }) => {
     const testData = {
       testResults: completeTestLogs.current,
       timestamp: new Date().toISOString(),
+      device : getDeviceType(),
+      mouseArray: mouseArray ? mouseArray : [],
       // You can add any additional metadata here
     };
     
@@ -218,6 +221,20 @@ export const UserBehaviourTestProvidor = ({ children }) => {
     const ANSR = numberOfAttendedButNotSelected / charactersTyped;
     return { WPM, KSPC, MSDErrorRate, OR, RBA, RTE, ANSR };
   };
+
+   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [mouseArray, setMouseArray] = useState([]);
+  useEffect(() => {
+      const handleMouseMove = (event) => {
+          setMousePosition({ x: event.clientX, y: event.clientY });
+          setMouseArray(prevArray => [...prevArray, { x: event.clientX, y: event.clientY }]);
+      };
+      window.addEventListener("mousemove", handleMouseMove);
+      return () => {
+          window.removeEventListener("mousemove", handleMouseMove);
+      };
+  }, []);
+
   // function levenshtein (a, b) {
   //   if (a.length === 0) return b.length;
   //   if (b.length === 0) return a.length;
