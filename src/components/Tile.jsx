@@ -17,6 +17,7 @@ const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected, log
   const finishedHover = useRef(false);
   const gazedMoreThanThreshold = useRef(false);
   const gazeTimerRef = useRef(null);
+  
   // Calculate positions for surrounding letters
   const positions = {
     "top-left": { top: '0%',    left: '10%' },  // Top-left
@@ -37,6 +38,12 @@ const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected, log
   };
 
   const handleClick = () => {
+    if (gazeTimerRef.current) {
+      clearTimeout(gazeTimerRef.current);
+      gazeTimerRef.current = null;
+    }
+    gazedMoreThanThreshold.current = false;
+
     const tileId = tile.id || tile.label;
     const now = Date.now();
     
@@ -63,7 +70,7 @@ const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected, log
   const handleMouseEnter = () => {
       if (!counterStarted) return;
       gazeTimerRef.current = setTimeout(() => {
-        logEvent({ type: TestConstants.TILE_GAZED_NOT_SELECTED, label: tile.label });
+        gazedMoreThanThreshold.current = true;
         gazeTimerRef.current = null;
       }, TestConstants.GAZE_MILLISECONDS);
     };
@@ -72,6 +79,10 @@ const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected, log
       if (gazeTimerRef.current) {
         clearTimeout(gazeTimerRef.current);
         gazeTimerRef.current = null;
+      }
+      if (gazedMoreThanThreshold.current) {
+        logEvent({ type: TestConstants.TILE_GAZED_NOT_SELECTED, label: tile.label });
+        gazedMoreThanThreshold.current = false;
       }
     };
 
