@@ -91,40 +91,33 @@ const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected, log
     if (hovering) {
       startedHover.current = true;
       finishedHover.current = false;
-      gazedMoreThanThreshold.current = false;
       const startTime = Date.now();
       timer = setInterval(() => {
         const elapsed = Date.now() - startTime;
         const percentage = 100 - (elapsed / dwellTime) * 100;
-        if (elapsed > gazeThreshold) {
-          gazedMoreThanThreshold.current = true;
-        }
         if (percentage <= 0) {
           finishedHover.current = true;
           clearInterval(timer);
-          playSound();
-          onActivate(tile.action);
-          const letter = tile.label;
-          if (otherLetters) {
-            if (onLetterSelected) {
-              onLetterSelected(otherLetters, letter);
+          if (process.env.NODE_ENV === "test") {
+            playSound();
+            onActivate(tile.action);
+            const letter = tile.label;
+            if (otherLetters) {
+              if (onLetterSelected) {
+                onLetterSelected(otherLetters, letter);
+              }
             }
           }
-          // setHovering(false);
           setProgress(100);
         } else {
           setProgress(percentage);
         }
       }, 50);
     } else {
-      if (startedHover.current && !finishedHover.current && gazedMoreThanThreshold.current && counterStarted) {
-        logEvent({ type: TestConstants.TILE_GAZED_NOT_SELECTED, label: tile.label });
-      }
       if (timer) {clearInterval(timer);}
       setProgress(100);
       startedHover.current = false;
       finishedHover.current = false;
-      gazedMoreThanThreshold.current = false;
     }
 
     return () => {
@@ -138,8 +131,8 @@ const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected, log
       role="button"
       aria-label={tile.label || "tile"}
       style={tile.customStyle || {}}
-      onMouseEnter={process.env.NODE_ENV === "test" ? () => setHovering(true) : () => {handleMouseEnter();}}
-      onMouseLeave={process.env.NODE_ENV === "test" ? () => setHovering(false) : () => {handleMouseLeave();}}
+      onMouseEnter={process.env.NODE_ENV === "test" ? () => setHovering(true) : () => {handleMouseEnter(); setHovering(true);}}
+      onMouseLeave={process.env.NODE_ENV === "test" ? () => setHovering(false) : () => {handleMouseLeave(); setHovering(false);}}
       onClick={handleClick}
     >
       {tile.icon ? (

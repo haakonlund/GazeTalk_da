@@ -24,7 +24,7 @@ import { useTesting } from "./components/UserBehaviourTest";
 import { getLastSentence } from "./util/textUtils";
 import * as TestConst from "./constants/testConstants/testConstants";
 import { getDeviceType } from "./util/deviceUtils";
-let dwellTime = 1500;
+let dwellTime = 800;
 
 function App({ initialView = CmdConst.MAIN_MENU, initialLayout = "2+2+4x2", initialText="", unitTesting=process.env.NODE_ENV === "test" }) {
   const [currentViewName, setCurrentViewName] = useState(initialView);
