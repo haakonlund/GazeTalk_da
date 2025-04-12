@@ -81,10 +81,9 @@ export const getWordBoundaries = (text, cursorPosition) => {
     // const { x0, x1 } = getWordBoundaries(textValue, cursorPosition);
 
 
-
     let start = cursorPosition;
     let end = cursorPosition;
-
+    let hadSpaceLeftInitially = false;
     // include all spaces
     // while (start > 0 && /\s/.test(textValue[start - 1])) {
     //   start--;
@@ -92,9 +91,9 @@ export const getWordBoundaries = (text, cursorPosition) => {
     // get the left boundary
     if (start > 0 && !/\s/.test(textValue[start - 1])) {
       while (start > 0 && !/\s/.test(textValue[start - 1])) {
-            start--;
-          }
-           // move to the previous word
+        start--;
+      }
+      // move to the previous word
       while (start > 0 && /\s/.test(textValue[start - 1])) {
         start--;
       }
@@ -102,14 +101,14 @@ export const getWordBoundaries = (text, cursorPosition) => {
       // move to the previous word
       while (start > 0 && /\s/.test(textValue[start - 1])) {
         start--;
+        hadSpaceLeftInitially = true;
       }
-
+      while (start > 0 && !/\s/.test(textValue[start - 1])) {
+        start--;
+      }
     }
-   
-    
-  
     // get the right boundary
-    while (end < textValue.length && !/\s/.test(textValue[end])) {
+    while (!hadSpaceLeftInitially && end < textValue.length && !/\s/.test(textValue[end])) {
       end++;
     }
 

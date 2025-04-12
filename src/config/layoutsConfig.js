@@ -57,6 +57,11 @@ export const layoutsConfig = {
           label: "2+4+6x5",
           icon: "/layoutIcons/2+4+6x5.png",
           action: { type: "switch_layout", value: "2+4+6x5" }
+        },
+        {
+          type: "iconTile",
+          label: "kb_4x4",
+          action: { type: "switch_layout", value: "kb_4x4" }
         }
       ]
   };

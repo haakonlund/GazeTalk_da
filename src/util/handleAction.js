@@ -107,8 +107,6 @@ export const handleAction = (
       } else {
         setCurrentViewName(CmdConst.WRITING);
       }
-      console.log("WRITING LOL");
-
       // if the last letter was punctuation speak it
       if (action.value === CmdConst.PERIOD) {
         const lastSentenceStart = getLastSentence(textValue)
