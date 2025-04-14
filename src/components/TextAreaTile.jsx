@@ -117,7 +117,7 @@ const TextAreaTile = ({ value, onChange, colspan = 2, customStyle, logEvent, cou
   return (
     <div 
       className="tile textarea-tile" 
-      style={{ gridColumn: `span ${colspan}` }}
+      style={{ gridColumn: `span ${colspan}`}}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       >
@@ -136,6 +136,7 @@ const TextAreaTile = ({ value, onChange, colspan = 2, customStyle, logEvent, cou
         <div 
           ref={displayRef} 
           className="text-display" 
+          style={customStyle}
         />
       </div>
     </div>
