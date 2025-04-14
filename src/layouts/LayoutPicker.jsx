@@ -8,6 +8,7 @@ import Layout3_3x4 from "./Layout3_3x4";
 import Layout4_4x4 from "./Layout4_4x4";
 import Layout2_4_6x4 from "./Layout2_4_6x4";
 import Layout2_4_6x5 from "./Layout2_4_6x5";
+import KeyboardLayout4x4 from "./KeyboardLayout4x4";
 import Tracker_layout from "./tracker_layout"
 
 const layouts = {
@@ -19,6 +20,7 @@ const layouts = {
   "3+3x4": Layout3_3x4,
   "4+4x4": Layout4_4x4,
   "3+3x3": Layout3_3x3,
+  "kb_4x4": KeyboardLayout4x4,
   "tracker" : Tracker_layout,
 };
 
