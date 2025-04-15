@@ -126,7 +126,7 @@ export const handleAction = (
     }
     case CmdConst.SWITCH_VIEW: {
         if (action.view === CmdConst.MAIN_MENU) {
-            if (isTesting && currentTestIndex < TestConst.NUMBER_OF_TESTS - 1) {
+            if (isTesting && currentTestIndex < TestConst.NUMBER_OF_TESTS) {
                 if (counterStarted) {
                     logEvent({ type: CmdConst.SWITCH_VIEW, value: CmdConst.WRITING});
                 }
