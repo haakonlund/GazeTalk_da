@@ -1,8 +1,9 @@
-
+import {getDeviceType} from './deviceUtils.js'
 /*
 For finding the Root Mean Square from points in a list;
 <points> is a list of positions.
 */
+const inch2mm = 25.4; // 1 inch = 25.4 mm
 export const find_rms = (points_x, points_y) => {
     let sx = 0.0
     let sy = 0.0
@@ -15,13 +16,8 @@ export const find_rms = (points_x, points_y) => {
     return {sx, sy}
 }
 // For finding euclidean distance between a set of 2 points.
-export const euclid_dist = (xy0, xy1) => {
-    return (
-        Math.sqrt(
-            (xy0[0] - xy1[0])**2 + (xy0[1] - xy1[1])**2
-        )
-    )
-};
+export const euclid_dist = ([x0, y0], [x1, y1]) =>
+    Math.sqrt((x0 - x1)**2 + (y0 - y1)**2);
 
 // xs: x list
 // xy: y list
@@ -29,48 +25,135 @@ export const euclid_dist = (xy0, xy1) => {
 // fy:  fixation y
 // fi:  fixation index (the index that is active)
 // s : is shrinking
-export const calculateAccuracy  = ({xs,ys},{fx,fy, fi},s) => {
-
-    // slice up the points into an array for each active fixation point
-    const split = (arr) => fi.reduce((acc, index, i) => {
-        acc[index] = acc[index] || [];
-        acc[index].push(arr[i]);
+// slice up the points into an array for each active fixation point
+export const split = (arr, fi) => fi.reduce((acc, index, i) => {
+    acc[index] = acc[index] || [];
+    acc[index].push(arr[i]);
+    return acc;
+}, []); 
+// distance from each point to the fixation point
+export const dist = (xs, ys, fx, fy) => {
+    return xs.reduce((acc, x, i) => {
+        acc.push(
+            euclid_dist(
+                [x, ys[i]],
+                [fx[i], fy[i]]
+            )
+        )
         return acc;
-    }, []); 
-    
-    const xsSplit = split(xs);
-    const ysSplit = split(ys);
-    const fxSplit = split(fx);
-    const fySplit = split(fy);
-    // distance from each point to the fixation point
-    const dist = (xsArr, ysArr, fxArr, fyArr) => {
-        return xsArr.map((xGroup, groupIndex) => {
-            // For each group, calculate distances between points and fixation
-            return xGroup.map((x, pointIndex) => {
-                return euclid_dist(
-                    [x, ysArr[groupIndex][pointIndex]],
-                    [fxArr[groupIndex][pointIndex], fyArr[groupIndex][pointIndex]]
-                );
-            });
-        });
-    };
-    
-    
-    const distances = dist(xsSplit, ysSplit, fxSplit, fySplit);
-    // flatten that array to get 1d array of distances
-    const flattened = distances.reduce((acc, current) => {
-        return [...acc,...current]
-    }, [])
-    
-    
-    console.log("Distances: ", distances);
-    console.log("flatten: ", flattened);
+    }, []);
+}
 
-    console.log("xsSplit : ",dist(
-        xsSplit, ysSplit,fxSplit,fySplit
-    ))
+export const distls = (xsArr, ysArr, fxArr, fyArr) => {
+    return xsArr.map((xs, i) => 
+        dist(xsArr[i], ysArr[i], fxArr[i], fyArr[i])
+    );
+}
 
-    const b = xs.map
+export const mean = (arr) => {
+    if (arr.length === 0) return 0;
+    
+    const numericValues = arr.filter(val => typeof val === 'number' && !isNaN(Number(val)))
+                             .map(val => typeof val === 'number' ? val : Number(val));
+    
+    if (numericValues.length === 0) return 0;
+    
+    return numericValues.reduce((acc, current) => acc + current, 0) / numericValues.length;
+  };
+
+export const removeNull = (arr) => {
+    return arr.filter((elm) => elm !== null && elm !== undefined);
+}
+
+export const distAverge = (arr) => {
+    return arr.map((subArr) =>  mean(removeNull(subArr)));
+
+}
+export const sd = (arr) => {
+    const meanVal = mean(arr)
+    const variance = arr.reduce((acc, val) => acc + (val - meanVal) ** 2, 0) / arr.length;
+    return Math.sqrt(variance);
+}
+// export const rms = (xs,ys) => {
+//     debugger
+//     // assert(xs.length === ys.length, "xs and ys must be the same length")
+//     const [sx, sy] =  xs.slice(0, -1).reduce(([sumX,sumY], _,i) => {
+//         const dx = (xs[i] - xs[i + 1]) ** 2
+//         const dy = (ys[i] - ys[i + 1]) ** 2
+//         return [sumX + dx, sumY + dy]
+//     },[0,0])
+//     return [Math.sqrt(sx/ xs.length), Math.sqrt(sy/ ys.length)];
+// }
+
+export const rms = (xs) => {
+    const sx = xs.reduce((sumX, x,i) => {
+        return sumX + x **2
+    }, 0.0)
+    return Math.sqrt(sx/ xs.length) ;
+}
+
+
+// for example [0 0 0 1 1 2 2] => [0,1,2]
+export const fi2fiArr = (fi) => {
+    return [...Array(fi[fi.length -1]).keys()];
+}
+export const pix2mm = (n) => {
+    return (n/getPPI()) * inch2mm;
+}
+export const mm2pix = (n) => {
+    return n*(getPPI() * inch2mm);
+}
+export const getPPI = () => {
+    const deviceType = getDeviceType();
+    if (deviceType === 'iphone') {
+       return 460 // from apples website
+    } else if (deviceType === 'ipad') {
+        return 264 // from apples website
+    } else if (deviceType === 'other') {
+        return 113 // asuming 1080p screen and 19.5 diagonal hre is a great website to calculate ppi https://www.sven.de/dpi/
+    }
+}
+
+// checks an array of arrays to see if they are all the same length
+export const isSameLength = (arr) => {
+    return arr.every((subArr) => subArr.length === arr[0].length);
+}
+export const removeIfNotShrinking = (arr, isShrinking) => {
+    return arr.filter((_, i) => isShrinking[i]);
+}
+// const a = removeIfNotShrinking([1,2,3,4,5], [true, false, true, false, true]) // [1,3,5]
+export const calculateAccuracy  = (xs,ys,fx,fy, fi, isShrinking) => {
+
+    // const fi2 = isShrinking ? removeIfNotShrinking(fi, isShrinking) : fi;
+    const isShrinkingSplit = isShrinking ? split(isShrinking, fi) : null;
+    const xsSplit = isShrinking ? split(xs, fi).map((subArr,i) => subArr.filter((_, j) => isShrinkingSplit[i][j])) : split(xs, fi);
+    const ysSplit = isShrinking ? split(ys, fi).map((subArr,i) => subArr.filter((_, j) => isShrinkingSplit[i][j])) : split(ys, fi);
+    const fxSplit = isShrinking ? split(fx, fi).map((subArr,i) => subArr.filter((_, j) => isShrinkingSplit[i][j])) : split(fx, fi);
+    const fySplit = isShrinking ? split(fy, fi).map((subArr,i) => subArr.filter((_, j) => isShrinkingSplit[i][j])) : split(fy, fi);
+    // return {
+    //     asdf : "asdf",
+    //     xsSplit,
+    //     ysSplit,
+    //     fxSplit,
+    //     fySplit,
+    // }
+    const distances = distls(xsSplit, ysSplit, fxSplit, fySplit);
+    
+    // return split(xs, fi).map((subArr,i) => subArr.filter((_, j) => isShrinkingSplit[i][j])); ;
+    
+
+    // console.log("asdf, ", split(removeIfNotShrinking(xs, isShrinking), fi));
+    // console.log("distances first: ", distances[0]);
+    const averages = distAverge(distances);
+    // console.log("averages asdf: ", averages);
+    const mm = pix2mm(mean(averages))
+    return {
+        accuracy: mm,
+        accuracyInPixel: mean(averages),
+        averages: averages, // averages for each fixation point
+        averagesInMm: averages.map((avg) => pix2mm(avg)), // averages in mm
+    }
+
 }
 // let p = {xs : [1,22,333,4444,55555,666666], ys : [6,5,4,3,2,1]}
 // let f = {fx : [1,2,3,4,5,6], fy : [7,8,9,10,11,12], fi : [0,0,1,1,2,2]}
