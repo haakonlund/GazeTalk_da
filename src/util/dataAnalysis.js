@@ -71,25 +71,55 @@ export const distAverge = (arr) => {
 }
 export const sd = (arr) => {
     const meanVal = mean(arr)
-    const variance = arr.reduce((acc, val) => acc + (val - meanVal) ** 2, 0) / arr.length;
+    const variance = arr.reduce((acc, val) => acc + (val - meanVal) ** 2, 0) / (arr.length);
     return Math.sqrt(variance);
 }
-// export const rms = (xs,ys) => {
-//     debugger
-//     // assert(xs.length === ys.length, "xs and ys must be the same length")
-//     const [sx, sy] =  xs.slice(0, -1).reduce(([sumX,sumY], _,i) => {
-//         const dx = (xs[i] - xs[i + 1]) ** 2
-//         const dy = (ys[i] - ys[i + 1]) ** 2
-//         return [sumX + dx, sumY + dy]
-//     },[0,0])
-//     return [Math.sqrt(sx/ xs.length), Math.sqrt(sy/ ys.length)];
-// }
 
 export const rms = (xs) => {
-    const sx = xs.reduce((sumX, x,i) => {
-        return sumX + x **2
-    }, 0.0)
-    return Math.sqrt(sx/ xs.length) ;
+    let sx = 0.0
+    for (let i = 0; i < xs.length - 1; i++) {
+        sx = sx + (xs[i] - xs[i + 1]) ** 2
+    }
+    return Math.sqrt(sx / (xs.length - 1))
+}
+
+export const calculatePrecision = (xs, ys, fi, isShrinking) => {
+    const isShrinkingSplit = isShrinking ? split(isShrinking, fi) : null;
+    const xsSplit = isShrinking ? 
+        split(xs, fi).map((subArr,i) => 
+            subArr.filter((_, j) => isShrinkingSplit[i][j])) 
+        : split(xs, fi);
+    const ysSplit = isShrinking ? split(ys, fi).map((subArr,i) => subArr.filter((_, j) => isShrinkingSplit[i][j])) : split(ys, fi);
+    
+    const rmsValues = xsSplit.map((_, i) => {
+        return [rms(xsSplit[i]), rms(ysSplit[i])]
+    })
+    const sdValues = xsSplit.map((_, i) => {
+        return [sd(xsSplit[i]), sd(ysSplit[i])]
+    })
+
+    const rmsSum = rmsValues.reduce((acc, val) => {
+        return [acc[0] + val[0], acc[1] + val[1]]
+    },[0,0])
+    const rmsAvg = [rmsSum[0] / rmsValues.length, rmsSum[1] / rmsValues.length]
+
+    const sdSum = sdValues.reduce((acc, val) => {
+        return [acc[0] + val[0], acc[1] + val[1]]
+    }
+    , [0,0])
+    const sdAvg = [sdSum[0] / sdValues.length, sdSum[1] / sdValues.length]
+
+    return {
+        ppi : getPPI(),
+        rmsAvg : rmsAvg, rmsAvgMm: rmsAvg.map((val) => pix2mm(val)),
+        sdAvg : sdAvg, sdAvgMm: sdAvg.map((val) => pix2mm(val)),
+        rmsMm: rmsValues.map((arr) => arr.map((val) => pix2mm(val))),
+        sdMm: sdValues.map((arr) => arr.map((val) => pix2mm(val))),
+        rmsPixel: rmsValues, sdPixel: sdValues,
+        sdPixel : sdValues
+    }
+    
+
 }
 
 
@@ -121,33 +151,19 @@ export const isSameLength = (arr) => {
 export const removeIfNotShrinking = (arr, isShrinking) => {
     return arr.filter((_, i) => isShrinking[i]);
 }
-// const a = removeIfNotShrinking([1,2,3,4,5], [true, false, true, false, true]) // [1,3,5]
 export const calculateAccuracy  = (xs,ys,fx,fy, fi, isShrinking) => {
-
-    // const fi2 = isShrinking ? removeIfNotShrinking(fi, isShrinking) : fi;
+    
     const isShrinkingSplit = isShrinking ? split(isShrinking, fi) : null;
     const xsSplit = isShrinking ? split(xs, fi).map((subArr,i) => subArr.filter((_, j) => isShrinkingSplit[i][j])) : split(xs, fi);
     const ysSplit = isShrinking ? split(ys, fi).map((subArr,i) => subArr.filter((_, j) => isShrinkingSplit[i][j])) : split(ys, fi);
     const fxSplit = isShrinking ? split(fx, fi).map((subArr,i) => subArr.filter((_, j) => isShrinkingSplit[i][j])) : split(fx, fi);
     const fySplit = isShrinking ? split(fy, fi).map((subArr,i) => subArr.filter((_, j) => isShrinkingSplit[i][j])) : split(fy, fi);
-    // return {
-    //     asdf : "asdf",
-    //     xsSplit,
-    //     ysSplit,
-    //     fxSplit,
-    //     fySplit,
-    // }
     const distances = distls(xsSplit, ysSplit, fxSplit, fySplit);
     
-    // return split(xs, fi).map((subArr,i) => subArr.filter((_, j) => isShrinkingSplit[i][j])); ;
-    
-
-    // console.log("asdf, ", split(removeIfNotShrinking(xs, isShrinking), fi));
-    // console.log("distances first: ", distances[0]);
     const averages = distAverge(distances);
-    // console.log("averages asdf: ", averages);
     const mm = pix2mm(mean(averages))
     return {
+        ppi: getPPI(),
         accuracy: mm,
         accuracyInPixel: mean(averages),
         averages: averages, // averages for each fixation point
@@ -155,6 +171,3 @@ export const calculateAccuracy  = (xs,ys,fx,fy, fi, isShrinking) => {
     }
 
 }
-// let p = {xs : [1,22,333,4444,55555,666666], ys : [6,5,4,3,2,1]}
-// let f = {fx : [1,2,3,4,5,6], fy : [7,8,9,10,11,12], fi : [0,0,1,1,2,2]}
-// console.log(calculateAccuracy(p, f,true))

@@ -4,9 +4,9 @@ import KeyboardGrid from "../components/KeyboardGrid";
 import * as DA from "../util/dataAnalysis.js"
 import { useLocalStorage } from "@uidotdev/usehooks";
 import { getDeviceType } from "../util/deviceUtils.js";
-
+import { calculateAccuracy, calculatePrecision } from "../util/dataAnalysis.js";
 const TrackerLayout = (props) => {
-    const logInterval = 1;
+    const logInterval = 5;
     const transitionTime = 2000;
     
     const handleAction = props.onTileActivate; // Destructure handleAction from props
@@ -26,6 +26,7 @@ const TrackerLayout = (props) => {
         { top: "50%", left: "50%" },   // Center
     ];
 
+    const isStarted = useRef(false);
     const [currentIndex, setCurrentIndex] = useState(0);
     const currentIndexRef = useRef(0);
     const [scale, setScale] = useState(1);
@@ -33,8 +34,8 @@ const TrackerLayout = (props) => {
     const animationRef = useRef(null);
     const timeoutRefs = useRef([]);
     const containerRef = useRef(null);
+    const [prevoiusLargest, setPrevoiusLargest] = useState(-1);
 
-    const element = document.querySelector(".shrinking-circle");
 
     const eyeTrackingData = "eyeTrackingData"
     const [trackingData, setTrackingData] = useState(
@@ -54,8 +55,6 @@ const TrackerLayout = (props) => {
             screen_width : window.innerWidth,
             screen_height : window.innerHeight,
             points: screenPoints,
-            accuracy: 0,
-            precision: 0,
     });
 
     // Clear all timeouts
@@ -71,23 +70,22 @@ const TrackerLayout = (props) => {
 
     // Handle point transitions
     useEffect(() => {
-        
         const initialWaitTime = 5000; // 5 seconds initial wait time
         const waitTime = 2000; // 2 seconds wait time
         const shrinkTime = transitionTime - 800; // Leave 800ms buffer before next point
-
+    
         const moveToNextPoint = () => {
             // Cancel any ongoing animations and timeouts
             clearAllTimeouts();
-
+    
             // Reset scale before moving to next point
             setScale(1);
-
+    
             // Move to next point
             const newIndex = (currentIndexRef.current + 1) % screenPoints.length;
             setCurrentIndex(newIndex);
             currentIndexRef.current = newIndex;
-
+    
             if (newIndex === 0) {
                 console.log("COMPLETE")
                 setIsComplete(true);
@@ -95,25 +93,35 @@ const TrackerLayout = (props) => {
                 switchToMainMenu();
                 return; // Stop transitions when reaching the last point
             }
-
+    
             // Wait for 2 seconds at the new point before starting to shrink
             const waitTimer = setTimeout(() => {
                 startShrinking(shrinkTime);
             }, waitTime);
-
+    
             timeoutRefs.current.push(waitTimer);
-
+    
             // Schedule the next point transition
             const nextPointTimer = setTimeout(moveToNextPoint, waitTime + shrinkTime);
             timeoutRefs.current.push(nextPointTimer);
         };
-
+    
         // Initial wait before starting the cycle
         const initialWaitTimer = setTimeout(() => {
+            // Start shrinking the first point
+            isStarted.current = true;
             startShrinking(shrinkTime);
-            moveToNextPoint();
+            
+            // Schedule the move to the next point after the shrinking animation completes
+            const nextPointTimer = setTimeout(() => {
+                moveToNextPoint();
+            }, shrinkTime);
+            
+            timeoutRefs.current.push(nextPointTimer);
         }, initialWaitTime);
+        
         timeoutRefs.current.push(initialWaitTimer);
+        
         // Cleanup on unmount
         return () => {
             clearAllTimeouts();
@@ -135,19 +143,25 @@ const TrackerLayout = (props) => {
             }
         };
 
+
         // Start the animation
         animationRef.current = requestAnimationFrame(animate);
+        // console.log("Shrinking animation started for duration:", animationRef.current !== null);
+
     };
 
+
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+    const mousePositionRef = useRef({ x: 0, y: 0 });
 
     useEffect(() => {
         const handleMouseMove = (event) => {
-            setMousePosition({ x: event.clientX, y: event.clientY });
+            const newPosition = { x: event.clientX, y: event.clientY };
+            setMousePosition(newPosition);
+            mousePositionRef.current = newPosition; // Update the ref
         };
-
+        
         window.addEventListener("mousemove", handleMouseMove);
-
         return () => {
             window.removeEventListener("mousemove", handleMouseMove);
         };
@@ -155,32 +169,40 @@ const TrackerLayout = (props) => {
 
     useEffect(() => {
         const logData = setInterval(() => {
+            const element = document.querySelector(".shrinking-circle");
+
             setTrackingData(prevData => {
+                if (!isStarted.current) return prevData; // Don't log data if not started
+                // console.log(isStarted.current)
+                // console.log("logging data")
                 const newData = { ...prevData };
                 const tracking_points = newData.tracking_points;
-    
-                tracking_points.x.push(mousePosition.x);
-                tracking_points.y.push(mousePosition.y);
+                // Use the ref value which is always up-to-date
+                tracking_points.x.push(mousePositionRef.current.x);
+                tracking_points.y.push(mousePositionRef.current.y);
                 tracking_points.is_shrinking.push(animationRef.current !== null);
                 tracking_points.timestamp.push(Date.now());
-                tracking_points.fixation_index.push(currentIndex);
-    
+
+                const isLarger = currentIndexRef.current > prevoiusLargest
+                isLarger ? 
+                    tracking_points.fixation_index.push(currentIndexRef.current) : {}
+                isLarger ? setPrevoiusLargest(currentIndexRef.current) : {}
+
                 if (element) {
                     const rect = element.getBoundingClientRect();
                     tracking_points.fixation_x.push(rect.left);
                     tracking_points.fixation_y.push(rect.top);
                 }
-    
+
                 return { ...newData };
             });
         }, logInterval);
-    
+
         return () => clearInterval(logData);
-    }, [mousePosition, logInterval]);
+    }, [logInterval]); // Keep the dependency array as is
     
     const calculateStats = () => {
         
-        // debugger
         const tracking_points = trackingData.tracking_points;
         
         if (tracking_points.x.length === 0) {
@@ -189,6 +211,30 @@ const TrackerLayout = (props) => {
         }
         trackingData.end_of_test = Date.now()
         trackingData.device = getDeviceType();
+        trackingData.accuracyStill =  calculateAccuracy(
+            trackingData.tracking_points.x, 
+            trackingData.tracking_points.y, 
+            trackingData.tracking_points.fixation_x, 
+            trackingData.tracking_points.fixation_y, 
+            trackingData.tracking_points.fixation_index, 
+            trackingData.tracking_points.is_shrinking
+        ),
+        trackingData.accuracyMoving = calculateAccuracy(
+            trackingData.tracking_points.x, 
+            trackingData.tracking_points.y, 
+            trackingData.tracking_points.fixation_x, 
+            trackingData.tracking_points.fixation_y, 
+            trackingData.tracking_points.fixation_index,
+            null
+        )
+        trackingData.precision = calculatePrecision(
+            trackingData.tracking_points.x,
+            trackingData.tracking_points.y,
+            trackingData.tracking_points.fixation_index,
+            trackingData.tracking_points.is_shrinking
+        )
+
+        setPrevoiusLargest(0) // Reset the largest index for the next test
         saveTrackingData()
     
     };
@@ -205,7 +251,8 @@ const TrackerLayout = (props) => {
         const dataToSend = {
             ...trackingData,
             timestamp: new Date().toISOString(),
-            dataType: "eyeTrackingData"
+            dataType: "eyeTrackingData",
+            
         };
         
         // Send data to server
@@ -250,7 +297,7 @@ const TrackerLayout = (props) => {
     }
     return (
 
-        <div>
+        <div>                                                   
              <div ref={containerRef} className="calibrationDiv">
                  {/* Static background circle with 50% opacity */}
                  <div

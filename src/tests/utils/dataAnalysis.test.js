@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom';
 import { getLastSentence } from '../../util/textUtils';
-import { calculateAccuracy, euclid_dist, distls, isSameLength, fi2fiArr, split, distAverge, mean, removeNull, getPPI, pix2mm, removeIfNotShrinking, rms, sd} from '../../util/dataAnalysis';
+import { calculateAccuracy, euclid_dist, distls, isSameLength, fi2fiArr, split, distAverge, mean, removeNull, getPPI, pix2mm, removeIfNotShrinking, rms, sd, calculatePrecision} from '../../util/dataAnalysis';
 import exp from 'node:constants';
 
 import { get } from 'node:http';
@@ -99,9 +99,6 @@ describe('accuracy', () => {
 
         expect(averages.every((avg) => typeof avg === 'number')).toBe(true); // check if all averages are numbers
     
-       
-
-    
     })
     test('calcutate pixel density', () => { 
         const xs = content.tracking_points.x    
@@ -142,18 +139,36 @@ describe('accuracy', () => {
         const isShrinking = content.tracking_points.is_shrinking
 
         const data = calculateAccuracy(xs,ys,fx,fy,fi, isShrinking)
+        // fs.writeFileSync('src/tests/utils/testData/data.json', JSON.stringify(data[0]));
         expect(data.accuracy).toBeCloseTo(21.31656761903601, 1);
-        // fs.writeFileSync('src/tests/utils/testData/data.json', JSON.stringify(data));
     })
     test('rms', () => {
         const arr = [1, 2, 3, 4, 5]
         const result = rms(arr)
         // console.log("rms: ", result);
-        expect(result).toBeCloseTo(3.3166247903554, 1);
+        expect(result).toBeCloseTo(1, 1);
     })
     test('sd', () => {
         const arr = [1, 2, 3, 4, 5]
         const result = sd(arr)
         expect(result).toBeCloseTo(1.4142135623731, 1);
+    })
+    test('calculatePrecision', () => {
+
+
+        const xs = content.tracking_points.x    
+        const ys = content.tracking_points.y
+        const fi = content.tracking_points.fixation_index
+        const isShrinking = content.tracking_points.is_shrinking
+
+        const precision0 = calculatePrecision(xs, ys, fi, isShrinking) 
+        // fs.writeFileSync('src/tests/utils/testData/data.json', JSON.stringify(precision0[0]));
+
+        const precision1 = calculatePrecision(xs, ys, fi, null)
+        
+        // console.log("precision0: ", precision0);
+        // console.log("precision1: ", precision1);
+
+
     })
 });
