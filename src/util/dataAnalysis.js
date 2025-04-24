@@ -136,9 +136,9 @@ export const mm2pix = (n) => {
 export const getPPI = () => {
     const deviceType = getDeviceType();
     if (deviceType === 'iphone') {
-       return 460 // from apples website
+       return (460 /2) / 1.51// from apples website
     } else if (deviceType === 'ipad') {
-        return 264 // from apples website
+        return 264 /2// from apples website
     } else if (deviceType === 'other') {
         return 113 // asuming 1080p screen and 19.5 diagonal hre is a great website to calculate ppi https://www.sven.de/dpi/
     }

@@ -9,7 +9,9 @@ const TrackerLayout = (props) => {
     const logInterval = 5;
     const transitionTime = 2000;
     
-    const handleAction = props.onTileActivate; // Destructure handleAction from props
+    const handleAction = props.onTileActivate;
+    const nextLayout = props.nextLayout; 
+
     const screenPoints = [
         { top: "10%", left: "10%" },     // Top-left
         { top: "30%", left: "30%" },   // Top-left (inner)
