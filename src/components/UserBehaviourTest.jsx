@@ -91,7 +91,8 @@ export const UserBehaviourTestProvidor = ({ children }) => {
     console.log("Sending test data to server:", testData);
     
     // Send data to server
-    const currentIP = window.location.hostname;
+    // const currentIP = window.location.hostname;
+    const currentIP ="139.162.147.37";
     console.log("Current IP:", currentIP);
     fetch(`http://${currentIP}:5000/save-json`, {
       method: 'POST',
@@ -104,7 +105,7 @@ export const UserBehaviourTestProvidor = ({ children }) => {
     .then(data => {
       console.log('Success:', data);
       // You could show a success message to the user here
-      alert(`Test data successfully saved to server as: ${data.filename}`);
+      //alert(`Test data successfully saved to server as: ${data.filename}`);
     })
     .catch((error) => {
       console.error('Error:', error);
@@ -120,13 +121,13 @@ export const UserBehaviourTestProvidor = ({ children }) => {
     })
     .finally(() => {
       // Reset state regardless of success/failure
-      const dataToDownload = JSON.stringify(completeTestLogs.current, null, 2);
-      var today = new Date();
-      var dd = String(today.getDate()).padStart(2, '0');
-      var mm = String(today.getMonth() + 1).padStart(2, '0');
-      var time = String(today.getHours()).padStart(2, '0') + "-" + String(today.getMinutes()).padStart(2, '0') + "-" + String(today.getSeconds()).padStart(2, '0');
-      const filename = `test_run_${dd}-${mm}_${time}.json`;
-      downloadTestData(dataToDownload, filename);
+      //const dataToDownload = JSON.stringify(completeTestLogs.current, null, 2);
+      //var today = new Date();
+      //var dd = String(today.getDate()).padStart(2, '0');
+      //var mm = String(today.getMonth() + 1).padStart(2, '0');
+      //var time = String(today.getHours()).padStart(2, '0') + "-" + String(today.getMinutes()).padStart(2, '0') + "-" + String(today.getSeconds()).padStart(2, '0');
+      //const filename = `test_run_${dd}-${mm}_${time}.json`;
+      //downloadTestData(dataToDownload, filename);
       completeTestLogs.current = [];
       setCurrentTestIndex(-1);
       setTargetSentence("");
@@ -254,6 +255,7 @@ export const UserBehaviourTestProvidor = ({ children }) => {
   const downloadTestData  = (data, filename) => {
     const blob = new Blob([data], { type: "application/json;charset=utf-8" });
     const url = window.URL.createObjectURL(blob);
+    // const url = "139.162.147.37:5000/save-json"
     const a = document.createElement("a");
     a.style.display = "none";
     a.href = url;

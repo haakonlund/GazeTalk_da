@@ -26,7 +26,7 @@ import * as TestConst from "./constants/testConstants/testConstants";
 import { getDeviceType } from "./util/deviceUtils";
 let dwellTime = 1500;
 
-function App({ initialView = CmdConst.MAIN_MENU, initialLayout = "2+2+4x2", initialText="", unitTesting=process.env.NODE_ENV === "test" }) {
+function App({ initialView = CmdConst.FIRST_PAGE, initialLayout = "2+2+4x2", initialText="", unitTesting=process.env.NODE_ENV === "test" }) {
   const [currentViewName, setCurrentViewName] = useState(initialView);
   const [currentLayoutName, setCurrentLayoutName] = useState(initialLayout);
   const [textValue, updateTextValue] = useState(initialText);
@@ -41,13 +41,13 @@ function App({ initialView = CmdConst.MAIN_MENU, initialLayout = "2+2+4x2", init
   
   const textAreaRef = useRef(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const view = config.views[currentViewName] || config.views[CmdConst.MAIN_MENU];
+  const view = config.views[currentViewName] || config.views[CmdConst.FIRST_PAGE];
   const input = document.getElementById('text_region');
 
   const [buttonFontSize, setButtonFontSize] = useState(30)
   const [textFontSize, setTextFontSize] = useState(20)
   const [buttonNum, setButtonNum] = useState(6)
-  const [nextView, setNextView] = useState("main_menu")
+  const [nextView, setNextView] = useState("first_menu")
   const [nextLayout, setNextLayout] = useState("2+2+4x2")
   // const [testSuiteActive,setTestSuiteActive] = useState(false)
 

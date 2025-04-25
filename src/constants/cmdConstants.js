@@ -40,6 +40,7 @@ export const SWITCH_LAYOUT = "switch_layout";
 export const WRITING = "writing";
 export const SUGGESTIONS = "suggestions";
 export const MAIN_MENU = "main_menu";
+export const FIRST_PAGE = "first_page";
 export const PERIOD = ".";
 export const INCREASE_DWELLTIME = "increase_dwelltime";
 export const DECREASE_DWELLTIME = "decrease_dwelltime";
