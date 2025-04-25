@@ -49,13 +49,13 @@ function App({ initialView = CmdConst.MAIN_MENU, initialLayout = "2+2+4x2", init
   const [buttonNum, setButtonNum] = useState(6)
   const [nextView, setNextView] = useState("main_menu")
   const [nextLayout, setNextLayout] = useState("2+2+4x2")
-  const [testSuiteActive,setTestSuiteActive] = useState(false)
+  // const [testSuiteActive,setTestSuiteActive] = useState(false)
 
   const showNextSuggestions = unitTesting // turn on to show next suggestions
   //const [audioUnlocked, setAudioUnlocked] = useState(false);
   const [audioUnlocked, setAudioUnlocked] = useState(false);
   // Testing 
-  const { isTesting, currentTestIndex, targetSentence, counterStarted, initTest, startTest, endTest, completeTests, logEvent, setLogs, logs, cancelTest } = useTesting();
+  const { isTesting, currentTestIndex, targetSentence, counterStarted, initTest, startTest, endTest, completeTests, logEvent, setLogs, logs, cancelTest, testSuiteActive,setTestSuiteActive } = useTesting();
   
   const unlockAudio = () => {
     const audio = new Audio("/click_button.mp3");
@@ -161,7 +161,13 @@ function setupRemoteLogging() {
           initTest(currentTestIndex + 1, userData);
           updateTextValue("");
           updateGlobalCursorPosition(0);
-          setAudioUnlocked(false);
+          console.log("All tests completed. Switching to tracker layout.");
+          if (testSuiteActive){
+              handleActionWrapper({type: "start_tracker_test"})
+              setTestSuiteActive(false)
+          }
+          
+          // setAudioUnlocked(false); // why is this here
         } else { //Next tests
           initTest(currentTestIndex + 1, userData);
           updateTextValue(targetSentence + "\n");

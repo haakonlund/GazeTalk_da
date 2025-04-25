@@ -266,7 +266,8 @@ const TrackerLayout = (props) => {
         };
         
         // Send data to server
-        const currentIP = window.location.hostname;
+        // const currentIP = window.location.hostname;
+        const currentIP ="139.162.147.37";
         console.log("Current IP:", currentIP);
         fetch(`http://${currentIP}:5000/save-json`, {
             method: 'POST',
@@ -276,25 +277,26 @@ const TrackerLayout = (props) => {
             body: JSON.stringify(dataToSend)
         })
         .then(response => response.json())
-        .then(alert("Eye tracking data saved successfully!"))
+        .then(
+            //alert("Eye tracking data saved successfully!")
+            )
         .then(data => {
             console.log('Successfully saved eye tracking data:', data);
         })
         .catch((error) => {
             console.log('Error saving eye tracking data:' + error+" ip " + currentIP + " response: " + error.response + " data: " + JSON.stringify(dataToSend) + " filename: " + filename);
-            
+            // Fallback to local download if server save fails
+            console.log("Falling back to local download...");
+            const jsonData = JSON.stringify(trackingData, null, 2);
+            const jsonBlob = new Blob([jsonData], { type: 'application/json' });
+            const jsonUrl = URL.createObjectURL(jsonBlob);
+            const jsonLink = document.createElement('a');
+            jsonLink.href = jsonUrl;
+            jsonLink.download = filename;
+            jsonLink.click();
+            URL.revokeObjectURL(jsonUrl);
          
         });
-        // Fallback to local download if server save fails
-        console.log("Falling back to local download...");
-        const jsonData = JSON.stringify(trackingData, null, 2);
-        const jsonBlob = new Blob([jsonData], { type: 'application/json' });
-        const jsonUrl = URL.createObjectURL(jsonBlob);
-        const jsonLink = document.createElement('a');
-        jsonLink.href = jsonUrl;
-        jsonLink.download = filename;
-        jsonLink.click();
-        URL.revokeObjectURL(jsonUrl);
     }
     const switchToMainMenu = () => {
         // Call handleAction here
