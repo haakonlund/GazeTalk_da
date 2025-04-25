@@ -8,7 +8,9 @@ import Layout3_3x4 from "./Layout3_3x4";
 import Layout4_4x4 from "./Layout4_4x4";
 import Layout2_4_6x4 from "./Layout2_4_6x4";
 import Layout2_4_6x5 from "./Layout2_4_6x5";
+import KeyboardLayout4x4 from "./KeyboardLayout4x4";
 import Tracker_layout from "./tracker_layout"
+import Mesurement_layout from "./mesurment_layout"
 
 const layouts = {
   "2+2+4x2": Layout2_2_4x2,
@@ -19,10 +21,12 @@ const layouts = {
   "3+3x4": Layout3_3x4,
   "4+4x4": Layout4_4x4,
   "3+3x3": Layout3_3x3,
+  "kb_4x4": KeyboardLayout4x4,
   "tracker" : Tracker_layout,
+  "mesurement" : Mesurement_layout,
 };
 
-const LayoutPicker = ({ layout, view, textValue, setTextValue, handleAction, suggestions, letterSuggestions, dwellTime,buttonFontSize,textFontSize, nextLetters, getNext, handleLetterSelected, logEvent, counterStarted}) => {
+const LayoutPicker = ({ layout, view, textValue, setTextValue, handleAction, suggestions, letterSuggestions, dwellTime,buttonFontSize,textFontSize, nextLetters, getNext, handleLetterSelected, logEvent, counterStarted, nextView, nextLayout, testSuiteActive}) => {
   const LayoutComponent = layouts[layout];
   const { textAreaColSpan, rows, cols } = LayoutComponent.properties;
   return (
@@ -45,6 +49,9 @@ const LayoutPicker = ({ layout, view, textValue, setTextValue, handleAction, sug
         handleLetterSelected={handleLetterSelected}
         logEvent={logEvent}
         counterStarted={counterStarted}
+        nextView={nextView}
+        nextLayout={nextLayout}
+        testSuiteActive={testSuiteActive}
       />
       <div
         data-testid="layout-metadata"

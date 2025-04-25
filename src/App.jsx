@@ -26,7 +26,7 @@ import * as TestConst from "./constants/testConstants/testConstants";
 import { getDeviceType } from "./util/deviceUtils";
 let dwellTime = 800;
 
-function App({ initialView = CmdConst.MAIN_MENU, initialLayout = "2+2+4x2", initialText="", unitTesting=process.env.NODE_ENV === "test" }) {
+function App({ initialView = CmdConst.FIRST_PAGE, initialLayout = "2+2+4x2", initialText="", unitTesting=process.env.NODE_ENV === "test" }) {
   const [currentViewName, setCurrentViewName] = useState(initialView);
   const [currentLayoutName, setCurrentLayoutName] = useState(initialLayout);
   const [textValue, updateTextValue] = useState(initialText);
@@ -41,17 +41,21 @@ function App({ initialView = CmdConst.MAIN_MENU, initialLayout = "2+2+4x2", init
   
   const textAreaRef = useRef(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const view = config.views[currentViewName] || config.views[CmdConst.MAIN_MENU];
+  const view = config.views[currentViewName] || config.views[CmdConst.FIRST_PAGE];
   const input = document.getElementById('text_region');
 
   const [buttonFontSize, setButtonFontSize] = useState(30)
   const [textFontSize, setTextFontSize] = useState(20)
   const [buttonNum, setButtonNum] = useState(6)
+  const [nextView, setNextView] = useState("first_menu")
+  const [nextLayout, setNextLayout] = useState("2+2+4x2")
+  // const [testSuiteActive,setTestSuiteActive] = useState(false)
+
   const showNextSuggestions = unitTesting // turn on to show next suggestions
   //const [audioUnlocked, setAudioUnlocked] = useState(false);
   const [audioUnlocked, setAudioUnlocked] = useState(false);
   // Testing 
-  const { isTesting, currentTestIndex, targetSentence, counterStarted, initTest, startTest, endTest, completeTests, logEvent, setLogs, logs, cancelTest } = useTesting();
+  const { isTesting, currentTestIndex, targetSentence, counterStarted, initTest, startTest, endTest, completeTests, logEvent, setLogs, logs, cancelTest, testSuiteActive,setTestSuiteActive } = useTesting();
   
   const unlockAudio = () => {
     const audio = new Audio("/click_button.mp3");
@@ -157,7 +161,13 @@ function setupRemoteLogging() {
           initTest(currentTestIndex + 1, userData);
           updateTextValue("");
           updateGlobalCursorPosition(0);
-          setAudioUnlocked(false);
+          console.log("All tests completed. Switching to tracker layout.");
+          if (testSuiteActive){
+              handleActionWrapper({type: "start_tracker_test"})
+              setTestSuiteActive(false)
+          }
+          
+          // setAudioUnlocked(false); // why is this here
         } else { //Next tests
           initTest(currentTestIndex + 1, userData);
           updateTextValue(targetSentence + "\n");
@@ -369,6 +379,10 @@ function setupRemoteLogging() {
       abandonTest,
       dwellTime,
       currentTestIndex,
+      nextView,
+      setNextView,
+      setNextLayout,
+      setTestSuiteActive
     });
   };
 
@@ -390,6 +404,9 @@ function setupRemoteLogging() {
         handleLetterSelected={handleLetterSelected}
         logEvent={logEvent}
         counterStarted={counterStarted}
+        nextView={nextView}
+        nextLayout={nextLayout}
+        testSuiteActive={testSuiteActive}
         />
       }
       {alarmActive && <AlarmPopup onClose={() => setAlarmActive(false)} dwellTime={dwellTime} />}

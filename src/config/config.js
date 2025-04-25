@@ -22,8 +22,10 @@ import { adjust_font_sizeConfig } from "./adjust_font_sizeConfig"
 import { pauseConfig } from "./pauseConfig"
 import { layoutsConfig } from "./layoutsConfig"
 import { trackerTestConfig } from "./trackerTestConfig"
+import { first_pageConfig } from "./first_pageConfig";
 export const config = {
   views: {
+      "first_page": first_pageConfig,
       "numbers2": numbers2Config,
       "edit_language": edit_languageConfig,
       "writing": writingConfig,

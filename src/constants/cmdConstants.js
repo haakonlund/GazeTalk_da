@@ -1,6 +1,9 @@
 export const ENTER_LETTER = "enter_letter";
 export const NEWLINE = "newline";
 export const SWITCH_VIEW = "switch_view";
+export const START_TEST_SUITE = "start_test_suite";
+export const START_WRITING_TEST = "start_writing_test";
+export const START_TRACKER_TEST = "start_tracker_test";
 export const DELETE_LETTER = "delete_letter";
 export const DELETE_LETTER_EDIT = "delete_letter_edit";
 export const TOGGLE_CASE = "toggle_case";
@@ -37,6 +40,7 @@ export const SWITCH_LAYOUT = "switch_layout";
 export const WRITING = "writing";
 export const SUGGESTIONS = "suggestions";
 export const MAIN_MENU = "main_menu";
+export const FIRST_PAGE = "first_page";
 export const PERIOD = ".";
 export const INCREASE_DWELLTIME = "increase_dwelltime";
 export const DECREASE_DWELLTIME = "decrease_dwelltime";

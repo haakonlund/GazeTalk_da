@@ -77,8 +77,21 @@ export const handleAction = (
     abandonTest,
     dwellTime,
     currentTestIndex,
+    nextView,
+    setNextView,
+    setNextLayout,
+    setTestSuiteActive
   }
 ) => {
+    const startWrittingTest = () => {
+        startUserTest();
+        setCurrentViewName(CmdConst.WRITING)
+    }
+    const startTrackerTest = () => {
+        setCurrentViewName("main_menu")
+        setNextLayout(currentLayoutName)
+        setCurrentLayoutName("tracker")
+    }
   switch (action.type) {
     case CmdConst.ENTER_LETTER: {
       // insert the letter at the global cursor position
@@ -107,8 +120,6 @@ export const handleAction = (
       } else {
         setCurrentViewName(CmdConst.WRITING);
       }
-      console.log("WRITING LOL");
-
       // if the last letter was punctuation speak it
       if (action.value === CmdConst.PERIOD) {
         const lastSentenceStart = getLastSentence(textValue)
@@ -139,8 +150,8 @@ export const handleAction = (
               setCurrentViewName(CmdConst.MAIN_MENU);
         } else {
             if (action.view === "test") {
-                startUserTest();
-                setCurrentViewName(CmdConst.WRITING);
+                // handleAction(action ={type: CmdConst.START_WRITING_TEST})
+                startWrittingTest()
             } else {
                 if (config.views[action.view]) {
                     if (counterStarted) {
@@ -153,6 +164,20 @@ export const handleAction = (
             }
         }
         break;
+    }
+    case CmdConst.START_TEST_SUITE:{
+        setNextLayout(currentLayoutName)
+        setCurrentLayoutName("tracker")
+        setTestSuiteActive(true)
+        break;
+    }
+    case CmdConst.START_WRITING_TEST: {
+        startWrittingTest()
+
+        break;
+    }
+    case CmdConst.START_TRACKER_TEST: {
+        startTrackerTest()
     }
     case CmdConst.DELETE_LETTER: {
         // delete the letter at the global cursor position
