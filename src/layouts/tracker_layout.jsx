@@ -5,13 +5,17 @@ import * as DA from "../util/dataAnalysis.js"
 import { useLocalStorage } from "@uidotdev/usehooks";
 import { getDeviceType } from "../util/deviceUtils.js";
 import { calculateAccuracy, calculatePrecision } from "../util/dataAnalysis.js";
+import * as CmdConst from "../constants/cmdConstants.js";
 const TrackerLayout = (props) => {
     const logInterval = 5;
     const transitionTime = 2000;
     
     const handleAction = props.onTileActivate;
-    const nextLayout = props.nextLayout; 
+    const nextView = props.nextView // Default to "main_menu" if nextView is not provided
+    const nextLayout = props.nextLayout;
+    const testSuiteActive = props.testSuiteActive;
 
+    const currentLayout = props.currentLayout ? props.currentLayout : "2+2+4x2"; // Default to "2+2+4x2" if currentLayout is not provided
     const screenPoints = [
         { top: "10%", left: "10%" },     // Top-left
         { top: "30%", left: "30%" },   // Top-left (inner)
@@ -72,6 +76,7 @@ const TrackerLayout = (props) => {
 
     // Handle point transitions
     useEffect(() => {
+        
         const initialWaitTime = 5000; // 5 seconds initial wait time
         const waitTime = 2000; // 2 seconds wait time
         const shrinkTime = transitionTime - 800; // Leave 800ms buffer before next point
@@ -92,7 +97,10 @@ const TrackerLayout = (props) => {
                 console.log("COMPLETE")
                 setIsComplete(true);
                 calculateStats();
-                switchToMainMenu();
+                // Proceed to the next layout after the last point
+                // debugger
+                testSuiteActive ? proceedToTest() : switchToMainMenu();
+
                 return; // Stop transitions when reaching the last point
             }
     
@@ -291,10 +299,27 @@ const TrackerLayout = (props) => {
     const switchToMainMenu = () => {
         // Call handleAction here
         if (handleAction) { 
-            const action ={ type: "switch_layout", value: "2+2+4x2" };
+            const action ={ type: "switch_layout", value: props.nextLayout };
             
             handleAction(action);
+            const action2 = { type: "switch_view", view: nextView };
+            handleAction(action2);
+            // handleAction({type: CmdConst.START_WRITING_TEST})
+
         }
+        
+        
+    }
+    const proceedToTest = () => {
+        // Call handleAction here
+        if (handleAction) { 
+            // switch to the last set layout
+            handleAction({ type: "switch_layout", value: props.nextLayout });
+            // const action2 = { type: "switch_view", view: nextView };
+            // handleAction(action2);
+            handleAction({type: CmdConst.START_WRITING_TEST})
+        }
+        
         
     }
     return (

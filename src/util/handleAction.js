@@ -87,6 +87,11 @@ export const handleAction = (
         startUserTest();
         setCurrentViewName(CmdConst.WRITING)
     }
+    const startTrackerTest = () => {
+        setCurrentViewName("main_menu")
+        setNextLayout(currentLayoutName)
+        setCurrentLayoutName("tracker")
+    }
   switch (action.type) {
     case CmdConst.ENTER_LETTER: {
       // insert the letter at the global cursor position
@@ -168,9 +173,11 @@ export const handleAction = (
     }
     case CmdConst.START_WRITING_TEST: {
         startWrittingTest()
-        // startUserTest();
-        // setCurrentViewName(CmdConst.WRITING);
+
         break;
+    }
+    case CmdConst.START_TRACKER_TEST: {
+        startTrackerTest()
     }
     case CmdConst.DELETE_LETTER: {
         // delete the letter at the global cursor position

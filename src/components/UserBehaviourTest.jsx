@@ -27,6 +27,7 @@ export const UserBehaviourTestProvidor = ({ children }) => {
   const [currentTestIndex, setCurrentTestIndex] = useState(-1); 
   const [targetSentence, setTargetSentence] = useState("");
   const [counterStarted, setCounterStarted] = useState(false);
+  const [testSuiteActive,setTestSuiteActive] = useState(false)
   const randomTests = useRef([]);
 
   const initTest = (id, userData) => {
@@ -278,6 +279,8 @@ export const UserBehaviourTestProvidor = ({ children }) => {
         setLogs,
         logs,
         cancelTest,
+        testSuiteActive,
+        setTestSuiteActive
       }}
     >
       {children}
