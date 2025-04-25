@@ -47,6 +47,10 @@ function App({ initialView = CmdConst.MAIN_MENU, initialLayout = "2+2+4x2", init
   const [buttonFontSize, setButtonFontSize] = useState(30)
   const [textFontSize, setTextFontSize] = useState(20)
   const [buttonNum, setButtonNum] = useState(6)
+  const [nextView, setNextView] = useState("main_menu")
+  const [nextLayout, setNextLayout] = useState("2+2+4x2")
+  const [testSuiteActive,setTestSuiteActive] = useState(false)
+
   const showNextSuggestions = unitTesting // turn on to show next suggestions
   //const [audioUnlocked, setAudioUnlocked] = useState(false);
   const [audioUnlocked, setAudioUnlocked] = useState(false);
@@ -369,6 +373,10 @@ function setupRemoteLogging() {
       abandonTest,
       dwellTime,
       currentTestIndex,
+      nextView,
+      setNextView,
+      setNextLayout,
+      setTestSuiteActive
     });
   };
 
@@ -390,6 +398,9 @@ function setupRemoteLogging() {
         handleLetterSelected={handleLetterSelected}
         logEvent={logEvent}
         counterStarted={counterStarted}
+        nextView={nextView}
+        nextLayout={nextLayout}
+        testSuiteActive={testSuiteActive}
         />
       }
       {alarmActive && <AlarmPopup onClose={() => setAlarmActive(false)} dwellTime={dwellTime} />}

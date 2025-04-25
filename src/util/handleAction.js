@@ -77,8 +77,16 @@ export const handleAction = (
     abandonTest,
     dwellTime,
     currentTestIndex,
+    nextView,
+    setNextView,
+    setNextLayout,
+    setTestSuiteActive
   }
 ) => {
+    const startWrittingTest = () => {
+        startUserTest();
+        setCurrentViewName(CmdConst.WRITING)
+    }
   switch (action.type) {
     case CmdConst.ENTER_LETTER: {
       // insert the letter at the global cursor position
@@ -137,8 +145,8 @@ export const handleAction = (
               setCurrentViewName(CmdConst.MAIN_MENU);
         } else {
             if (action.view === "test") {
-                startUserTest();
-                setCurrentViewName(CmdConst.WRITING);
+                // handleAction(action ={type: CmdConst.START_WRITING_TEST})
+                startWrittingTest()
             } else {
                 if (config.views[action.view]) {
                     if (counterStarted) {
@@ -150,6 +158,18 @@ export const handleAction = (
                 }
             }
         }
+        break;
+    }
+    case CmdConst.START_TEST_SUITE:{
+        setNextLayout(currentLayoutName)
+        setCurrentLayoutName("tracker")
+        setTestSuiteActive(true)
+        break;
+    }
+    case CmdConst.START_WRITING_TEST: {
+        startWrittingTest()
+        // startUserTest();
+        // setCurrentViewName(CmdConst.WRITING);
         break;
     }
     case CmdConst.DELETE_LETTER: {
