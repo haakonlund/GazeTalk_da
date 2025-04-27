@@ -77,6 +77,7 @@ export const handleAction = (
     abandonTest,
     dwellTime,
     currentTestIndex,
+    setAlphabetPage,
     nextView,
     setNextView,
     setNextLayout,
@@ -156,6 +157,11 @@ export const handleAction = (
                 if (config.views[action.view]) {
                     if (counterStarted) {
                         logEvent({ type: CmdConst.SWITCH_VIEW, value: action.view});
+                    }
+                    if (action.view === CmdConst.ALPHABET_V2 && action.page != null) {
+                        setAlphabetPage(action.page);
+                    } else {
+                        setAlphabetPage(0);
                     }
                     setCurrentViewName(action.view);
                 } else {
@@ -324,10 +330,6 @@ export const handleAction = (
         const replaced = textUpToCursor.slice(0, lineStart) + replacedCurrentLine;
         const casedSuggestion = matchCase(suggestion, lastWord);
         const newText = replaced + casedSuggestion + " " + rest;
-        console.log(textUpToCursor);
-        console.log(replaced);
-        console.log(casedSuggestion);
-        console.log(rest);
         setTextValue(newText);
         logEvent({ type: CmdConst.INSERT_SUGGESTION, value: casedSuggestion });
         const spaceLength = 1;

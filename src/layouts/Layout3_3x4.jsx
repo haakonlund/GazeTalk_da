@@ -1,9 +1,9 @@
 import React from "react";
-import KeyboardGrid from "../components/KeyboardGrid";
+import KeyboardGridV1 from "../components/KeyboardGridV1";
 
 const Layout3_3x4 = (props) => {
   return (
-    <KeyboardGrid {...props}  />
+    <KeyboardGridV1 {...props}  />
   );
 };
 Layout3_3x4.properties = {

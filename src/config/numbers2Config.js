@@ -12,7 +12,7 @@ export const numbers2Config = {
       },
       {
         type: "switch",
-        label: "back",
+        label: "Back",
         action: { type: "switch_view", view: "writing" }
       },
       {

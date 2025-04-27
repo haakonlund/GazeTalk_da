@@ -41,6 +41,7 @@ export const WRITING = "writing";
 export const SUGGESTIONS = "suggestions";
 export const MAIN_MENU = "main_menu";
 export const FIRST_PAGE = "first_page";
+export const ALPHABET_V2 = "Alphabet_V2";
 export const PERIOD = ".";
 export const INCREASE_DWELLTIME = "increase_dwelltime";
 export const DECREASE_DWELLTIME = "decrease_dwelltime";
