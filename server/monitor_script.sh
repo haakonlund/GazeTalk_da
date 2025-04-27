@@ -13,7 +13,6 @@ while true; do
     # Check if the script exited abnormally
     if [ $EXIT_CODE -ne 0 ]; then
         # Send notification email
-        send_email
         echo "Script crashed with exit code $EXIT_CODE at $(date). Restarting..." >> $LOG_FILE
         # Wait a bit before restarting to avoid rapid restart loops
         sleep 10

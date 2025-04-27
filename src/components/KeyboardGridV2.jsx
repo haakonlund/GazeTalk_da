@@ -88,7 +88,6 @@ const KeyboardGridV2 = (props) => {
             // letter‐suggestions in the grid (middle)
             const letterIndex = (row-2)*cols + (col-2);
             const letter = letterSuggestions[letterIndex];
-            console.log("letterSuggestions ", letterSuggestions);
             return {
               key:`let-${letterIndex}`,
               tile:{
