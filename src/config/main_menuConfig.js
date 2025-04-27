@@ -8,6 +8,11 @@ export const main_menuConfig = {
         },
         {
           type: "switch",
+          label: "Start Tests",
+          action:  { type: "enter_form", value: "enter_form" }
+        },
+        {
+          type: "switch",
           label: "write",
           action: { type: "switch_view", view: "writing" }
         },
@@ -42,10 +47,6 @@ export const main_menuConfig = {
           label: "Test Mesurment",
           action :{type :"switch_layout", value : "mesurement" }
         },
-        {
-          type: "switch",
-          label: "Start Test sutie",
-          action: { type: "start_test_suite", value: "test_suite" }
-        }
+        
       ]
   };
