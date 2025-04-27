@@ -76,9 +76,9 @@ const KeyboardGridV2 = (props) => {
           };
           else if (idx%totalCols === totalCols-1) {// word suggestions in the right side
             return {
-              key:`sug-${row}`,
+              key:`sug-${row - 1}`,
               tile:{
-                label: suggestions[row],
+                label: suggestions[row - 1],
                 is_dynamic:true,
                 action:{type:"insert_suggestion",value:suggestions[row]},
                 customStyle: { color: "#0f0" }
@@ -88,6 +88,7 @@ const KeyboardGridV2 = (props) => {
             // letter‐suggestions in the grid (middle)
             const letterIndex = (row-2)*cols + (col-2);
             const letter = letterSuggestions[letterIndex];
+            console.log("letterSuggestions ", letterSuggestions);
             return {
               key:`let-${letterIndex}`,
               tile:{
