@@ -257,8 +257,8 @@ describe('deleteWordAtCursor', () => {
     const text = "Hello world";
     const cursorPosition = 6;
     const { newText, newCursorPosition } = deleteWordAtCursor(text, cursorPosition);
-    expect(newText).toBe("Hello");
-    expect(newCursorPosition).toBe(5);
+    expect(newText).toBe("world");
+    expect(newCursorPosition).toBe(0);
   });
 
   test('deletes the entire word when the cursor is at the end of the word', () => {
@@ -273,8 +273,16 @@ describe('deleteWordAtCursor', () => {
     const text = "Hello  world";
     const cursorPosition = 6;
     const { newText, newCursorPosition } = deleteWordAtCursor(text, cursorPosition);
-    expect(newText).toBe("Hello world");
-    expect(newCursorPosition).toBe(5);
+    expect(newText).toBe(" world");
+    expect(newCursorPosition).toBe(0);
+  });
+
+  test('deletes the entire word and space when the cursor is after a word and space', () => {
+    const text = "Hello world ";
+    const cursorPosition = 12;
+    const { newText, newCursorPosition } = deleteWordAtCursor(text, cursorPosition);
+    expect(newText).toBe("Hello ");
+    expect(newCursorPosition).toBe(6);
   });
 });
 

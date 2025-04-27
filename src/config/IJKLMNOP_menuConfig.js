@@ -12,7 +12,7 @@ export const IJKLMNOP_menuConfig = {
         },
         {
           type: "switch",
-          label: "back",
+          label: "Back",
           action: { type: "switch_view", view: "writing" }
         },
         {

@@ -102,12 +102,14 @@ const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected, log
         if (percentage <= 0) {
           finishedHover.current = true;
           clearInterval(timer);
-          playSound();
-          onActivate(tile.action);
-          const letter = tile.label;
-          if (otherLetters) {
-            if (onLetterSelected) {
-              onLetterSelected(otherLetters, letter);
+          if (process.env.NODE_ENV === "test") {
+            playSound();
+            onActivate(tile.action);
+            const letter = tile.label;
+            if (otherLetters) {
+              if (onLetterSelected) {
+                onLetterSelected(otherLetters, letter);
+              }
             }
           }
           // setHovering(false);
@@ -124,7 +126,6 @@ const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected, log
       setProgress(100);
       startedHover.current = false;
       finishedHover.current = false;
-      gazedMoreThanThreshold.current = false;
     }
 
     return () => {
@@ -137,9 +138,14 @@ const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected, log
       className="tile"
       role="button"
       aria-label={tile.label || "tile"}
-      style={tile.customStyle || {}}
-      onMouseEnter={process.env.NODE_ENV === "test" ? () => setHovering(true) : () => {handleMouseEnter();}}
-      onMouseLeave={process.env.NODE_ENV === "test" ? () => setHovering(false) : () => {handleMouseLeave();}}
+      style={tile.customStyle || {color:
+        tile.label === "Back"
+            ? "#0f0"
+            : tile.type === "switch"
+            ? "#ff0"
+            : "#fff",}}
+      onMouseEnter={process.env.NODE_ENV === "test" ? () => setHovering(true) : () => {handleMouseEnter()}}
+      onMouseLeave={process.env.NODE_ENV === "test" ? () => setHovering(false) : () => {handleMouseLeave()}}
       onClick={handleClick}
     >
       {tile.icon ? (

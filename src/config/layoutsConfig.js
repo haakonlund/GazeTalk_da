@@ -7,7 +7,7 @@ export const layoutsConfig = {
         },
         {
           type: "switch",
-          label: "back",
+          label: "Back",
           action: { type: "switch_view", view: "main_menu" }
         },
         {
@@ -57,6 +57,19 @@ export const layoutsConfig = {
           label: "2+4+6x5",
           icon: "/layoutIcons/2+4+6x5.png",
           action: { type: "switch_layout", value: "2+4+6x5" }
+        },
+        {
+          type: "iconTile",
+          label: "kbv2_4x4",
+          icon: "/layoutIcons/kbv2_4x4.png",
+          action: { type: "switch_layout", value: "kbv2_4x4" }
+        }
+        ,
+        {
+          type: "iconTile",
+          label: "kbv2_4x3",
+          icon: "/layoutIcons/kbv2_4x3.png",
+          action: { type: "switch_layout", value: "kbv2_4x3" }
         }
       ]
   };

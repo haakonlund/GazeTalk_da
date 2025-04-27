@@ -6,14 +6,14 @@ export const more_function_menuConfig = {
           colspan: 2
         },
         {
+          type: "switch",
+          label: "Back",
+          action: { type: "switch_view", view: "writing" }
+        },
+        {
           type : "switch",
           label : "Edit",
           action : {type : "switch_view", view : "edit_menu"}
-        },
-        {
-          type: "switch",
-          label: "back to wrtiting",
-          action: { type: "switch_view", view: "writing" }
         },
         {
           type : "start_of_text",

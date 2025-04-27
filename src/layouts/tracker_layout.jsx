@@ -1,15 +1,22 @@
 import React, { useEffect, useState, useRef } from "react";
 import "./TrackerLayout.css";
-import KeyboardGrid from "../components/KeyboardGrid";
+import KeyboardGridV1 from "../components/KeyboardGridV1.jsx";
 import * as DA from "../util/dataAnalysis.js"
 import { useLocalStorage } from "@uidotdev/usehooks";
 import { getDeviceType } from "../util/deviceUtils.js";
-
+import { calculateAccuracy, calculatePrecision } from "../util/dataAnalysis.js";
+import * as CmdConst from "../constants/cmdConstants.js";
+import * as DataSavingSingleton from "../singleton/dataSavingSingleton";
 const TrackerLayout = (props) => {
-    const logInterval = 1;
+    const logInterval = 5;
     const transitionTime = 2000;
     
-    const handleAction = props.onTileActivate; // Destructure handleAction from props
+    const handleAction = props.onTileActivate;
+    const nextView = props.nextView // Default to "main_menu" if nextView is not provided
+    const nextLayout = props.nextLayout;
+    const testSuiteActive = props.testSuiteActive;
+
+    const currentLayout = props.currentLayout ? props.currentLayout : "2+2+4x2"; // Default to "2+2+4x2" if currentLayout is not provided
     const screenPoints = [
         { top: "10%", left: "10%" },     // Top-left
         { top: "30%", left: "30%" },   // Top-left (inner)
@@ -26,6 +33,7 @@ const TrackerLayout = (props) => {
         { top: "50%", left: "50%" },   // Center
     ];
 
+    const isStarted = useRef(false);
     const [currentIndex, setCurrentIndex] = useState(0);
     const currentIndexRef = useRef(0);
     const [scale, setScale] = useState(1);
@@ -33,8 +41,8 @@ const TrackerLayout = (props) => {
     const animationRef = useRef(null);
     const timeoutRefs = useRef([]);
     const containerRef = useRef(null);
+    const [prevoiusLargest, setPrevoiusLargest] = useState(-1);
 
-    const element = document.querySelector(".shrinking-circle");
 
     const eyeTrackingData = "eyeTrackingData"
     const [trackingData, setTrackingData] = useState(
@@ -54,8 +62,6 @@ const TrackerLayout = (props) => {
             screen_width : window.innerWidth,
             screen_height : window.innerHeight,
             points: screenPoints,
-            accuracy: 0,
-            precision: 0,
     });
 
     // Clear all timeouts
@@ -75,45 +81,58 @@ const TrackerLayout = (props) => {
         const initialWaitTime = 5000; // 5 seconds initial wait time
         const waitTime = 2000; // 2 seconds wait time
         const shrinkTime = transitionTime - 800; // Leave 800ms buffer before next point
-
+    
         const moveToNextPoint = () => {
             // Cancel any ongoing animations and timeouts
             clearAllTimeouts();
-
+    
             // Reset scale before moving to next point
             setScale(1);
-
+    
             // Move to next point
             const newIndex = (currentIndexRef.current + 1) % screenPoints.length;
             setCurrentIndex(newIndex);
             currentIndexRef.current = newIndex;
-
+    
             if (newIndex === 0) {
                 console.log("COMPLETE")
                 setIsComplete(true);
                 calculateStats();
-                switchToMainMenu();
+                // Proceed to the next layout after the last point
+                // debugger
+                testSuiteActive ? proceedToTest() : switchToMainMenu();
+
                 return; // Stop transitions when reaching the last point
             }
-
+    
             // Wait for 2 seconds at the new point before starting to shrink
             const waitTimer = setTimeout(() => {
                 startShrinking(shrinkTime);
             }, waitTime);
-
+    
             timeoutRefs.current.push(waitTimer);
-
+    
             // Schedule the next point transition
             const nextPointTimer = setTimeout(moveToNextPoint, waitTime + shrinkTime);
             timeoutRefs.current.push(nextPointTimer);
         };
-
+    
         // Initial wait before starting the cycle
         const initialWaitTimer = setTimeout(() => {
+            // Start shrinking the first point
+            isStarted.current = true;
             startShrinking(shrinkTime);
-            moveToNextPoint();
+            
+            // Schedule the move to the next point after the shrinking animation completes
+            const nextPointTimer = setTimeout(() => {
+                moveToNextPoint();
+            }, shrinkTime);
+            
+            timeoutRefs.current.push(nextPointTimer);
         }, initialWaitTime);
+        
         timeoutRefs.current.push(initialWaitTimer);
+        
         // Cleanup on unmount
         return () => {
             clearAllTimeouts();
@@ -135,19 +154,25 @@ const TrackerLayout = (props) => {
             }
         };
 
+
         // Start the animation
         animationRef.current = requestAnimationFrame(animate);
+        // console.log("Shrinking animation started for duration:", animationRef.current !== null);
+
     };
 
+
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+    const mousePositionRef = useRef({ x: 0, y: 0 });
 
     useEffect(() => {
         const handleMouseMove = (event) => {
-            setMousePosition({ x: event.clientX, y: event.clientY });
+            const newPosition = { x: event.clientX, y: event.clientY };
+            setMousePosition(newPosition);
+            mousePositionRef.current = newPosition; // Update the ref
         };
-
+        
         window.addEventListener("mousemove", handleMouseMove);
-
         return () => {
             window.removeEventListener("mousemove", handleMouseMove);
         };
@@ -155,32 +180,40 @@ const TrackerLayout = (props) => {
 
     useEffect(() => {
         const logData = setInterval(() => {
+            const element = document.querySelector(".shrinking-circle");
+
             setTrackingData(prevData => {
+                if (!isStarted.current) return prevData; // Don't log data if not started
+                // console.log(isStarted.current)
+                // console.log("logging data")
                 const newData = { ...prevData };
                 const tracking_points = newData.tracking_points;
-    
-                tracking_points.x.push(mousePosition.x);
-                tracking_points.y.push(mousePosition.y);
+                // Use the ref value which is always up-to-date
+                tracking_points.x.push(mousePositionRef.current.x);
+                tracking_points.y.push(mousePositionRef.current.y);
                 tracking_points.is_shrinking.push(animationRef.current !== null);
                 tracking_points.timestamp.push(Date.now());
-                tracking_points.fixation_index.push(currentIndex);
-    
+
+                const isLarger = currentIndexRef.current > prevoiusLargest
+                isLarger ? 
+                    tracking_points.fixation_index.push(currentIndexRef.current) : {}
+                isLarger ? setPrevoiusLargest(currentIndexRef.current) : {}
+
                 if (element) {
                     const rect = element.getBoundingClientRect();
                     tracking_points.fixation_x.push(rect.left);
                     tracking_points.fixation_y.push(rect.top);
                 }
-    
+
                 return { ...newData };
             });
         }, logInterval);
-    
+
         return () => clearInterval(logData);
-    }, [mousePosition, logInterval]);
+    }, [logInterval]); // Keep the dependency array as is
     
     const calculateStats = () => {
         
-        // debugger
         const tracking_points = trackingData.tracking_points;
         
         if (tracking_points.x.length === 0) {
@@ -189,7 +222,34 @@ const TrackerLayout = (props) => {
         }
         trackingData.end_of_test = Date.now()
         trackingData.device = getDeviceType();
-        saveTrackingData()
+        trackingData.accuracyStill =  calculateAccuracy(
+            trackingData.tracking_points.x, 
+            trackingData.tracking_points.y, 
+            trackingData.tracking_points.fixation_x, 
+            trackingData.tracking_points.fixation_y, 
+            trackingData.tracking_points.fixation_index, 
+            trackingData.tracking_points.is_shrinking
+        ),
+        trackingData.accuracyMoving = calculateAccuracy(
+            trackingData.tracking_points.x, 
+            trackingData.tracking_points.y, 
+            trackingData.tracking_points.fixation_x, 
+            trackingData.tracking_points.fixation_y, 
+            trackingData.tracking_points.fixation_index,
+            null
+        )
+        trackingData.precision = calculatePrecision(
+            trackingData.tracking_points.x,
+            trackingData.tracking_points.y,
+            trackingData.tracking_points.fixation_index,
+            trackingData.tracking_points.is_shrinking
+        )
+
+        setPrevoiusLargest(0) // Reset the largest index for the next test
+        // only save data if the test SUITE is not active
+        if (!DataSavingSingleton.testActive.isActive) {
+            saveTrackingData()
+        }
     
     };
     function saveTrackingData() {
@@ -205,11 +265,13 @@ const TrackerLayout = (props) => {
         const dataToSend = {
             ...trackingData,
             timestamp: new Date().toISOString(),
-            dataType: "eyeTrackingData"
+            dataType: "eyeTrackingData",
+            
         };
         
         // Send data to server
         const currentIP = window.location.hostname;
+        // const currentIP ="139.162.147.37";
         console.log("Current IP:", currentIP);
         fetch(`http://${currentIP}:5000/save-json`, {
             method: 'POST',
@@ -219,38 +281,62 @@ const TrackerLayout = (props) => {
             body: JSON.stringify(dataToSend)
         })
         .then(response => response.json())
-        .then(alert("Eye tracking data saved successfully!"))
+        .then(
+            //alert("Eye tracking data saved successfully!")
+            )
         .then(data => {
             console.log('Successfully saved eye tracking data:', data);
         })
         .catch((error) => {
             console.log('Error saving eye tracking data:' + error+" ip " + currentIP + " response: " + error.response + " data: " + JSON.stringify(dataToSend) + " filename: " + filename);
-            
+            // Fallback to local download if server save fails
+            console.log("Falling back to local download...");
+            const jsonData = JSON.stringify(trackingData, null, 2);
+            const jsonBlob = new Blob([jsonData], { type: 'application/json' });
+            const jsonUrl = URL.createObjectURL(jsonBlob);
+            const jsonLink = document.createElement('a');
+            jsonLink.href = jsonUrl;
+            jsonLink.download = filename;
+            jsonLink.click();
+            URL.revokeObjectURL(jsonUrl);
          
         });
-        // Fallback to local download if server save fails
-        console.log("Falling back to local download...");
-        const jsonData = JSON.stringify(trackingData, null, 2);
-        const jsonBlob = new Blob([jsonData], { type: 'application/json' });
-        const jsonUrl = URL.createObjectURL(jsonBlob);
-        const jsonLink = document.createElement('a');
-        jsonLink.href = jsonUrl;
-        jsonLink.download = filename;
-        jsonLink.click();
-        URL.revokeObjectURL(jsonUrl);
     }
     const switchToMainMenu = () => {
         // Call handleAction here
         if (handleAction) { 
-            const action ={ type: "switch_layout", value: "2+2+4x2" };
+            if (DataSavingSingleton.testActive.isActive) {
+                DataSavingSingleton.data.second_calibration = trackingData
+                handleAction({type: CmdConst.END_TEST_SUITE})
+
+            }
+            const action ={ type: "switch_layout", value: props.nextLayout };
             
             handleAction(action);
+            const action2 = { type: "switch_view", view: nextView };
+            handleAction(action2);
+            // handleAction({type: CmdConst.START_WRITING_TEST})
+
         }
+        
+        
+    }
+    const proceedToTest = () => {
+        // Call handleAction here
+        if (handleAction) { 
+            // switch to the last set layout
+            handleAction({ type: "switch_layout", value: props.nextLayout });
+            // const action2 = { type: "switch_view", view: nextView };
+            // handleAction(action2);
+            DataSavingSingleton.data.first_calibration = trackingData
+            handleAction({type: CmdConst.START_WRITING_TEST})
+        }
+        
         
     }
     return (
 
-        <div>
+        <div>                                                   
              <div ref={containerRef} className="calibrationDiv">
                  {/* Static background circle with 50% opacity */}
                  <div

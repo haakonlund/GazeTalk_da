@@ -29,7 +29,7 @@ import {
 
 
 import { layoutToButtonNum } from "../constants/layoutConstants";
-
+import * as DataSavingSingleton from "../singleton/dataSavingSingleton";
 
 
 export const handleAction = (
@@ -77,8 +77,24 @@ export const handleAction = (
     abandonTest,
     dwellTime,
     currentTestIndex,
+    setAlphabetPage,
+    nextView,
+    setNextView,
+    setNextLayout,
+    setTestSuiteActive,
+    enterForm, 
+    setEnterForm
   }
 ) => {
+    const startWrittingTest = () => {
+        startUserTest();
+        setCurrentViewName(CmdConst.WRITING)
+    }
+    const startTrackerTest = () => {
+        setCurrentViewName("main_menu")
+        setNextLayout(currentLayoutName)
+        setCurrentLayoutName("tracker")
+    }
   switch (action.type) {
     case CmdConst.ENTER_LETTER: {
       // insert the letter at the global cursor position
@@ -107,8 +123,6 @@ export const handleAction = (
       } else {
         setCurrentViewName(CmdConst.WRITING);
       }
-      console.log("WRITING LOL");
-
       // if the last letter was punctuation speak it
       if (action.value === CmdConst.PERIOD) {
         const lastSentenceStart = getLastSentence(textValue)
@@ -128,7 +142,7 @@ export const handleAction = (
     }
     case CmdConst.SWITCH_VIEW: {
         if (action.view === CmdConst.MAIN_MENU) {
-            if (isTesting && currentTestIndex < TestConst.NUMBER_OF_TESTS - 1) {
+            if (isTesting && currentTestIndex < TestConst.NUMBER_OF_TESTS) {
                 if (counterStarted) {
                     logEvent({ type: CmdConst.SWITCH_VIEW, value: CmdConst.WRITING});
                 }
@@ -139,12 +153,17 @@ export const handleAction = (
               setCurrentViewName(CmdConst.MAIN_MENU);
         } else {
             if (action.view === "test") {
-                startUserTest();
-                setCurrentViewName(CmdConst.WRITING);
+                // handleAction(action ={type: CmdConst.START_WRITING_TEST})
+                startWrittingTest()
             } else {
                 if (config.views[action.view]) {
                     if (counterStarted) {
                         logEvent({ type: CmdConst.SWITCH_VIEW, value: action.view});
+                    }
+                    if (action.view === CmdConst.ALPHABET_V2 && action.page != null) {
+                        setAlphabetPage(action.page);
+                    } else {
+                        setAlphabetPage(0);
                     }
                     setCurrentViewName(action.view);
                 } else {
@@ -154,6 +173,37 @@ export const handleAction = (
         }
         break;
     }
+    case CmdConst.START_TEST_SUITE:{
+        setNextLayout(currentLayoutName);
+        setCurrentLayoutName("tracker");
+        DataSavingSingleton.testActive.isActive = true;
+        setTestSuiteActive(true);
+        break;
+    }
+    case CmdConst.DOWNLOAD_DATA : {
+        DataSavingSingleton.downloadFromBrowser()
+        break;
+    }
+    case CmdConst.END_TEST_SUITE: {
+        DataSavingSingleton.saveRemotely()
+        DataSavingSingleton.testActive.isActive = false;
+        
+        break;
+    }
+    case CmdConst.START_WRITING_TEST: {
+        startWrittingTest()
+
+        break;
+    }
+    case CmdConst.START_TRACKER_TEST: {
+        startTrackerTest()
+        break;
+    }
+    case CmdConst.ENTER_FORM: {
+        setEnterForm(true)
+        break;
+    }
+
     case CmdConst.DELETE_LETTER: {
         // delete the letter at the global cursor position
         const newText = textValue.slice(0, globalCursorPosition.value - 1) + textValue.slice(globalCursorPosition.value);
@@ -299,10 +349,6 @@ export const handleAction = (
         const replaced = textUpToCursor.slice(0, lineStart) + replacedCurrentLine;
         const casedSuggestion = matchCase(suggestion, lastWord);
         const newText = replaced + casedSuggestion + " " + rest;
-        console.log(textUpToCursor);
-        console.log(replaced);
-        console.log(casedSuggestion);
-        console.log(rest);
         setTextValue(newText);
         logEvent({ type: CmdConst.INSERT_SUGGESTION, value: casedSuggestion });
         const spaceLength = 1;
@@ -430,7 +476,7 @@ export const handleAction = (
     default:
       console.warn("Unhandled action:", action);
   }
-  input.focus();
+  input ? input.focus() : null;
 };
 
 

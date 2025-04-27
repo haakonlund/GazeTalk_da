@@ -1,5 +1,5 @@
 import React from "react";
-import KeyboardGrid from "../components/KeyboardGrid";
+import KeyboardGridV1 from "../components/KeyboardGridV1";
 import Layout2_2_4x2 from "./Layout2_2_4x2";
 import Layout3_3x3 from "./Layout3_3x3";
 import Layout2_3_5x2 from "./Layout2_3_5x2";
@@ -8,7 +8,10 @@ import Layout3_3x4 from "./Layout3_3x4";
 import Layout4_4x4 from "./Layout4_4x4";
 import Layout2_4_6x4 from "./Layout2_4_6x4";
 import Layout2_4_6x5 from "./Layout2_4_6x5";
+import KeyboardLayoutV2_4x4 from "./KeyboardLayoutV2_4x4";
+import KeyboardLayoutV2_4x3 from "./KeyboardLayoutV2_4x3";
 import Tracker_layout from "./tracker_layout"
+import Mesurement_layout from "./mesurment_layout"
 
 const layouts = {
   "2+2+4x2": Layout2_2_4x2,
@@ -19,10 +22,13 @@ const layouts = {
   "3+3x4": Layout3_3x4,
   "4+4x4": Layout4_4x4,
   "3+3x3": Layout3_3x3,
+  "kbv2_4x4": KeyboardLayoutV2_4x4,
+  "kbv2_4x3": KeyboardLayoutV2_4x3,
   "tracker" : Tracker_layout,
+  "mesurement" : Mesurement_layout,
 };
 
-const LayoutPicker = ({ layout, view, textValue, setTextValue, handleAction, suggestions, letterSuggestions, dwellTime,buttonFontSize,textFontSize, nextLetters, getNext, handleLetterSelected, logEvent, counterStarted}) => {
+const LayoutPicker = ({ layout, view, textValue, setTextValue, handleAction, suggestions, letterSuggestions, dwellTime,buttonFontSize,textFontSize, nextLetters, getNext, handleLetterSelected, logEvent, counterStarted, nextView, nextLayout, testSuiteActive, alphabetPage}) => {
   const LayoutComponent = layouts[layout];
   const { textAreaColSpan, rows, cols } = LayoutComponent.properties;
   return (
@@ -45,6 +51,10 @@ const LayoutPicker = ({ layout, view, textValue, setTextValue, handleAction, sug
         handleLetterSelected={handleLetterSelected}
         logEvent={logEvent}
         counterStarted={counterStarted}
+        nextView={nextView}
+        nextLayout={nextLayout}
+        testSuiteActive={testSuiteActive}
+        alphabetPage={alphabetPage}
       />
       <div
         data-testid="layout-metadata"

@@ -7,14 +7,13 @@ export const edit_menuConfig = {
         },
         {
           type: "switch",
-          label: "Navigation",
-          action: { type: "switch_view", view: "navigation_menu" }
+          label: "Back",
+          action: { type: "switch_view", view: "writing" }
         },
         {
           type: "switch",
-          label: "Back",
-          action: { type: "switch_view", view: "writing" }
-
+          label: "Navigation",
+          action: { type: "switch_view", view: "navigation_menu" }
         },
         {
           type : "editing",
@@ -36,11 +35,6 @@ export const edit_menuConfig = {
           type: "delete",
           label: "DELETE",
           action: { type: "delete_letter_edit" }
-        },
-        {
-          type : "Switch",
-          label : "File",
-          action : { type: "switch_view", view: "file_menu"}
-        },
+        }
       ]
   };

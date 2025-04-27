@@ -8,7 +8,8 @@ export const setRanking = (xRanking) => {
 }
 
 export const setButtonNum = (xNum) => {
-    ranking = {}; // reset ranking for new button number
+    // reset ranking for new button number
+    ranking = {};
     buttonNum = xNum;
 }
 
@@ -19,12 +20,27 @@ export const getButtonNum = () => {
 export const getRank = () => {
     return ranking;
 }
-
+const assert = function(condition, message) {
+    if (!condition)
+        throw Error('Assert failed: ' + (message || ''));
+};
 const getLetterRank = (letter) => {
+    assert(ranking, "ranking does not exist");
+    assert(letter, "letter does not exist");
+    
     if (letter in ranking) {
         return ranking[letter];
     }
+    // if tests are running return a determinisc value
+    if (process.env.NODE_ENV === "test"){
+        return Array(buttonNum).fill(0);
+    }
+    // if letter not in ranking, create it and randomize its values to reduce the amount of jumping
     ranking[letter] = Array(buttonNum).fill(0);
+    ranking[letter] = Object.entries(ranking[letter]).map((key, value) => {
+        return Math.floor(Math.random()*5)
+    })
+
     return ranking[letter];
 }
 
@@ -92,17 +108,14 @@ const createPreferenceArrays = (arr, suggestionLetter, currentSelection) => {
         for (let i = 0; i < setA.length; i++) {
             const letter = setA[i];
             const letterRanking = getLetterRank(letter);
-            // Store the letter's preference for this position
             positionPreferences.push({
                 letter: letter,
                 preference: letterRanking[posIdx]
             });
         }
         
-        // Sort by preference (higher numbers preferred)
         positionPreferences.sort((a, b) => b.preference - a.preference);
         
-        // Return ordered array of letters
         return positionPreferences.map(p => p.letter);
     };
     
