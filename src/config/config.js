@@ -23,6 +23,7 @@ import { pauseConfig } from "./pauseConfig"
 import { layoutsConfig } from "./layoutsConfig"
 import { trackerTestConfig } from "./trackerTestConfig"
 import { first_pageConfig } from "./first_pageConfig";
+import { Alphabet_V2Config } from "./AlphabetV2";
 export const config = {
   views: {
       "first_page": first_pageConfig,
@@ -49,5 +50,6 @@ export const config = {
       "pause" : pauseConfig,
       "layouts": layoutsConfig,
       "tracker_test" : trackerTestConfig,
+      "Alphabet_V2": Alphabet_V2Config,
     }
 };

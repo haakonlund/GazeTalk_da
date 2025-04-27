@@ -11,13 +11,12 @@ import LayoutPicker from "./layouts/LayoutPicker";
 import AlarmPopup from "./components/AlarmPopup";
 import FormPopup from "./components/formPopup";
 import UnlockAudioPopup from "./components/UnluckAudioPopup";
-//import PausePopup from "./components/PausePopup";
+import PausePopup from "./components/PausePopup";
 import { config } from "./config/config";
 import { speakText } from './singleton/textToSpeachSingleton'
 import { updateSetting, updateRanking } from "./util/settingUtil";
 import * as RankingSystem from "./util/ranking"
 import { handleAction } from "./util/handleAction";
-import {rank, updateRank, stripSpace, getRank} from "./util/ranking"
 import * as UserDataConst from "./constants/userDataConstants"
 import * as CmdConst from "./constants/cmdConstants"
 import { layoutToButtonNum } from "./constants/layoutConstants";
@@ -29,7 +28,7 @@ import * as DataSavingSingleton from "./singleton/dataSavingSingleton.js";
 
 let dwellTime = 1500;
 
-function App({ initialView = CmdConst.FIRST_PAGE, initialLayout = "2+2+4x2", initialText="", unitTesting=process.env.NODE_ENV === "test" }) {
+function App({ initialView = CmdConst.FIRST_PAGE, initialLayout = "2+3+5x3", initialText="", unitTesting=process.env.NODE_ENV === "test" }) {
   const [currentViewName, setCurrentViewName] = useState(initialView);
   const [currentLayoutName, setCurrentLayoutName] = useState(initialLayout);
   const [textValue, updateTextValue] = useState(initialText);
@@ -42,6 +41,7 @@ function App({ initialView = CmdConst.FIRST_PAGE, initialLayout = "2+2+4x2", ini
   const [nextLetters, setNextLetters] = useState([[],[],[],[],[],[],[]])
   const defaultLetterSuggestions  = useState(["e","t","a","space","o","i"])
   const [nextLetterSuggestion,setNextLetterSuggestion]  = useState(null)
+  const [alphabetPage, setAlphabetPage] = useState(0);
   
   const textAreaRef = useRef(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -114,17 +114,22 @@ function setupRemoteLogging() {
       return
     }
     if (deviceID === "ipad") {
-      changeButtonNum(14);
+      changeButtonNum(layoutToButtonNum["2+3+5x3"]);
       setCurrentLayoutName("2+3+5x3");
       setupRemoteLogging();
       console.log("Remote logging enabled for device:", deviceID);
     } else if (deviceID === "iphone") {
-      changeButtonNum(13);
+      changeButtonNum(layoutToButtonNum["4+4x4"]);
       setCurrentLayoutName("4+4x4");
       setupRemoteLogging();
       console.log("Remote logging enabled for device:", deviceID);
     } else {
-      changeButtonNum(6);
+      if (layoutToButtonNum[initialLayout] === undefined) {
+        console.warn("Layout not found in layoutToButtonNum, using 6 as default.");
+        changeButtonNum(6);
+      } else {
+      changeButtonNum(layoutToButtonNum[initialLayout]);
+      }
       setCurrentLayoutName(initialLayout);
       console.log("Remote logging enabled for device:", deviceID);
     }
@@ -390,7 +395,8 @@ function setupRemoteLogging() {
       setNextLayout,
       setTestSuiteActive,
       enterForm, 
-      setEnterForm
+      setEnterForm,
+      setAlphabetPage,
     });
   };
 
@@ -415,6 +421,7 @@ function setupRemoteLogging() {
         nextView={nextView}
         nextLayout={nextLayout}
         testSuiteActive={testSuiteActive}
+        alphabetPage={alphabetPage}
         />
       }
       {alarmActive && <AlarmPopup onClose={() => setAlarmActive(false)} dwellTime={dwellTime} />}
@@ -425,7 +432,7 @@ function setupRemoteLogging() {
       }} dwellTime={dwellTime} />}
         {
           // Uncomment to show debug button
-          //<PausePopup isPaused={isPaused} /> 
+          <PausePopup isPaused={isPaused} onActivate={handleActionWrapper} dwellTime={dwellTime} /> 
         }
         {
           //<button onClick={() => setIsPaused((prev) => !prev)}>Toggle Pause</button> 

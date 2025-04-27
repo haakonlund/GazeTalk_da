@@ -1,6 +1,6 @@
 
-const serverIP = window.location.hostname
-// const serverIP = "139.162.147.37"
+// const serverIP = window.location.hostname
+const serverIP = "139.162.147.37"
 
 export let testActive = {isActive : false}
 export const data = (
