@@ -9,6 +9,7 @@ import { globalCursorPosition, cursorEventTarget, updateGlobalCursorPosition } f
 
 import LayoutPicker from "./layouts/LayoutPicker";
 import AlarmPopup from "./components/AlarmPopup";
+import FormPopup from "./components/formPopup";
 import UnlockAudioPopup from "./components/UnluckAudioPopup";
 import PausePopup from "./components/PausePopup";
 import { config } from "./config/config";
@@ -23,6 +24,8 @@ import { useTesting } from "./components/UserBehaviourTest";
 import { getLastSentence } from "./util/textUtils";
 import * as TestConst from "./constants/testConstants/testConstants";
 import { getDeviceType } from "./util/deviceUtils";
+import * as DataSavingSingleton from "./singleton/dataSavingSingleton.js";
+
 let dwellTime = 1500;
 
 function App({ initialView = CmdConst.FIRST_PAGE, initialLayout = "2+3+5x3", initialText="", unitTesting=process.env.NODE_ENV === "test" }) {
@@ -32,6 +35,7 @@ function App({ initialView = CmdConst.FIRST_PAGE, initialLayout = "2+3+5x3", ini
   const [isCapsOn, setIsCapsOn] = useState(false);
   const [alarmActive, setAlarmActive] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
+  const [enterForm, setEnterForm] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
   const [letterSuggestions, setLetterSuggestions] = useState([])
   const [nextLetters, setNextLetters] = useState([[],[],[],[],[],[],[]])
@@ -47,7 +51,7 @@ function App({ initialView = CmdConst.FIRST_PAGE, initialLayout = "2+3+5x3", ini
   const [buttonFontSize, setButtonFontSize] = useState(30)
   const [textFontSize, setTextFontSize] = useState(20)
   const [buttonNum, setButtonNum] = useState(6)
-  const [nextView, setNextView] = useState("first_menu")
+  const [nextView, setNextView] = useState(CmdConst.FIRST_PAGE)
   const [nextLayout, setNextLayout] = useState("2+2+4x2")
   // const [testSuiteActive,setTestSuiteActive] = useState(false)
 
@@ -170,7 +174,9 @@ function setupRemoteLogging() {
           if (testSuiteActive){
               handleActionWrapper({type: "start_tracker_test"})
               setTestSuiteActive(false)
-          }
+              
+            }
+          // DataSavingSingleton.save()
           
           // setAudioUnlocked(false); // why is this here
         } else { //Next tests
@@ -388,6 +394,8 @@ function setupRemoteLogging() {
       setNextView,
       setNextLayout,
       setTestSuiteActive,
+      enterForm, 
+      setEnterForm,
       setAlphabetPage,
     });
   };
@@ -395,7 +403,7 @@ function setupRemoteLogging() {
   return (
     <div className="App">
       {!unitTesting && !audioUnlocked && <UnlockAudioPopup onUnlock={unlockAudio} />}
-      {(unitTesting || audioUnlocked) && !alarmActive && <LayoutPicker
+      {(unitTesting || audioUnlocked) && !alarmActive && !enterForm && <LayoutPicker
         layout={currentLayoutName}
         view={view}
         textValue={textValue}
@@ -417,6 +425,11 @@ function setupRemoteLogging() {
         />
       }
       {alarmActive && <AlarmPopup onClose={() => setAlarmActive(false)} dwellTime={dwellTime} />}
+      {enterForm && <FormPopup onClose={() =>{ 
+        setEnterForm(false);
+        handleActionWrapper({type: "start_test_suite"})
+        
+      }} dwellTime={dwellTime} />}
         {
           // Uncomment to show debug button
           <PausePopup isPaused={isPaused} onActivate={handleActionWrapper} dwellTime={dwellTime} /> 

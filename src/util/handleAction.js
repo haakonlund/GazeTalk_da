@@ -29,7 +29,7 @@ import {
 
 
 import { layoutToButtonNum } from "../constants/layoutConstants";
-
+import * as DataSavingSingleton from "../singleton/dataSavingSingleton";
 
 
 export const handleAction = (
@@ -81,7 +81,9 @@ export const handleAction = (
     nextView,
     setNextView,
     setNextLayout,
-    setTestSuiteActive
+    setTestSuiteActive,
+    enterForm, 
+    setEnterForm
   }
 ) => {
     const startWrittingTest = () => {
@@ -172,9 +174,16 @@ export const handleAction = (
         break;
     }
     case CmdConst.START_TEST_SUITE:{
-        setNextLayout(currentLayoutName)
-        setCurrentLayoutName("tracker")
-        setTestSuiteActive(true)
+        setNextLayout(currentLayoutName);
+        setCurrentLayoutName("tracker");
+        DataSavingSingleton.testActive.isActive = true;
+        setTestSuiteActive(true);
+        break;
+    }
+    case CmdConst.END_TEST_SUITE: {
+        DataSavingSingleton.saveRemotely()
+        DataSavingSingleton.testActive.isActive = false;
+        
         break;
     }
     case CmdConst.START_WRITING_TEST: {
@@ -184,7 +193,13 @@ export const handleAction = (
     }
     case CmdConst.START_TRACKER_TEST: {
         startTrackerTest()
+        break;
     }
+    case CmdConst.ENTER_FORM: {
+        setEnterForm(true)
+        break;
+    }
+
     case CmdConst.DELETE_LETTER: {
         // delete the letter at the global cursor position
         const newText = textValue.slice(0, globalCursorPosition.value - 1) + textValue.slice(globalCursorPosition.value);
@@ -457,7 +472,7 @@ export const handleAction = (
     default:
       console.warn("Unhandled action:", action);
   }
-  input.focus();
+  input ? input.focus() : null;
 };
 
 
