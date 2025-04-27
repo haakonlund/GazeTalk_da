@@ -80,7 +80,7 @@ const KeyboardGridV2 = (props) => {
               tile:{
                 label: suggestions[row - 1],
                 is_dynamic:true,
-                action:{type:"insert_suggestion",value:suggestions[row]},
+                action:{type:"insert_suggestion",value:suggestions[row - 1]},
                 customStyle: { color: "#0f0" }
               },
             };
