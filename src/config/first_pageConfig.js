@@ -12,6 +12,11 @@ export const first_pageConfig = {
           action: { type: "enter_form", value: "enter_form" }
         },
         {
+          type: "Download Data",
+          label: "Download Data",
+          action: { type: "download_data" }
+        },
+        {
             type : "switch",
             label : "menu",
             action : { type : "switch_view", view : "main_menu" }

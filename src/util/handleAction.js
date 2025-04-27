@@ -180,6 +180,10 @@ export const handleAction = (
         setTestSuiteActive(true);
         break;
     }
+    case CmdConst.DOWNLOAD_DATA : {
+        DataSavingSingleton.downloadFromBrowser()
+        break;
+    }
     case CmdConst.END_TEST_SUITE: {
         DataSavingSingleton.saveRemotely()
         DataSavingSingleton.testActive.isActive = false;

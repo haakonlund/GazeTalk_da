@@ -27,6 +27,8 @@ export const saveRemotely = async () => {
 
     data.timestamp = new Date().toISOString()
     
+    // save to browser just in case the server is not reachable
+    saveToBrowser();
     // Send data to server
 
     console.log("Current IP:", serverIP);
@@ -65,6 +67,76 @@ export const saveLocally = () => {
     jsonLink.click();
     URL.revokeObjectURL(jsonUrl);
 }
+
+export const downloadFromBrowser = () => {
+    try {
+        // Get data from localStorage
+        const storedData = localStorage.getItem('testSuiteData');
+        
+        if (!storedData) {
+            console.error('No data found in browser storage');
+            alert('No saved data found in browser storage');
+            return;
+        }
+        
+        // Parse the stored data
+        const parsedData = JSON.parse(storedData);
+        
+        // Create a downloadable JSON file
+        const jsonData = JSON.stringify(parsedData, null, 2);
+        const jsonBlob = new Blob([jsonData], { type: 'application/json' });
+        const jsonUrl = URL.createObjectURL(jsonBlob);
+        
+        // Create and trigger download link
+        const downloadLink = document.createElement('a');
+        downloadLink.href = jsonUrl;
+        
+        // Create filename with participant name and date if available
+        const name = parsedData.form_data?.name || "unknown";
+        const date = new Date().toISOString().slice(0, 10);
+        downloadLink.download = `${name}_${date}_browser_data.json`;
+        
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+        
+        URL.revokeObjectURL(jsonUrl);
+        console.log('Successfully downloaded data from browser storage');
+    } catch (error) {
+        console.error('Error downloading data from browser storage:', error);
+        alert('Failed to download data from browser storage');
+    }
+}
+
+export const saveToBrowser = () => {
+    const [isWellformed, msg] = wellformed();
+    if (!isWellformed) {
+        console.error(msg);
+        return false;
+    }
+    
+    try {
+        // Add timestamp before saving
+        const dataToSave = { ...data };
+        dataToSave.timestamp = new Date().toISOString();
+        
+        // Save to localStorage
+        localStorage.setItem('testSuiteData', JSON.stringify(dataToSave));
+        
+        console.log('Data successfully saved to browser storage');
+        return true;
+    } catch (error) {
+        if (error instanceof DOMException && error.name === 'QuotaExceededError') {
+            console.error('Storage quota exceeded. Cannot save data to browser.');
+            alert('Browser storage is full. Please download your data first or clear some space.');
+        } else {
+            console.error('Error saving to browser storage:', error);
+            alert('Failed to save data to browser storage');
+        }
+        return false;
+    }
+}
+
 function isObjectEmpty(obj) {
     return Object.keys(obj).length === 0;
 }
