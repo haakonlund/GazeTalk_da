@@ -242,8 +242,8 @@ export const UserBehaviourTestProvidor = ({ children }) => {
   };
 
    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [mouseArray, setMouseArray] = useState([]);
-  useEffect(() => {
+   const [mouseArray, setMouseArray] = useState([]);
+   useEffect(() => {
       const handleMouseMove = (event) => {
           setMousePosition({ x: event.clientX, y: event.clientY });
           setMouseArray(prevArray => [...prevArray, { x: event.clientX, y: event.clientY }]);
