@@ -1,6 +1,6 @@
 
 // const serverIP = window.location.hostname
-const serverIP = "139.162.147.37"
+const serverIP = "172.104.225.14"
 
 export let testActive = {isActive : false}
 export const data = (
@@ -43,7 +43,8 @@ export const saveRemotely = async () => {
     .then(
         )
     .then(data => {
-        console.log('Successfully saved data:', data);
+        alert('Successfully saved data, however we advise to download it locally as well if something where to go wrong.');
+        saveLocally();
     })
     .catch((error) => {
         console.log('Error data:' + error+" ip " + serverIP + " response: " + error.response + " data: " + JSON.stringify(data) + " filename: " + filename);
