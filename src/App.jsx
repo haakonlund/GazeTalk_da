@@ -247,10 +247,8 @@ function setupRemoteLogging() {
   }, [buttonFontSize]);
   
   React.useEffect(() => {
-    console.log("fetching sugg");
     let textUpToCursor;
     textUpToCursor = textValue.slice(0, globalCursorPosition.value);
-    console.log("TEXT ", textUpToCursor);
     if (isTesting) {
       textUpToCursor = textUpToCursor.replace(targetSentence, "");
     }
@@ -262,7 +260,6 @@ function setupRemoteLogging() {
           locale: "en_US",
           prompt: textUpToCursor,
         });
-        console.log(suggestions, " SUGGESTIONS");
         setSuggestions(response.data.continuations.slice(0, 16) || []);
       } catch (error) {
         console.error("Error fetching suggestions:", error);
