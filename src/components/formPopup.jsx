@@ -1,23 +1,30 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Tile from "./Tile";
 import * as DataSavingSingleton from "../singleton/dataSavingSingleton";
-const FormPopup = ({ onClose, dwellTime }) => {
 
-  
+const FormPopup = ({ onClose, dwellTime }) => {
+  const [selectedDeviceMethod, setSelectedDeviceMethod] = useState(""); // new state
+
   useEffect(() => {
     // Effect logic here
   }, []);
-  const submit= () => {
+
+  const submit = () => {
     const data = {
       name: document.querySelector('.nameInput').value,
       device: document.querySelector('.deviceInput').value,
       screensize: document.querySelector('.screensizeInput').value,
       screen_resolution: window.screen.width + "x" + window.screen.height,
-      
+      interaction_method: selectedDeviceMethod, // save selected method
     }
-    DataSavingSingleton.data.form_data = data
-    onClose()
-  }
+    DataSavingSingleton.data.form_data = data;
+    onClose();
+  };
+
+  const handleCheckboxChange = (method) => {
+    setSelectedDeviceMethod(method);
+  };
+
   return (
     <div className="form-overlay">
       <div className="form-popup-content">
@@ -27,21 +34,52 @@ const FormPopup = ({ onClose, dwellTime }) => {
           <input className="nameInput" type="text" placeholder="Name" />
         </div>
         <div>
-          <p>Please write what device you are using </p>
+          <p>Please write what device you are using</p>
           <input className="deviceInput" type="text" placeholder="iPad gen 10" />
-          {/* <p>if you are using a computer please enter the screen resolution and the sceensize in inches </p>
-          <input type="text" placeholder="1920x1080" /> */}
-          Please enter the sceensize in inches 
+          Please enter the screen size in inches
           <input className="screensizeInput" type="text" placeholder="27" />
         </div>
         <div>
-          <p>
-              
-          </p>
+          <p>Select your interaction method:</p>
+          <label>
+            <input
+              type="checkbox"
+              checked={selectedDeviceMethod === "eye-tracking"}
+              onChange={() => handleCheckboxChange("eye-tracking")}
+            />
+            Eye Tracking
+          </label>
+          <br />
+          <label>
+            <input
+              type="checkbox"
+              checked={selectedDeviceMethod === "head-tracking"}
+              onChange={() => handleCheckboxChange("head-tracking")}
+            />
+            Head Tracking
+          </label>
+          <br />
+          <label>
+            <input
+              type="checkbox"
+              checked={selectedDeviceMethod === "touch"}
+              onChange={() => handleCheckboxChange("touch")}
+            />
+            Touch
+          </label>
+          <br />
+          <label>
+            <input
+              type="checkbox"
+              checked={selectedDeviceMethod === "mouse"}
+              onChange={() => handleCheckboxChange("mouse")}
+            />
+            Mouse
+          </label>
         </div>
-        <button onClick={submit}>start test</button>
+        <button onClick={submit}>Start Test</button>
       </div>
-      
+
       <style jsx>{`
         .form-overlay {
           position: fixed;
@@ -71,7 +109,7 @@ const FormPopup = ({ onClose, dwellTime }) => {
           margin-bottom: 1rem;
         }
         
-        .form-popup-content input {
+        .form-popup-content input[type="text"] {
           width: 100%;
           padding: 0.5rem;
           margin-bottom: 1rem;
@@ -79,6 +117,10 @@ const FormPopup = ({ onClose, dwellTime }) => {
           border: 1px solid #555;
           background-color: #444;
           color: white;
+        }
+
+        .form-popup-content input[type="checkbox"] {
+          margin-right: 0.5rem;
         }
         
         .form-popup-content button {

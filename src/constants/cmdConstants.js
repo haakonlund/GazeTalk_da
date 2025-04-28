@@ -6,6 +6,7 @@ export const START_WRITING_TEST = "start_writing_test";
 export const START_TRACKER_TEST = "start_tracker_test";
 export const END_TEST_SUITE = "end_test_suite";
 export const ENTER_FORM = "enter_form";
+export const DOWNLOAD_DATA = "download_data";
 export const DELETE_LETTER = "delete_letter";
 export const DELETE_LETTER_EDIT = "delete_letter_edit";
 export const TOGGLE_CASE = "toggle_case";
