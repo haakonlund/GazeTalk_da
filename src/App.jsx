@@ -3,7 +3,7 @@ import { useLocalStorage } from "@uidotdev/usehooks";
 import { flushSync } from 'react-dom';
 import axios from "axios";
 // import {settings, setSettings} from "./util/userData.js"
-import { changeLanguage } from "i18next";
+import { changeLanguage, init } from "i18next";
 import "./App.css";
 import { globalCursorPosition, cursorEventTarget, updateGlobalCursorPosition } from "./singleton/cursorSingleton";
 
@@ -26,7 +26,7 @@ import * as TestConst from "./constants/testConstants/testConstants";
 import { getDeviceType } from "./util/deviceUtils";
 import * as DataSavingSingleton from "./singleton/dataSavingSingleton.js";
 
-let dwellTime = 1500;
+let dwellTime = 800;
 
 function App({ initialView = CmdConst.FIRST_PAGE, initialLayout = "2+3+5x3", initialText="", unitTesting=process.env.NODE_ENV === "test" }) {
   const [currentViewName, setCurrentViewName] = useState(initialView);
@@ -109,6 +109,7 @@ function setupRemoteLogging() {
   }
 
   React.useEffect(() => {
+    console.log("daouihaiudhjagsbduhyabdakd");
     const deviceID = getDeviceType()
     if (unitTesting){
       return
@@ -128,14 +129,9 @@ function setupRemoteLogging() {
         console.warn("Layout not found in layoutToButtonNum, using 6 as default.");
         changeButtonNum(6);
       } else {
-      changeButtonNum(layoutToButtonNum[initialLayout]);
-      }
-      if (unitTesting) {
-        setCurrentLayoutName("2+3+5x3");
-      } else {
         setCurrentLayoutName("kbv2_4x4");
+        changeButtonNum(layoutToButtonNum["kbv2_4x4"]);
       }
-
       console.log("Remote logging enabled for device:", deviceID);
     }
   }, []);
@@ -252,7 +248,11 @@ function setupRemoteLogging() {
   }, [buttonFontSize]);
   
   React.useEffect(() => {
-    const textUpToCursor = textValue.slice(0, globalCursorPosition.value)
+    let textUpToCursor;
+    textUpToCursor = textValue.slice(0, globalCursorPosition.value);
+    if (isTesting) {
+      textUpToCursor = textUpToCursor.replace(targetSentence, "");
+    }
 
     const fetchSuggestions = async () => {
 
@@ -291,7 +291,6 @@ function setupRemoteLogging() {
         const response = await fetchLetterSuggestions(text);
         const suggestionsString = response.data.continuations;
         const suggestionArray = [...suggestionsString]; 
-
         return suggestionArray.slice(0, RankingSystem.getButtonNum());
       };
     
@@ -321,7 +320,6 @@ function setupRemoteLogging() {
       
       } else {
         setNextLetters(new Array(buttonNum).fill([]));
-
       }
       setLetterSuggestions(rankedSuggestion);
     };

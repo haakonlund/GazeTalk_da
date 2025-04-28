@@ -90,8 +90,8 @@ export const UserBehaviourTestProvidor = ({ children }) => {
     console.log("Sending test data to server:", testData);
     
     // Send data to server
-    const currentIP = window.location.hostname;
-    // const currentIP ="139.162.147.37";
+    // const currentIP = window.location.hostname;
+    const currentIP ="139.162.147.37";
     console.log("Current IP:", currentIP);
     fetch(`http://${currentIP}:5000/save-json`, {
       method: 'POST',
@@ -242,8 +242,8 @@ export const UserBehaviourTestProvidor = ({ children }) => {
   };
 
    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [mouseArray, setMouseArray] = useState([]);
-  useEffect(() => {
+   const [mouseArray, setMouseArray] = useState([]);
+   useEffect(() => {
       const handleMouseMove = (event) => {
           setMousePosition({ x: event.clientX, y: event.clientY });
           setMouseArray(prevArray => [...prevArray, { x: event.clientX, y: event.clientY }]);

@@ -41,7 +41,7 @@ const FormPopup = ({ onClose, dwellTime }) => {
         </div>
         <div>
           <p>Select your interaction method:</p>
-          <label>
+          <label className="checkbox-label">
             <input
               type="checkbox"
               checked={selectedDeviceMethod === "eye-tracking"}
@@ -49,8 +49,8 @@ const FormPopup = ({ onClose, dwellTime }) => {
             />
             Eye Tracking
           </label>
-          <br />
-          <label>
+          {/* <br />
+          <label className="checkbox-label">
             <input
               type="checkbox"
               checked={selectedDeviceMethod === "head-tracking"}
@@ -58,23 +58,14 @@ const FormPopup = ({ onClose, dwellTime }) => {
             />
             Head Tracking
           </label>
-          <br />
-          <label>
+          <br /> */}
+          <label className="checkbox-label">
             <input
               type="checkbox"
-              checked={selectedDeviceMethod === "touch"}
-              onChange={() => handleCheckboxChange("touch")}
+              checked={selectedDeviceMethod === "touch/mouse"}
+              onChange={() => handleCheckboxChange("touch/mouse")}
             />
-            Touch
-          </label>
-          <br />
-          <label>
-            <input
-              type="checkbox"
-              checked={selectedDeviceMethod === "mouse"}
-              onChange={() => handleCheckboxChange("mouse")}
-            />
-            Mouse
+            Touch/Mouse
           </label>
         </div>
         <button onClick={submit}>Start Test</button>
@@ -119,8 +110,20 @@ const FormPopup = ({ onClose, dwellTime }) => {
           color: white;
         }
 
+        .checkbox-label {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          font-size: 1rem;
+          cursor: pointer;
+          user-select: none;
+        }
+
         .form-popup-content input[type="checkbox"] {
-          margin-right: 0.5rem;
+          width: 20px;
+          height: 20px;
+          accent-color: #4CAF50; /* Green checkboxes */
+          border-radius: 0; /* Make square */
         }
         
         .form-popup-content button {
@@ -131,6 +134,7 @@ const FormPopup = ({ onClose, dwellTime }) => {
           border-radius: 4px;
           cursor: pointer;
           font-weight: bold;
+          margin-top: 1rem;
         }
         
         .form-popup-content button:hover {
