@@ -3,7 +3,7 @@ import { useLocalStorage } from "@uidotdev/usehooks";
 import { flushSync } from 'react-dom';
 import axios from "axios";
 // import {settings, setSettings} from "./util/userData.js"
-import { changeLanguage } from "i18next";
+import { changeLanguage, init } from "i18next";
 import "./App.css";
 import { globalCursorPosition, cursorEventTarget, updateGlobalCursorPosition } from "./singleton/cursorSingleton";
 
@@ -109,6 +109,7 @@ function setupRemoteLogging() {
   }
 
   React.useEffect(() => {
+    console.log("daouihaiudhjagsbduhyabdakd");
     const deviceID = getDeviceType()
     if (unitTesting){
       return
@@ -128,14 +129,9 @@ function setupRemoteLogging() {
         console.warn("Layout not found in layoutToButtonNum, using 6 as default.");
         changeButtonNum(6);
       } else {
-      changeButtonNum(layoutToButtonNum[initialLayout]);
-      }
-      if (unitTesting) {
-        setCurrentLayoutName("2+3+5x3");
-      } else {
         setCurrentLayoutName("kbv2_4x4");
+        changeButtonNum(layoutToButtonNum["kbv2_4x4"]);
       }
-
       console.log("Remote logging enabled for device:", deviceID);
     }
   }, []);
@@ -295,7 +291,6 @@ function setupRemoteLogging() {
         const response = await fetchLetterSuggestions(text);
         const suggestionsString = response.data.continuations;
         const suggestionArray = [...suggestionsString]; 
-
         return suggestionArray.slice(0, RankingSystem.getButtonNum());
       };
     
@@ -325,7 +320,6 @@ function setupRemoteLogging() {
       
       } else {
         setNextLetters(new Array(buttonNum).fill([]));
-
       }
       setLetterSuggestions(rankedSuggestion);
     };
