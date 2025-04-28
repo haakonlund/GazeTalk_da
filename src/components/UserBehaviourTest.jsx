@@ -5,6 +5,7 @@ import * as CmdConst from "../constants/cmdConstants";
 import * as TestConst from "../constants/testConstants/testConstants";
 import levenshtein from 'js-levenshtein';
 import { getDeviceType } from '../util/deviceUtils';
+import * as DataSavingSingleton from "../singleton/dataSavingSingleton";
 const UserBehaviourTest = createContext();
 const numberOfTests = TestConst.NUMBER_OF_TESTS
 
@@ -76,9 +77,7 @@ export const UserBehaviourTestProvidor = ({ children }) => {
       setCounterStarted(false);
     }
   };
-
-  const completeTests = () => {
-    setIsTesting(false);
+  const saveOnServerOrDownloadLocally = () => {
     const testData = {
       testResults: completeTestLogs.current,
       timestamp: new Date().toISOString(),
@@ -128,11 +127,29 @@ export const UserBehaviourTestProvidor = ({ children }) => {
       //var time = String(today.getHours()).padStart(2, '0') + "-" + String(today.getMinutes()).padStart(2, '0') + "-" + String(today.getSeconds()).padStart(2, '0');
       //const filename = `test_run_${dd}-${mm}_${time}.json`;
       //downloadTestData(dataToDownload, filename);
+      DataSavingSingleton.data.writing_test = completeTestLogs.current;
       completeTestLogs.current = [];
       setCurrentTestIndex(-1);
       setTargetSentence("");
-    });
-  };
+  })
+};
+
+  const completeTests = () => {
+    setIsTesting(false);
+
+    // save locally if you are running the test seperately
+    if (!DataSavingSingleton.testActive.isActive) {
+      saveOnServerOrDownloadLocally();
+    
+    } else {
+      DataSavingSingleton.data.writing_test = completeTestLogs.current;
+      completeTestLogs.current = [];
+      setCurrentTestIndex(-1);
+      setTargetSentence("");
+
+    }
+   
+    };
   const cancelTest = () => {
     setIsTesting(false);
     setCurrentTestIndex(-1);
@@ -225,8 +242,8 @@ export const UserBehaviourTestProvidor = ({ children }) => {
   };
 
    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [mouseArray, setMouseArray] = useState([]);
-  useEffect(() => {
+   const [mouseArray, setMouseArray] = useState([]);
+   useEffect(() => {
       const handleMouseMove = (event) => {
           setMousePosition({ x: event.clientX, y: event.clientY });
           setMouseArray(prevArray => [...prevArray, { x: event.clientX, y: event.clientY }]);

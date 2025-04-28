@@ -7,4 +7,6 @@ export const layoutToButtonNum = {
     "4+4x4" : 13,
     "2+4+6x4": 24,
     "2+4+6x5": 30,
+    "kbv2_4x4" : 16,
+    "kbv2_4x3" : 12,
 }

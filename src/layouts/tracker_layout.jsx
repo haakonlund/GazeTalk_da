@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useRef } from "react";
 import "./TrackerLayout.css";
-import KeyboardGrid from "../components/KeyboardGrid";
+import KeyboardGridV1 from "../components/KeyboardGridV1.jsx";
 import * as DA from "../util/dataAnalysis.js"
 import { useLocalStorage } from "@uidotdev/usehooks";
 import { getDeviceType } from "../util/deviceUtils.js";
 import { calculateAccuracy, calculatePrecision } from "../util/dataAnalysis.js";
 import * as CmdConst from "../constants/cmdConstants.js";
+import * as DataSavingSingleton from "../singleton/dataSavingSingleton";
 const TrackerLayout = (props) => {
     const logInterval = 5;
     const transitionTime = 2000;
@@ -245,7 +246,10 @@ const TrackerLayout = (props) => {
         )
 
         setPrevoiusLargest(0) // Reset the largest index for the next test
-        saveTrackingData()
+        // only save data if the test SUITE is not active
+        if (!DataSavingSingleton.testActive.isActive) {
+            saveTrackingData()
+        }
     
     };
     function saveTrackingData() {
@@ -301,6 +305,11 @@ const TrackerLayout = (props) => {
     const switchToMainMenu = () => {
         // Call handleAction here
         if (handleAction) { 
+            if (DataSavingSingleton.testActive.isActive) {
+                DataSavingSingleton.data.second_calibration = trackingData
+                handleAction({type: CmdConst.END_TEST_SUITE})
+
+            }
             const action ={ type: "switch_layout", value: props.nextLayout };
             
             handleAction(action);
@@ -319,6 +328,7 @@ const TrackerLayout = (props) => {
             handleAction({ type: "switch_layout", value: props.nextLayout });
             // const action2 = { type: "switch_view", view: nextView };
             // handleAction(action2);
+            DataSavingSingleton.data.first_calibration = trackingData
             handleAction({type: CmdConst.START_WRITING_TEST})
         }
         

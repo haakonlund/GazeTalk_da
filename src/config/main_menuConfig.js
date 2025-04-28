@@ -1,10 +1,10 @@
 export const main_menuConfig = {
     name: "main_menu",
     tiles: [
-        // Row 1 (4 tiles): first two tiles combined into a textarea
         {
-          type: "textarea",
-          colspan: 2 // This tile spans 2 columns
+          type: "switch",
+          label: "Start Tests",
+          action:  { type: "enter_form", value: "enter_form" }
         },
         {
           type: "switch",
@@ -30,7 +30,7 @@ export const main_menuConfig = {
         {
           type: "switch",
           label: "Pause",
-          action :{type :"switch_view", view : "pause" }
+          action :{type :"toggle_pause" }
         },
         {
           type: "switch",
@@ -42,10 +42,6 @@ export const main_menuConfig = {
           label: "Test Mesurment",
           action :{type :"switch_layout", value : "mesurement" }
         },
-        {
-          type: "switch",
-          label: "Start Test sutie",
-          action: { type: "start_test_suite", value: "test_suite" }
-        }
+        
       ]
   };

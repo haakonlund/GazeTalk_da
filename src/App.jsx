@@ -3,20 +3,20 @@ import { useLocalStorage } from "@uidotdev/usehooks";
 import { flushSync } from 'react-dom';
 import axios from "axios";
 // import {settings, setSettings} from "./util/userData.js"
-import { changeLanguage } from "i18next";
+import { changeLanguage, init } from "i18next";
 import "./App.css";
 import { globalCursorPosition, cursorEventTarget, updateGlobalCursorPosition } from "./singleton/cursorSingleton";
 
 import LayoutPicker from "./layouts/LayoutPicker";
 import AlarmPopup from "./components/AlarmPopup";
+import FormPopup from "./components/formPopup";
 import UnlockAudioPopup from "./components/UnluckAudioPopup";
-//import PausePopup from "./components/PausePopup";
+import PausePopup from "./components/PausePopup";
 import { config } from "./config/config";
 import { speakText } from './singleton/textToSpeachSingleton'
 import { updateSetting, updateRanking } from "./util/settingUtil";
 import * as RankingSystem from "./util/ranking"
 import { handleAction } from "./util/handleAction";
-import {rank, updateRank, stripSpace, getRank} from "./util/ranking"
 import * as UserDataConst from "./constants/userDataConstants"
 import * as CmdConst from "./constants/cmdConstants"
 import { layoutToButtonNum } from "./constants/layoutConstants";
@@ -24,20 +24,24 @@ import { useTesting } from "./components/UserBehaviourTest";
 import { getLastSentence } from "./util/textUtils";
 import * as TestConst from "./constants/testConstants/testConstants";
 import { getDeviceType } from "./util/deviceUtils";
+import * as DataSavingSingleton from "./singleton/dataSavingSingleton.js";
+
 let dwellTime = 800;
 
-function App({ initialView = CmdConst.FIRST_PAGE, initialLayout = "2+2+4x2", initialText="", unitTesting=process.env.NODE_ENV === "test" }) {
+function App({ initialView = CmdConst.FIRST_PAGE, initialLayout = "2+3+5x3", initialText="", unitTesting=process.env.NODE_ENV === "test" }) {
   const [currentViewName, setCurrentViewName] = useState(initialView);
   const [currentLayoutName, setCurrentLayoutName] = useState(initialLayout);
   const [textValue, updateTextValue] = useState(initialText);
   const [isCapsOn, setIsCapsOn] = useState(false);
   const [alarmActive, setAlarmActive] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
+  const [enterForm, setEnterForm] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
   const [letterSuggestions, setLetterSuggestions] = useState([])
   const [nextLetters, setNextLetters] = useState([[],[],[],[],[],[],[]])
   const defaultLetterSuggestions  = useState(["e","t","a","space","o","i"])
   const [nextLetterSuggestion,setNextLetterSuggestion]  = useState(null)
+  const [alphabetPage, setAlphabetPage] = useState(0);
   
   const textAreaRef = useRef(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -47,7 +51,7 @@ function App({ initialView = CmdConst.FIRST_PAGE, initialLayout = "2+2+4x2", ini
   const [buttonFontSize, setButtonFontSize] = useState(30)
   const [textFontSize, setTextFontSize] = useState(20)
   const [buttonNum, setButtonNum] = useState(6)
-  const [nextView, setNextView] = useState("first_menu")
+  const [nextView, setNextView] = useState(CmdConst.FIRST_PAGE)
   const [nextLayout, setNextLayout] = useState("2+2+4x2")
   // const [testSuiteActive,setTestSuiteActive] = useState(false)
 
@@ -105,23 +109,29 @@ function setupRemoteLogging() {
   }
 
   React.useEffect(() => {
+    console.log("daouihaiudhjagsbduhyabdakd");
     const deviceID = getDeviceType()
     if (unitTesting){
       return
     }
     if (deviceID === "ipad") {
-      changeButtonNum(14);
-      setCurrentLayoutName("2+3+5x3");
+      changeButtonNum(layoutToButtonNum["kbv2_4x4"]);
+      setCurrentLayoutName("kbv2_4x4");
       setupRemoteLogging();
       console.log("Remote logging enabled for device:", deviceID);
     } else if (deviceID === "iphone") {
-      changeButtonNum(13);
+      changeButtonNum(layoutToButtonNum["4+4x4"]);
       setCurrentLayoutName("4+4x4");
       setupRemoteLogging();
       console.log("Remote logging enabled for device:", deviceID);
     } else {
-      changeButtonNum(6);
-      setCurrentLayoutName(initialLayout);
+      if (layoutToButtonNum[initialLayout] === undefined) {
+        console.warn("Layout not found in layoutToButtonNum, using 6 as default.");
+        changeButtonNum(6);
+      } else {
+        setCurrentLayoutName("kbv2_4x4");
+        changeButtonNum(layoutToButtonNum["kbv2_4x4"]);
+      }
       console.log("Remote logging enabled for device:", deviceID);
     }
   }, []);
@@ -165,7 +175,9 @@ function setupRemoteLogging() {
           if (testSuiteActive){
               handleActionWrapper({type: "start_tracker_test"})
               setTestSuiteActive(false)
-          }
+              
+            }
+          // DataSavingSingleton.save()
           
           // setAudioUnlocked(false); // why is this here
         } else { //Next tests
@@ -236,7 +248,11 @@ function setupRemoteLogging() {
   }, [buttonFontSize]);
   
   React.useEffect(() => {
-    const textUpToCursor = textValue.slice(0, globalCursorPosition.value)
+    let textUpToCursor;
+    textUpToCursor = textValue.slice(0, globalCursorPosition.value);
+    if (isTesting) {
+      textUpToCursor = textUpToCursor.replace(targetSentence, "");
+    }
 
     const fetchSuggestions = async () => {
 
@@ -275,7 +291,6 @@ function setupRemoteLogging() {
         const response = await fetchLetterSuggestions(text);
         const suggestionsString = response.data.continuations;
         const suggestionArray = [...suggestionsString]; 
-
         return suggestionArray.slice(0, RankingSystem.getButtonNum());
       };
     
@@ -305,7 +320,6 @@ function setupRemoteLogging() {
       
       } else {
         setNextLetters(new Array(buttonNum).fill([]));
-
       }
       setLetterSuggestions(rankedSuggestion);
     };
@@ -382,14 +396,17 @@ function setupRemoteLogging() {
       nextView,
       setNextView,
       setNextLayout,
-      setTestSuiteActive
+      setTestSuiteActive,
+      enterForm, 
+      setEnterForm,
+      setAlphabetPage,
     });
   };
 
   return (
     <div className="App">
       {!unitTesting && !audioUnlocked && <UnlockAudioPopup onUnlock={unlockAudio} />}
-      {(unitTesting || audioUnlocked) && !alarmActive && <LayoutPicker
+      {(unitTesting || audioUnlocked) && !alarmActive && !enterForm && <LayoutPicker
         layout={currentLayoutName}
         view={view}
         textValue={textValue}
@@ -407,12 +424,18 @@ function setupRemoteLogging() {
         nextView={nextView}
         nextLayout={nextLayout}
         testSuiteActive={testSuiteActive}
+        alphabetPage={alphabetPage}
         />
       }
       {alarmActive && <AlarmPopup onClose={() => setAlarmActive(false)} dwellTime={dwellTime} />}
+      {enterForm && <FormPopup onClose={() =>{ 
+        setEnterForm(false);
+        handleActionWrapper({type: "start_test_suite"})
+        
+      }} dwellTime={dwellTime} />}
         {
           // Uncomment to show debug button
-          //<PausePopup isPaused={isPaused} /> 
+          <PausePopup isPaused={isPaused} onActivate={handleActionWrapper} dwellTime={dwellTime} /> 
         }
         {
           //<button onClick={() => setIsPaused((prev) => !prev)}>Toggle Pause</button> 

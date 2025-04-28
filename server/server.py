@@ -45,7 +45,39 @@ def save_json():
         return jsonify({
             "message": f"Error saving JSON data: {str(e)}"
         }), 500
-
+@app.route('/save-test-data', methods=['POST']) 
+def complete_test():
+    pass
+    try:
+        # Get JSON data from request
+        data = request.json
+        
+        # Validate the data
+        if not data:
+            return jsonify({"message": "No data provided"}), 400
+        
+        # get name inside the json data
+        name = data["form_data"]["name"]
+        
+        # Generate a unique filename
+        timestamp = datetime.now().strftime("%d%m%Y_%H%M%S")
+        filename = f"{name}_{timestamp}.json"
+        filepath = os.path.join(STORAGE_DIR, filename)
+        
+        # Save the JSON data to a file
+        with open(filepath, 'w') as file:
+            json.dump(data, file, indent=2)
+        
+        # Return success response
+        return jsonify({
+            "message": "JSON data saved successfully",
+            "filename": filename,
+            "filepath": filepath
+        }), 200
+    except Exception as e:
+        return jsonify({
+            "message": f"Error saving test data: {str(e)}"
+        }), 500
 @app.route('/list-json', methods=['GET'])
 def list_json():
     try:

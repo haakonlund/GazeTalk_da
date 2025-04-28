@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import Tile from "./Tile";
+import * as CmdConst from "../constants/cmdConstants";
 
 const AlarmPopup = ({ onClose, dwellTime}) => {
     const audioRef = useRef(null);
@@ -20,13 +21,12 @@ const AlarmPopup = ({ onClose, dwellTime}) => {
             tile={
               { 
                 label: 'Yes', 
-                action: { type: 'close_alarm' }, 
+                action: { type: CmdConst.CLOSE_ALARM }, 
                 customStyle: { fontSize: '4rem', padding: '50px 100px' } 
               }
             }
             onActivate={() => onClose()}
             dwellTime={dwellTime}
-            
           />
         </div>
       </div>

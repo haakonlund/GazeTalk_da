@@ -8,8 +8,13 @@ export const first_pageConfig = {
         },
         {
           type: "switch",
-          label: "Start Test sutie",
-          action: { type: "start_test_suite", value: "test_suite" }
+          label: "Start Tests",
+          action: { type: "enter_form", value: "enter_form" }
+        },
+        {
+          type: "Download Data",
+          label: "Download Data",
+          action: { type: "download_data" }
         },
         {
             type : "switch",

@@ -147,7 +147,7 @@ html, body {
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding-top: 18%;
+  padding-top: 9%;
   z-index: 1000; 
 }
 
@@ -157,7 +157,7 @@ html, body {
   padding: 20px;
   border-radius: 8px;
   text-align: center;
-  font-size: 30px;
+  font-size: 25px;
 }
 
 .tile-icon {

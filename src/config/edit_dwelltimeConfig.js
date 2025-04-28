@@ -12,7 +12,7 @@ export const edit_dwelltimeConfig = {
       },
       {
         type: "switch",
-        label: "back",
+        label: "Back",
         action: { type: "switch_view", view: "main_menu" }
       },
       {

@@ -12,7 +12,7 @@ export const special_chars1Config = {
         },
         {
           type: "switch",
-          label: "back",
+          label: "Back",
           action: { type: "switch_view", view: "YZÆØÅ,?.._menu" }
         },
         {

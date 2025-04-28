@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
 import "./TrackerLayout.css";
-import KeyboardGrid from "../components/KeyboardGrid";
 import * as DA from "../util/dataAnalysis.js"
 import { useLocalStorage } from "@uidotdev/usehooks";
 import { getDeviceType } from "../util/deviceUtils.js";
