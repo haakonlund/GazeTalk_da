@@ -56,7 +56,7 @@ const KeyboardGridV1 = (props) => {
               tile:{
                 ...tile,
                 label: preview,
-                customStyle:{ whiteSpace:"pre-line", color:"#0f0" },
+                customStyle:{ whiteSpace:"pre-line", color:"#0f0", lineHeight: "1" },
                 action:{ type:"show_suggestions" }
               }
             };

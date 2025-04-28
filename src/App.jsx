@@ -252,7 +252,11 @@ function setupRemoteLogging() {
   }, [buttonFontSize]);
   
   React.useEffect(() => {
-    const textUpToCursor = textValue.slice(0, globalCursorPosition.value)
+    let textUpToCursor;
+    textUpToCursor = textValue.slice(0, globalCursorPosition.value);
+    if (isTesting) {
+      textUpToCursor = textUpToCursor.replace(targetSentence, "");
+    }
 
     const fetchSuggestions = async () => {
 
