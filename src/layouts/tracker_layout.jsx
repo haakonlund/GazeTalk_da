@@ -270,8 +270,8 @@ const TrackerLayout = (props) => {
         };
         
         // Send data to server
-        const currentIP = window.location.hostname;
-        // const currentIP ="139.162.147.37";
+        // const currentIP = window.location.hostname;
+        const currentIP ="139.162.147.37";
         console.log("Current IP:", currentIP);
         fetch(`http://${currentIP}:5000/save-json`, {
             method: 'POST',
