@@ -91,7 +91,7 @@ export const UserBehaviourTestProvidor = ({ children }) => {
     
     // Send data to server
     // const currentIP = window.location.hostname;
-    const currentIP ="139.162.147.37";
+    const currentIP ="172.104.225.14";
     console.log("Current IP:", currentIP);
     fetch(`http://${currentIP}:5000/save-json`, {
       method: 'POST',
