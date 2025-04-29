@@ -27,7 +27,7 @@ const layouts = {
   "measurement" : MeasurementLayout,
 };
 
-const LayoutPicker = ({ layout, view, textValue, setTextValue, handleAction, suggestions, letterSuggestions, dwellTime,buttonFontSize,textFontSize, nextLetters, getNext, handleLetterSelected, logEvent, counterStarted, nextView, nextLayout, testSuiteActive, alphabetPage}) => {
+const LayoutPicker = ({ layout, view, textValue, setTextValue, handleAction, suggestions, letterSuggestions, dwellTime,buttonFontSize,textFontSize, nextLetters, getNext, handleLetterSelected, logEvent, counterStarted, nextView, nextLayout, testSuiteActive, alphabetPage, isTesting, inputEnabledForTests}) => {
   const LayoutComponent = layouts[layout];
   const { textAreaColSpan, rows, cols } = LayoutComponent.properties;
   return (
@@ -54,6 +54,8 @@ const LayoutPicker = ({ layout, view, textValue, setTextValue, handleAction, sug
         nextLayout={nextLayout}
         testSuiteActive={testSuiteActive}
         alphabetPage={alphabetPage}
+        isTesting={isTesting}
+        inputEnabledForTests={inputEnabledForTests}
       />
       <div
         data-testid="layout-metadata"

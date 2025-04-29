@@ -20,6 +20,8 @@ const KeyboardGridV2 = (props) => {
     textFontSize,
     handleLetterSelected,
     alphabetPage,
+    isTesting,
+    inputEnabledForTests,
   } = props;
 
   const rows = 5;

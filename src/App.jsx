@@ -59,8 +59,9 @@ function App({ initialView = CmdConst.FIRST_PAGE, initialLayout = "2+3+5x3", ini
   //const [audioUnlocked, setAudioUnlocked] = useState(false);
   const [audioUnlocked, setAudioUnlocked] = useState(false);
   // Testing 
-  const { isTesting, currentTestIndex, targetSentence, counterStarted, initTest, startTest, endTest, completeTests, logEvent, setLogs, logs, cancelTest, testSuiteActive,setTestSuiteActive } = useTesting();
-  
+  const { isTesting, currentTestIndex, targetSentence, counterStarted, initTest, startTest, endTest, completeTests, logEvent, setLogs, logs, cancelTest, testSuiteActive, setTestSuiteActive } = useTesting();
+  const [inputEnabledForTests, setInputEnabledForTests] = useState(false);
+
   const unlockAudio = () => {
     const audio = new Audio("/click_button.mp3");
     audio.play().then(() => {
@@ -92,8 +93,6 @@ function App({ initialView = CmdConst.FIRST_PAGE, initialLayout = "2+3+5x3", ini
   const startUserTest = () => {
     initTest(0, userData);
   };
-
- 
 
 function setupRemoteLogging() {
     const originalLog = console.log;
@@ -152,6 +151,9 @@ function setupRemoteLogging() {
     }
   };
   const setTextValue = (text) => {
+    if (isTesting && !inputEnabledForTests) {
+      return;
+    }
     if (isTesting && !counterStarted) {
       startTest();
       //gets last word of 'text'
@@ -215,6 +217,11 @@ function setupRemoteLogging() {
     } else if (isTesting && targetSentence) {
       updateTextValue(targetSentence + "\n");
       updateGlobalCursorPosition((targetSentence + "\n").length);
+      setInputEnabledForTests(false);
+      const waitBeforeWriting = setTimeout(() => {
+        setInputEnabledForTests(true);
+      }, 1000);
+      return () => clearTimeout(waitBeforeWriting);
     }
   }, [targetSentence]);
 
@@ -424,6 +431,8 @@ function setupRemoteLogging() {
         nextLayout={nextLayout}
         testSuiteActive={testSuiteActive}
         alphabetPage={alphabetPage}
+        isTesting={isTesting}
+        inputEnabledForTests={inputEnabledForTests}
         />
       }
       {alarmActive && <AlarmPopup onClose={() => setAlarmActive(false)} dwellTime={dwellTime} />}

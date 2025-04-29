@@ -22,9 +22,11 @@ const BaseKeyboardGrid = ({
   handleLetterSelected,
   logEvent,
   counterStarted,
+  isTesting,
+  inputEnabledForTests
 }) => {
   const total = rows * cols;
-  const baseProps = { onActivate: onTileActivate, dwellTime, logEvent, counterStarted };
+  const baseProps = { onActivate: onTileActivate, dwellTime, logEvent, counterStarted, isTesting, inputEnabledForTests };
 
 
   return (
