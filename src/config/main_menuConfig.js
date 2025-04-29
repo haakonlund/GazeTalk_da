@@ -1,11 +1,7 @@
 export const main_menuConfig = {
     name: "main_menu",
     tiles: [
-        {
-          type: "switch",
-          label: "Start Tests",
-          action:  { type: "enter_form", value: "enter_form" }
-        },
+        
         {
           type: "switch",
           label: "write",
@@ -16,16 +12,10 @@ export const main_menuConfig = {
           label: "settings",
           action: { type: "switch_view", view: "edit_settings" }
         },
-        // Row 2 (4 tiles)
         {
           type: "switch",
           label: "play alarm",
           action: { type: "play_alarm" }
-        },
-        {
-          type: "switch",
-          label: "Test Tracker",
-          action :{type :"switch_layout", value : "tracker" }
         },
         {
           type: "switch",
@@ -34,14 +24,10 @@ export const main_menuConfig = {
         },
         {
           type: "switch",
-          label: "Start Test",
-          action :{type :"switch_view", view : "test" }
+          label: "Developer menu",
+          action: { type: "switch_view", view: "development_menu" }
         },
-        {
-          type: "switch",
-          label: "Test Measurement",
-          action :{type :"switch_layout", value : "measurement" }
-        },
+
         
       ]
   };
