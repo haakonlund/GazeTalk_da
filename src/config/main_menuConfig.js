@@ -39,8 +39,8 @@ export const main_menuConfig = {
         },
         {
           type: "switch",
-          label: "Test Mesurment",
-          action :{type :"switch_layout", value : "mesurement" }
+          label: "Test Measurement",
+          action :{type :"switch_layout", value : "measurement" }
         },
         
       ]

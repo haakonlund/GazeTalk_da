@@ -4,7 +4,7 @@ import * as DA from "../util/dataAnalysis.js"
 import { useLocalStorage } from "@uidotdev/usehooks";
 import { getDeviceType } from "../util/deviceUtils.js";
 import { calculateAccuracy, calculatePrecision, euclid_dist, pix2mm, getPPI } from "../util/dataAnalysis.js";
-const TrackerLayout = (props) => {
+const MeasurementLayout = (props) => {
     const logInterval = 5;
     const transitionTime = 2000;
     
@@ -82,10 +82,10 @@ const TrackerLayout = (props) => {
     );
 };
 
-TrackerLayout.properties = {
+MeasurementLayout.properties = {
     textAreaColSpan: 0,
     rows: 0,
     cols: 0,
 };
 
-export default TrackerLayout;
+export default MeasurementLayout;

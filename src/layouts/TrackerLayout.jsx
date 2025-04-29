@@ -6,7 +6,7 @@ import { useLocalStorage } from "@uidotdev/usehooks";
 import { getDeviceType } from "../util/deviceUtils.js";
 import { calculateAccuracy, calculatePrecision } from "../util/dataAnalysis.js";
 import * as CmdConst from "../constants/cmdConstants.js";
-import * as DataSavingSingleton from "../singleton/dataSavingSingleton";
+import * as DataSavingSingleton from "../singleton/dataSavingSingleton.js";
 const TrackerLayout = (props) => {
     const logInterval = 5;
     const transitionTime = 2000;
