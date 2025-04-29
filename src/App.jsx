@@ -109,7 +109,6 @@ function setupRemoteLogging() {
   }
 
   React.useEffect(() => {
-    console.log("daouihaiudhjagsbduhyabdakd");
     const deviceID = getDeviceType()
     if (unitTesting){
       return
