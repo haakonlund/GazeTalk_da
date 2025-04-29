@@ -36,7 +36,7 @@ const FormPopup = ({ onClose, dwellTime }) => {
         <div>
           <p>Please write what device you are using</p>
           <input className="deviceInput" type="text" placeholder="iPad gen 10" />
-          Please enter the screen size in inches
+          If you are not using iPhone or iPad, please enter the screen size in inches
           <input className="screensizeInput" type="text" placeholder="27" />
         </div>
         <div>
@@ -49,7 +49,7 @@ const FormPopup = ({ onClose, dwellTime }) => {
             />
             Eye Tracking
           </label>
-          {/* <br />
+          <br />
           <label className="checkbox-label">
             <input
               type="checkbox"
@@ -58,7 +58,7 @@ const FormPopup = ({ onClose, dwellTime }) => {
             />
             Head Tracking
           </label>
-          <br /> */}
+          <br />
           <label className="checkbox-label">
             <input
               type="checkbox"
