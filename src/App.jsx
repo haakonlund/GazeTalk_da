@@ -236,6 +236,9 @@ function setupRemoteLogging() {
       dwellTime = settings[UserDataConst.DWELLTIME]
 
       setButtonFontSize(settings[UserDataConst.BUTTON_FONT_SIZE])
+      if (getDeviceType() === "ipad") {
+        setButtonFontSize(55);
+      }
       setTextFontSize(settings[UserDataConst.TEXT_FONT_SIZE])
     }
     
