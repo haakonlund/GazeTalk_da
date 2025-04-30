@@ -196,6 +196,7 @@ export const handleAction = (
         break;
     }
     case CmdConst.START_TRACKER_TEST: {
+        DataSavingSingleton.data.form_data.layout = currentLayoutName;
         startTrackerTest()
         break;
     }
