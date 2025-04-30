@@ -113,8 +113,8 @@ function setupRemoteLogging() {
       return
     }
     if (deviceID === "ipad") {
-      changeButtonNum(layoutToButtonNum["kbv2_4x4"]);
-      setCurrentLayoutName("kbv2_4x4");
+      changeButtonNum(layoutToButtonNum["kbv2_3x3"]);
+      setCurrentLayoutName("kbv2_3x3");
       setupRemoteLogging();
       console.log("Remote logging enabled for device:", deviceID);
     } else if (deviceID === "iphone") {
@@ -127,8 +127,8 @@ function setupRemoteLogging() {
         console.warn("Layout not found in layoutToButtonNum, using 6 as default.");
         changeButtonNum(6);
       } else {
-        setCurrentLayoutName("kbv2_4x4");
-        changeButtonNum(layoutToButtonNum["kbv2_4x4"]);
+        setCurrentLayoutName("kbv2_3x3");
+        changeButtonNum(layoutToButtonNum["kbv2_3x3"]);
       }
       console.log("Remote logging enabled for device:", deviceID);
     }

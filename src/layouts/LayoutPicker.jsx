@@ -9,6 +9,7 @@ import Layout2_4_6x4 from "./Layout2_4_6x4";
 import Layout2_4_6x5 from "./Layout2_4_6x5";
 import KeyboardLayoutV2_4x4 from "./KeyboardLayoutV2_4x4";
 import KeyboardLayoutV2_4x3 from "./KeyboardLayoutV2_4x3";
+import KeyboardLayoutV2_3x3 from "./KeyboardLayoutV2_3x3";
 import TrackerLayout from "./TrackerLayout";
 import MeasurementLayout from "./MeasurementLayout";
 
@@ -21,6 +22,7 @@ const layouts = {
   "3+3x4": Layout3_3x4,
   "4+4x4": Layout4_4x4,
   "3+3x3": Layout3_3x3,
+  "kbv2_3x3": KeyboardLayoutV2_3x3,
   "kbv2_4x4": KeyboardLayoutV2_4x4,
   "kbv2_4x3": KeyboardLayoutV2_4x3,
   "tracker" : TrackerLayout,
