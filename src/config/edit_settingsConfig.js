@@ -15,11 +15,11 @@ export const edit_settingsConfig = {
           label: "layout",
           action: { type: "switch_view", view: "layouts" }
         },
-        {
-          type: "switch",
-          label: "dwell time",
-          action: { type: "switch_view", view: "edit_dwelltime" }
-        },
+        // {
+        //   type: "switch",
+        //   label: "dwell time",
+        //   action: { type: "switch_view", view: "edit_dwelltime" }
+        // },
         {
           type: "switch",
           label: "change language",
