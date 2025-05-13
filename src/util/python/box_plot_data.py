@@ -27,18 +27,7 @@ if len(sys.argv) > 2:
 else:
     include_glasses = False  # default: do not include users with glasses
 
-# Expected structure:
-#   <BASE_DIR>/
-#       Subject_1/
-#           iphone/
-#               writing/
-#                   <some_file.json>
-#           ipad/
-#               writing/
-#                   <some_file.json>
-#       Subject_2/
-#           ...
-#
+
 # Define the list of metric keys to be plotted.
 ALL_METRICS = ["WPM", "KSPC", "MSDErrorRate", "RBA", "OR", "RTE", "ANSR"]
 
@@ -59,9 +48,14 @@ def load_metrics_from_file(filepath, subject, device, include_glasses):
         print(f"Warning: Could not decode JSON from {filepath}")
         return results
 
-    # Use "testResults" key if available or assume data is a list.
-    if isinstance(data, dict) and "testResults" in data:
-        tests = data["testResults"]
+    if isinstance(data, dict):
+        if "writing_test" in data:
+            tests = data["writing_test"]
+        elif "testResults" in data:
+            tests = data["testResults"]
+        else:
+            print(f"Unexpected data structure in {filepath}")
+            return results
     elif isinstance(data, list):
         tests = data
     else:
@@ -97,7 +91,7 @@ def traverse_data_dir(base_dir, include_glasses):
     """
     Traverses the base directory.
     Assumes the following structure:
-      base_dir/Subject/Device/writing/<any JSON file>
+      base_dir/Subject/Device/<any .json>
     Returns a list of metrics event dictionaries.
     """
     all_metrics = []
@@ -110,16 +104,15 @@ def traverse_data_dir(base_dir, include_glasses):
             if not os.path.isdir(device_path):
                 continue
             # Look for a "writing" folder.
-            writing_path = os.path.join(device_path, "writing")
-            if not os.path.isdir(writing_path):
-                print(f"Warning: 'writing' folder not found in {device_path}")
+            json_files = [
+                f for f in os.listdir(device_path)
+                if f.lower().endswith(".json")
+            ]
+            if not json_files:
+                print(f"Warning: No JSON file in {device_path}")
                 continue
-            # Since there's exactly one JSON file per folder, get that file.
-            files = [f for f in os.listdir(writing_path) if f.lower().endswith(".json")]
-            if not files:
-                print(f"Warning: No JSON file found in {writing_path}")
-                continue
-            json_file = os.path.join(writing_path, files[0])
+
+            json_file = os.path.join(device_path, json_files[0])
             metrics = load_metrics_from_file(json_file, subject, device, include_glasses)
             all_metrics.extend(metrics)
     return all_metrics
@@ -161,6 +154,25 @@ def main():
     # Reshape data: melt the metrics columns into a long-format DataFrame.
     df_long = df.melt(id_vars=["subject", "device"], value_vars=ALL_METRICS,
                       var_name="Metric", value_name="Value")
+    #print metrics as a table
+    for dev in ["iphone", "ipad"]:
+        dev_stats = (
+            df_long[df_long["device"] == dev]
+            .groupby("Metric")["Value"]
+            .agg(Min="min", Q1=lambda x: x.quantile(0.25), Q3=lambda x: x.quantile(0.75), Max="max", Avg="mean", Median="median")
+        ).rename(columns={"Q1":"25\\%", "Q3":"75\\%"})
+        print(f"\nSummary statistics for {dev}:")
+        print(dev_stats.to_string())
+
+        # If you want pandas to spit out LaTeX code directly:
+        latex = dev_stats.to_latex(
+            caption=f"Summary statistics for {dev.capitalize()}",
+            label=f"tab:summary_{dev}",
+            float_format="%.4f",
+            header=True,
+            bold_rows=True
+        )
+        print(latex)
 
     # For each metric, plot a box plot comparing iPhone vs. iPad.
     for metric in ALL_METRICS:
