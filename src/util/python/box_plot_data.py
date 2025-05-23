@@ -42,12 +42,12 @@ def load_metrics_from_file(filepath, subject, device, include_glasses):
     """
     results = []
     try:
-        with open(filepath, "r") as f:
+        with open(filepath, "r", encoding="utf-8") as f:
             data = json.load(f)
     except json.JSONDecodeError:
         print(f"Warning: Could not decode JSON from {filepath}")
         return results
-
+    method = data.get("form_data", {}).get("interaction_method", "unknown")
     if isinstance(data, dict):
         if "writing_test" in data:
             tests = data["writing_test"]
@@ -84,6 +84,7 @@ def load_metrics_from_file(filepath, subject, device, include_glasses):
         if metrics_event:
             metrics_event["subject"] = subject
             metrics_event["device"] = device
+            metrics_event["method"]  = method
             results.append(metrics_event)
     return results
 
@@ -149,34 +150,46 @@ def main():
     # Create a DataFrame.
     df = pd.DataFrame(metrics_list)
     print("Summary (by subject and device):")
-    print(df.groupby(["subject", "device"]).size().unstack(fill_value=0))
+    print(df.groupby(["subject", "device", "method"]).size().unstack(fill_value=0))
 
     # Reshape data: melt the metrics columns into a long-format DataFrame.
-    df_long = df.melt(id_vars=["subject", "device"], value_vars=ALL_METRICS,
+    df_long = df.melt(id_vars=["subject", "device", "method"], value_vars=ALL_METRICS,
                       var_name="Metric", value_name="Value")
     #print metrics as a table
-    for dev in ["iphone", "ipad"]:
-        dev_stats = (
-            df_long[df_long["device"] == dev]
-            .groupby("Metric")["Value"]
-            .agg(Min="min", Q1=lambda x: x.quantile(0.25), Q3=lambda x: x.quantile(0.75), Max="max", Avg="mean", Median="median")
-        ).rename(columns={"Q1":"25\\%", "Q3":"75\\%"})
-        print(f"\nSummary statistics for {dev}:")
-        print(dev_stats.to_string())
-
-        # If you want pandas to spit out LaTeX code directly:
-        latex = dev_stats.to_latex(
-            caption=f"Summary statistics for {dev.capitalize()}",
-            label=f"tab:summary_{dev}",
-            float_format="%.4f",
-            header=True,
-            bold_rows=True
-        )
-        print(latex)
+    for method in ["eye-tracking", "head-tracking"]:
+        for dev in ["iphone", "ipad"]:
+            combo = df_long[
+                (df_long["method"] == method) &
+                (df_long["device"] == dev)
+            ]
+            if combo.empty:
+                continue
+            stats = (
+                combo.groupby("Metric")["Value"]
+                .agg(
+                    Min="min",
+                    Q1=lambda x: x.quantile(0.25),
+                    Q3=lambda x: x.quantile(0.75),
+                    Max="max",
+                    Avg="mean",
+                    Median="median"
+                )
+                .rename(columns={"Q1":"25\\%", "Q3":"75\\%"})
+            )
+            print(f"\nSummary statistics for {method} on {dev}:")
+            print(stats.to_string())
+            latex = stats.to_latex(
+                caption=f"Summary statistics for {method.replace('-', ' ').title()} on {dev.capitalize()}",
+                label=f"tab:summary_{method.replace('-', '')}_{dev}",
+                float_format="%.4f",
+                header=True,
+                bold_rows=True
+            )
+            print(latex)
 
     # For each metric, plot a box plot comparing iPhone vs. iPad.
-    for metric in ALL_METRICS:
-        plot_boxplots_per_metric(df_long, metric)
+    #for metric in ALL_METRICS:
+    #    plot_boxplots_per_metric(df_long, metric)
 
 if __name__ == "__main__":
     main()
