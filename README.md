@@ -1,8 +1,36 @@
-# React + Vite
+# Running and installing Gazetalk
+To install dependencies for the site run
+```bash
+npm install
+```
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+### Running
 
-Currently, two official plugins are available:
+To run Gazetalk website run at root
+```bash
+npm run dev -- --host
+```
+Then, navigate to the address displayed in your terminal (usually something like `http://localhost:5173` or your network IP if accessed remotely).
+# Data collection server
+Navigate to ````Gazetalk/server```
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+To install the python dependencies run :
+```bash
+pip install flask flask-cors
+```
+
+To run the data collection server run
+```bash
+python server.py 
+# or
+python3 server.py
+```
+
+if there is trouble running the python data collection server try to use ``python3 ``
+If you are on a linux envioment and want to run it in the background you can use ``nohup``
+```bash
+apt install nohup
+nohup python server.py &
+```
+
+The files will be saved in the folder ``json_data/``
