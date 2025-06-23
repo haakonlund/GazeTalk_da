@@ -26,7 +26,7 @@ import * as TestConst from "./constants/testConstants/testConstants";
 import { getDeviceType } from "./util/deviceUtils";
 import * as DataSavingSingleton from "./singleton/dataSavingSingleton.js";
 
-let dwellTime = 1500;
+let dwellTime = 800;
 
 function App({ initialView = CmdConst.FIRST_PAGE, initialLayout = "2+3+5x3", initialText="", unitTesting=process.env.NODE_ENV === "test" }) {
   const [currentViewName, setCurrentViewName] = useState(initialView);
