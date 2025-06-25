@@ -20,11 +20,7 @@ export const edit_settingsConfig = {
         //   label: "dwell time",
         //   action: { type: "switch_view", view: "edit_dwelltime" }
         // },
-        {
-          type: "switch",
-          label: "change language",
-          action: { type: "switch_view", view: "edit_language" }
-        },
+
         {
           type : "switch",
           label : "font size",
