@@ -138,10 +138,10 @@ const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected, log
       onMouseLeave={process.env.NODE_ENV === "test" ? () => setHovering(false) : () => {handleMouseLeave(); setHovering(false);}}
       style={tile.customStyle || {color:
         tile.label === "Back"
-            ? "#0f0"
+            ? "#f0f"
             : tile.type === "switch"
-            ? "#ff0"
-            : "#fff",}}
+            ? "#00f"
+            : "#000",}}
       onMouseEnter={process.env.NODE_ENV === "test" ? () => setHovering(true) : () => {handleMouseEnter()}}
       onMouseLeave={process.env.NODE_ENV === "test" ? () => setHovering(false) : () => {handleMouseLeave()}}
       onClick={handleClick}
