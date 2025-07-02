@@ -1,11 +1,9 @@
 import React, { useState, useRef } from "react";
 import { useLocalStorage } from "@uidotdev/usehooks";
-import { flushSync } from 'react-dom';
 import axios from "axios";
-// import {settings, setSettings} from "./util/userData.js"
-import { changeLanguage, init } from "i18next";
+import { changeLanguage } from "i18next";
 import "./App.css";
-import { globalCursorPosition, cursorEventTarget, updateGlobalCursorPosition } from "./singleton/cursorSingleton";
+import { globalCursorPosition, updateGlobalCursorPosition } from "./singleton/cursorSingleton";
 
 import LayoutPicker from "./layouts/LayoutPicker";
 import AlarmPopup from "./components/AlarmPopup";
@@ -14,7 +12,6 @@ import UnlockAudioPopup from "./components/UnluckAudioPopup";
 import PausePopup from "./components/PausePopup";
 import { config } from "./config/config";
 import { speakText } from './singleton/textToSpeachSingleton'
-import { updateSetting, updateRanking } from "./util/settingUtil";
 import * as RankingSystem from "./util/ranking"
 import { handleAction } from "./util/handleAction";
 import * as UserDataConst from "./constants/userDataConstants"
@@ -24,7 +21,6 @@ import { useTesting } from "./components/UserBehaviourTest";
 import { getLastSentence } from "./util/textUtils";
 import * as TestConst from "./constants/testConstants/testConstants";
 import { getDeviceType } from "./util/deviceUtils";
-import * as DataSavingSingleton from "./singleton/dataSavingSingleton.js";
 
 let dwellTime = 1500;
 
@@ -53,11 +49,10 @@ function App({ initialView = CmdConst.FIRST_PAGE, initialLayout = "2+3+5x3", ini
   const [buttonNum, setButtonNum] = useState(6)
   const [nextView, setNextView] = useState(CmdConst.FIRST_PAGE)
   const [nextLayout, setNextLayout] = useState("2+2+4x2")
-  // const [testSuiteActive,setTestSuiteActive] = useState(false)
 
-  const showNextSuggestions = unitTesting // turn on to show next suggestions
-  //const [audioUnlocked, setAudioUnlocked] = useState(false);
+  const showNextSuggestions = unitTesting // turn on to show next letters suggestions
   const [audioUnlocked, setAudioUnlocked] = useState(false);
+
   // Testing 
   const { isTesting, currentTestIndex, targetSentence, counterStarted, initTest, startTest, endTest, completeTests, logEvent, setLogs, logs, cancelTest, testSuiteActive, setTestSuiteActive } = useTesting();
   const [inputEnabledForTests, setInputEnabledForTests] = useState(false);
@@ -139,7 +134,6 @@ function setupRemoteLogging() {
     RankingSystem.updateRank(Letters, selectedLetter)
     const newUserdata = updateRanking(userData, RankingSystem.getRank())
     setUserData(newUserdata)
-    // console.log("Other letters:", Letters, "Selected:", selectedLetter);
     let index = 0;
     for (let i = 0; i < Letters.length; i++) {
       if ( Letters[i] === selectedLetter) {
@@ -178,9 +172,6 @@ function setupRemoteLogging() {
               setTestSuiteActive(false)
               
             }
-          // DataSavingSingleton.save()
-          
-          // setAudioUnlocked(false); // why is this here
         } else { //Next tests
           initTest(currentTestIndex + 1, userData);
           updateTextValue(targetSentence + "\n");
@@ -194,7 +185,6 @@ function setupRemoteLogging() {
   const abandonTest = () => {
     cancelTest();
   }
-
   //Needed to unlock audio on browsers
   React.useEffect(() => {
     const unlockAudio = () => {
@@ -225,10 +215,8 @@ function setupRemoteLogging() {
     }
   }, [targetSentence]);
 
-
   // load settings initalially
   React.useEffect(() => {
-    // console.log("first load", userData)
     const settings = userData?.settings
     if (settings) {
       const language = settings[UserDataConst.LANGUAGE] || UserDataConst.DEFAULT_LANGUAGE;
@@ -241,7 +229,6 @@ function setupRemoteLogging() {
       }
       setTextFontSize(settings[UserDataConst.TEXT_FONT_SIZE])
     }
-    
   }, [userData]);
   
   React.useEffect(() => {
@@ -264,7 +251,6 @@ function setupRemoteLogging() {
     }
 
     const fetchSuggestions = async () => {
-
       try {
         const response = await axios.post("https://cloudapidemo.azurewebsites.net/continuations", {
           locale: "en_US",
@@ -276,8 +262,6 @@ function setupRemoteLogging() {
         setSuggestions([]);
       }
     };
-
-    
     
     fetchSuggestions();
 
@@ -302,7 +286,6 @@ function setupRemoteLogging() {
         const suggestionArray = [...suggestionsString]; 
         return suggestionArray.slice(0, RankingSystem.getButtonNum());
       };
-    
       // Get initial suggestions
       let rankedSuggestion = [];
       if (nextLetterSuggestion) {
@@ -312,29 +295,24 @@ function setupRemoteLogging() {
         rankedSuggestion = RankingSystem.rank(currentSuggestion, null, null);
       }
       setNextLetterSuggestion(null);
-    
-      
+
       // Process results
       if (showNextSuggestions) {
         // Make all next suggestion API calls in parallel using Promise.all
         const nextSugPromises = rankedSuggestion.map(async (suggestion, index) => {
           return getSug(textUpToCursor + suggestion);
         });
-
         const nextSugResults = await Promise.all(nextSugPromises);
         const letterSuggestionsArray = nextSugResults.map((result, i) => {
           return RankingSystem.rank(result, rankedSuggestion[i], i);
         });
         setNextLetters(letterSuggestionsArray);
-      
       } else {
         setNextLetters(new Array(buttonNum).fill([]));
       }
       setLetterSuggestions(rankedSuggestion);
     };
-    
     fillLetterSuggestions();
-
   }, [textValue, buttonNum]);
 
   React.useEffect(() => {
@@ -355,8 +333,7 @@ function setupRemoteLogging() {
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [textValue]); // Depend on textValue so it updates properly.
-
+  }, [textValue]);
 
   const handleActionWrapper = (action) => {
     handleAction(action, {
@@ -372,43 +349,28 @@ function setupRemoteLogging() {
       userData,
       setUserData,
       speakText,
-      alarmActive,
-      nextLetterSuggestion,
       setAlarmActive,
-      isPaused,
       setIsPaused,
-      setNextLetterSuggestion,
-      letterSuggestions,
-      setLetterSuggestions,
-      nextLetters,
-      setNextLetters,
       suggestions,
-      setSuggestions,
       buttonFontSize,
-      setButtonFontSize,
-      textFontSize,
-      setTextFontSize,
-      config,
-      setCurrentLayoutName,
-      currentLayoutName,
-      setShowSuggestions,
-      showSuggestions,
-      changeButtonNum,
-      buttonNum,
-      isTesting,
-      counterStarted,
-      startUserTest,
-      logEvent,
-      abandonTest,
-      dwellTime,
-      currentTestIndex,
-      nextView,
-      setNextView,
-      setNextLayout,
-      setTestSuiteActive,
-      enterForm, 
-      setEnterForm,
-      setAlphabetPage,
+    setButtonFontSize,
+    textFontSize,
+    setTextFontSize,
+    config,
+    setCurrentLayoutName,
+    currentLayoutName,
+    setShowSuggestions,
+    changeButtonNum,
+    isTesting,
+    counterStarted,
+    startUserTest,
+    logEvent,
+    dwellTime,
+    currentTestIndex,
+    setAlphabetPage,
+    setNextLayout,
+    setTestSuiteActive,
+    setEnterForm
     });
   };
 
@@ -445,11 +407,7 @@ function setupRemoteLogging() {
         
       }} dwellTime={dwellTime} />}
         {
-          // Uncomment to show debug button
           <PausePopup isPaused={isPaused} onActivate={handleActionWrapper} dwellTime={dwellTime} /> 
-        }
-        {
-          //<button onClick={() => setIsPaused((prev) => !prev)}>Toggle Pause</button> 
         }
     </div>
   );
