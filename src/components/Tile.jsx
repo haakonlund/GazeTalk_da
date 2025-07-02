@@ -94,14 +94,10 @@ const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected, log
     if (hovering) {
       startedHover.current = true;
       finishedHover.current = false;
-      gazedMoreThanThreshold.current = false;
       const startTime = Date.now();
       timer = setInterval(() => {
         const elapsed = Date.now() - startTime;
         const percentage = 100 - (elapsed / dwellTime) * 100;
-        if (elapsed > gazeThreshold) {
-          gazedMoreThanThreshold.current = true;
-        }
         if (percentage <= 0) {
           finishedHover.current = true;
           clearInterval(timer);
@@ -115,16 +111,12 @@ const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected, log
               }
             }
           }
-          // setHovering(false);
           setProgress(100);
         } else {
           setProgress(percentage);
         }
       }, 50);
     } else {
-      if (startedHover.current && !finishedHover.current && gazedMoreThanThreshold.current && counterStarted) {
-        logEvent({ type: TestConstants.TILE_GAZED_NOT_SELECTED, label: tile.label });
-      }
       if (timer) {clearInterval(timer);}
       setProgress(100);
       startedHover.current = false;
@@ -141,12 +133,15 @@ const Tile = ({ tile, onActivate, dwellTime, otherLetters, onLetterSelected, log
       className="tile"
       role="button"
       aria-label={tile.label || "tile"}
+      style={tile.customStyle || {}}
+      onMouseEnter={process.env.NODE_ENV === "test" ? () => setHovering(true) : () => {handleMouseEnter(); setHovering(true);}}
+      onMouseLeave={process.env.NODE_ENV === "test" ? () => setHovering(false) : () => {handleMouseLeave(); setHovering(false);}}
       style={tile.customStyle || {color:
         tile.label === "Back"
-            ? "#0f0"
+            ? "#f0f"
             : tile.type === "switch"
-            ? "#ff0"
-            : "#fff",}}
+            ? "#00f"
+            : "#000",}}
       onMouseEnter={process.env.NODE_ENV === "test" ? () => setHovering(true) : () => {handleMouseEnter()}}
       onMouseLeave={process.env.NODE_ENV === "test" ? () => setHovering(false) : () => {handleMouseLeave()}}
       onClick={handleClick}
