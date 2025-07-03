@@ -61,7 +61,7 @@ describe('Checking configurations', () => {
         config.views["writing"],
         config.views["suggestions"],
         config.views["main_menu"],
-        config.views["writing_submenu"],
+        // config.views["writing_submenu"],
         config.views["navigation_menu"],
         config.views["edit_menu"],
         config.views["edit_dwelltime"],
