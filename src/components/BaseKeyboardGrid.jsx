@@ -68,7 +68,6 @@ const BaseKeyboardGrid = ({
           return;
         }
 
-        // 2) dynamic
         const spec = renderDynamic(idx, row, col);
         if (!spec) {
           return <div key={idx} />;

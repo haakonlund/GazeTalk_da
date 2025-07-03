@@ -3,7 +3,7 @@ export const writing_submenuConfig = {
     tiles: [
         {
           type: "textarea",
-          colspan: 2 // This tile spans 2 columns
+          colspan: 2 
         },
         {
           type: "letter",

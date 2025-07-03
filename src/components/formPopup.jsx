@@ -3,10 +3,9 @@ import Tile from "./Tile";
 import * as DataSavingSingleton from "../singleton/dataSavingSingleton";
 
 const FormPopup = ({ onClose, dwellTime }) => {
-  const [selectedDeviceMethod, setSelectedDeviceMethod] = useState(""); // new state
+  const [selectedDeviceMethod, setSelectedDeviceMethod] = useState(""); 
 
   useEffect(() => {
-    // Effect logic here
   }, []);
 
   const submit = () => {
@@ -15,7 +14,7 @@ const FormPopup = ({ onClose, dwellTime }) => {
       device: document.querySelector('.deviceInput').value,
       screensize: document.querySelector('.screensizeInput').value,
       screen_resolution: window.screen.width + "x" + window.screen.height,
-      interaction_method: selectedDeviceMethod, // save selected method
+      interaction_method: selectedDeviceMethod, 
     }
     DataSavingSingleton.data.form_data = data;
     onClose();
