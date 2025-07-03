@@ -24,7 +24,8 @@ import { getDeviceType } from "./util/deviceUtils";
 
 let dwellTime = 800;
 
-function App({ initialView = CmdConst.WRITING, initialLayout = "2+3+5x3", initialText="", unitTesting=process.env.NODE_ENV === "test" }) {
+function App({ initialView = CmdConst.MAIN_MENU, initialLayout = "2+3+5x3", initialText="", unitTesting=process.env.NODE_ENV === "test" }) {
+
   const [currentViewName, setCurrentViewName] = useState(initialView);
   const [currentLayoutName, setCurrentLayoutName] = useState(initialLayout);
   const [textValue, updateTextValue] = useState(initialText);

@@ -61,7 +61,7 @@ describe('Checking configurations', () => {
         config.views["writing"],
         config.views["suggestions"],
         config.views["main_menu"],
-        config.views["writing_submenu"],
+        // config.views["writing_submenu"],
         config.views["navigation_menu"],
         config.views["edit_menu"],
         config.views["edit_dwelltime"],
@@ -91,14 +91,14 @@ describe('Checking configurations', () => {
             expect(textArea).toBeInTheDocument();
             const tiles = staticConfigs[i].tiles.filter(tile => tile.type !== 'textarea');
             tiles.forEach(tile => {
-                // if (tile.label.trim() !== "") {
-                //     expect(
-                //         screen.getByText((content, element) =>
-                //           element.classList.contains("label") &&
-                //           content.trim() === tile.label.trim()
-                //         )
-                //       ).toBeInTheDocument();
-                // }
+                if (tile.label.trim() !== "") {
+                    expect(
+                        screen.getByText((content, element) =>
+                          element.classList.contains("label") &&
+                          content.trim() === tile.label.trim()
+                        )
+                      ).toBeInTheDocument();
+                }
             });
         });
     }

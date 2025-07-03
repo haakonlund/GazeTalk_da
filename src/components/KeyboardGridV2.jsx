@@ -84,7 +84,7 @@ const KeyboardGridV2 = (props) => {
                 label: suggestions[row - 1],
                 is_dynamic:true,
                 action:{type:"insert_suggestion",value:suggestions[row - 1]},
-                customStyle: { color: "#f0f" }
+                customStyle: { color: "#0f0" }
               },
             };
           } else {
@@ -100,7 +100,7 @@ const KeyboardGridV2 = (props) => {
                 surroundingLetters: nextLetters[letterIndex],
               },
               extraProps:{ onLetterSelected: handleLetterSelected },
-              customStyle: {color: "#f0f"}
+              customStyle: {color: "#0f0"}
             };
           }
         }
