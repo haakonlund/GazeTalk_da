@@ -1,9 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import "./TrackerLayout.css";
-import * as DA from "../util/dataAnalysis.js"
-import { useLocalStorage } from "@uidotdev/usehooks";
-import { getDeviceType } from "../util/deviceUtils.js";
-import { calculateAccuracy, calculatePrecision, euclid_dist, pix2mm, getPPI } from "../util/dataAnalysis.js";
+
+import { euclid_dist, pix2mm, getPPI } from "../util/dataAnalysis.js";
 const MeasurementLayout = (props) => {
     const logInterval = 5;
     const transitionTime = 2000;
@@ -12,12 +10,10 @@ const MeasurementLayout = (props) => {
     const nextLayout = props.nextLayout; 
 
     const screenPoints = [
-        { top: "10%", left: "10%" },     // Top-left
-        { top: "10%", left: "55%" },    // Top-center
+        { top: "10%", left: "10%" },    
+        { top: "10%", left: "55%" },    
     ];
 
-
-    const [currentIndex, setCurrentIndex] = useState(0);
 
     const [scale, setScale] = useState(0.2);
     const [isComplete, setIsComplete] = useState(false);
@@ -36,7 +32,7 @@ const MeasurementLayout = (props) => {
                 (screenPoints[1].left.replace('%', '') / 100) * window.innerWidth,
                (screenPoints[1].top.replace('%', '') / 100) * window.innerHeight
             ])
-            return pix2mm(pixelDistance) // Convert to mm
+            return pix2mm(pixelDistance) 
         })
     },[]);
 

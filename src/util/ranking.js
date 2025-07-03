@@ -1,6 +1,5 @@
 import { useState } from "react";
 
-// --- State Management (Unchanged) ---
 let buttonNum = 14;
 let ranking = {};
 
@@ -9,7 +8,6 @@ export const setRanking = (xRanking) => {
 }
 
 export const setButtonNum = (xNum) => {
-    // reset ranking for new button number
     ranking = {};
     buttonNum = xNum;
 }
