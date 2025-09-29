@@ -1,3 +1,4 @@
+export const minimumNumberOfKeystrokes = {
 "Mit ur faldt i vandet.": 23,
 "Fremherskende vind fra øst.": 30,
 "Aldrig for rig og aldrig for tynd.": 39,
@@ -498,3 +499,4 @@
 "Erfaring er svær at få.": 28,
 "Alle ønsker at vinde i lotteriet.": 38,
 "Strejkelinjen giver mig kuldegysninger.": 43,
+}
