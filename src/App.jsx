@@ -254,7 +254,7 @@ function setupRemoteLogging() {
     const fetchSuggestions = async () => {
       try {
         const response = await axios.post("https://cloudapidemo.azurewebsites.net/continuations", {
-          locale: "en_US",
+          locale: "da_DK",
           prompt: textUpToCursor,
         });
         setSuggestions(response.data.continuations.slice(0, 16) || []);
@@ -269,7 +269,7 @@ function setupRemoteLogging() {
     const fetchLetterSuggestions = async (text) => {
       try {
         const response = await axios.post("https://cloudapidemo.azurewebsites.net/lettercontinuations", {
-          locale: "en_US",
+          locale: "da_DK",
           prompt: text,
         });
         return response
