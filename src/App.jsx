@@ -94,8 +94,8 @@ function setupRemoteLogging() {
     const originalLog = console.log;
     console.log = function (...args) {
       originalLog(...args);
-      const currentIP = "172.104.225.14";
-      fetch(`http://${currentIP}:5000/log`, {
+      const currentIP = "130.225.251.172";
+      fetch(`http://${currentIP}:3000/log`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ logs: args })
