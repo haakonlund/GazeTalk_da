@@ -12,7 +12,11 @@ export const main_menuConfig = {
           label: "settings",
           action: { type: "switch_view", view: "edit_settings" }
         },
-        
+        {
+          type: "switch",
+          label: "start test",
+          action: { type: "switch_view", view: "test" }
+        },
 
   
 
