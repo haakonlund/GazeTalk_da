@@ -22,6 +22,11 @@ export const edit_settingsConfig = {
           action : {type : "switch_view", view : "adjust_font_size"}
         },
         {
+          type : "switch",
+          label : "Change Language",
+          action : {type : "switch_view", view : "edit_language"}
+        },
+        {
         type: "switch",
         label: "Start Tests",
         action:  { type: "enter_form", value: "enter_form" }
