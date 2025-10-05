@@ -2,5 +2,21 @@
     "write" : "Skriv",
     "settings" : "Indstillinger",
     "Back" : "Tilbage",
-    "Edit" : "Rediger"
+    "Edit" : "Rediger",
+    "DELETE" : "SLET",
+    "More functions", : "Flere funktioner",
+    "cursor to the left" : "Flyt cursor til venstre",
+    "cursor to the right" : "Flyt cursor til højre",
+    "Start of text" : "Begyndelse af tekst",
+    "Previous section" : "Forrige afsnit",
+    "Previous sentence" : "Forrige sætning",
+    "Previous word" : "Forrige ord",
+    "End of text" : "Slutning på tekst",
+    "Next section" : "Næste afsnit",
+    "Next Sentence" : "Næste sætning",
+    "next word" : "Næste ord"
+
+
+
+
 }
