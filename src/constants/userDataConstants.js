@@ -7,7 +7,7 @@ export const USERDATA = "userdata"
     export const RANKING = "ranking"
 
 // defaults
-export const DEFAULT_LANGUAGE = "en"
+export const DEFAULT_LANGUAGE = "da"
 export const DEFAULT_DWELLTIME = 2000
 export const DEFAULT_BUTTON_FONT_SIZE = 30
 export const DEFAULT_TEXT_FONT_SIZE = 20
