@@ -3,9 +3,24 @@
     "settings" : "Indstillinger",
     "Back" : "Tilbage",
     "Edit" : "Rediger",
-    "DELETE" : "SLET"
-
-
+    "DELETE" : "SLET",
+    "Navigation" : "Navigation",
+    "Delete Section" : "Slet afsnit",
+    "Delete Sentence" : "Slet sætning",
+    "Delete Word" : "Slet ord",
+    "Change Language" : "Skift sprog",
+    "font size" : "Font størrelse",
+    "Start of text" : "Start af text",
+    "Previous section" : "Forrige afsnit",
+    "Previous sentence" : "Forrige sætning",
+    "Previous word" : "Forrige ord",
+    "End of text" : "Slutning på text",
+    "Next section" : "Næste sektion",
+    "Next Sentence" : "Næste sætning",
+    "next word" : " Næste ord",
+    "More functions" : "Flere funktioner",
+    "cursor to the left" : "Flyt ursor til venstre",
+    "cursor to the right" : "Flyt cursor til højre"
 
 
 }
