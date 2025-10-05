@@ -1,6 +1,6 @@
 
 // const serverIP = window.location.hostname
-const serverIP = "172.104.225.14"
+const serverIP = "130.225.251.172"
 
 export let testActive = {isActive : false}
 export const data = (
@@ -32,7 +32,7 @@ export const saveRemotely = async () => {
     // Send data to server
 
     console.log("Current IP:", serverIP);
-    fetch(`http://${serverIP}:5000/save-test-data`, {
+    fetch(`http://${serverIP}:3000/save-test-data`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
