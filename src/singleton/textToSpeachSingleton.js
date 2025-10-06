@@ -63,9 +63,7 @@ null;
 
     } catch (error) {
 
-      console.error("Error
- parsing userData from localStorage:",
-error);
+      console.error("Error parsing userData from localStorage:", error);
 
     }
 
