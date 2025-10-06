@@ -1,22 +1,6 @@
-import
-*
-as
-UserDataConst
-from
-"../constants/userDataConstants";
+import * as UserDataConst from "../constants/userDataConstants";
 
-
-
-export
-const
-speakText
-= (text)
-=> {
-
-    const
-synth
-=
-window.speechSynthesis;
+export const speakText = (text) => {const synth = window.speechSynthesis;
 
     if (synth.speaking)
  {
@@ -27,39 +11,17 @@ window.speechSynthesis;
 
 
 
-    const
-utterance
-=
-new
-SpeechSynthesisUtterance(text);
-
-    utterance.rate
-=
-1;
+    const utterance = new SpeechSynthesisUtterance(text); utterance.rate = 1;
 
 
 
-    const
-storedUserData
-=
-localStorage.getItem("userdata");
+    const storedUserData = localStorage.getItem("userdata");
 
-    let
-userData
-=
-null;
+    let userData = null;
 
 
 
-    try {
-
-      userData
-=
-storedUserData
-?
-JSON.parse(storedUserData)
-:
-null;
+    try {userData = storedUserData?JSON.parse(storedUserData): null;
 
     } catch (error) {
 
@@ -69,35 +31,13 @@ null;
 
 
 
-    const
-settings
-=
-userData?.settings;
+    const settings = userData?.settings;
 
-    const
-language
-=
+    const language = settings?.[UserDataConst.LANGUAGE] || UserDataConst.DEFAULT_LANGUAGE;
 
-      settings?.[UserDataConst.LANGUAGE]
-||
-UserDataConst.DEFAULT_LANGUAGE;
+    const formated_language = language === "da"?"da-DK":"en-US";
 
-    const
-formated_language
-=
-language
-===
-"da"
-?
-"da-DK"
-:
-"en-US";
-
-    utterance.lang
-=
-formated_language
-||
-"da-DK";
+    utterance.lang = formated_language || "da-DK";
 // Default to Danish if not set
 
     synth.speak(utterance);
